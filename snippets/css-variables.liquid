@@ -1,18 +1,28 @@
-{% style %}
-  {% # Loads all font variantions with display: swap %}
-  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-
+{% doc %}
+  Emits theme design tokens as CSS variables and loads the chosen fonts.
+{% enddoc %}
+<style>
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
-    --page-width: {{ settings.max_page_width }};
-    --page-margin: {{ settings.min_page_margin }}px;
-    --color-background: {{ settings.background_color }};
-    --color-foreground: {{ settings.foreground_color }};
-    --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+    --color-bg: {{ settings.color_bg }};
+    --color-panel: {{ settings.color_panel }};
+    --color-ink: {{ settings.color_ink }};
+    --color-mute: {{ settings.color_mute }};
+    --color-faint: {{ settings.color_faint }};
+    --color-line: {{ settings.color_line }};
+    --color-line-soft: {{ settings.color_line_soft }};
+    --color-wine: {{ settings.color_wine }};
+    --color-wine-bright: {{ settings.color_wine_bright }};
+    --color-ok: {{ settings.color_ok }};
+    --color-cta: {{ settings.color_cta }};
+    --color-cta-hover: {{ settings.color_cta_hover }};
+    --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+    --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+    --container: {{ settings.container_width }}px;
+    --spacing: {{ settings.section_spacing }}px;
+    --radius: {{ settings.radius }}px;
   }
-{% endstyle %}
+  body { background: var(--color-bg); color: var(--color-ink); font-family: var(--font-body); }
+  h1, h2, h3, h4 { font-family: var(--font-heading); }
+</style>
+{{ settings.font_heading | font_face }}
+{{ settings.font_body | font_face }}
