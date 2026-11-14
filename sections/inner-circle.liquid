@@ -1,0 +1,133 @@
+<div class="inner-circle color-{{ section.settings.color_scheme }}">
+  <div class="inner-circle__head">
+    <h2>{{ section.settings.heading }}</h2>
+    <p>{{ section.settings.sub }}</p>
+  </div>
+  <div class="inner-circle__cards">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'whatsapp' %}
+          <div class="inner-circle__card" {{ block.shopify_attributes }}>
+            <div class="inner-circle__card-head">
+              <span class="inner-circle__icon" aria-hidden="true">&#9679;</span>
+              <strong>{{ block.settings.title }}</strong>
+              <em>{{ block.settings.tag }}</em>
+            </div>
+            <p>{{ block.settings.text }}</p>
+            <a class="inner-circle__btn" href="{{ block.settings.url }}">{{ block.settings.label }}</a>
+          </div>
+        {% when 'newsletter' %}
+          <div class="inner-circle__card" {{ block.shopify_attributes }}>
+            <div class="inner-circle__card-head">
+              <strong>{{ block.settings.title }}</strong>
+            </div>
+            <p>{{ block.settings.text }}</p>
+            {% form 'customer', class: 'inner-circle__form' %}
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <input
+                type="email"
+                name="contact[email]"
+                placeholder="{{ block.settings.placeholder }}"
+                aria-label="{{ block.settings.placeholder }}"
+                required
+              >
+              <button type="submit" aria-label="{{ 'sections.inner_circle.subscribe' | t }}">&rarr;</button>
+            {% endform %}
+          </div>
+      {% endcase %}
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .inner-circle { padding: var(--spacing) 1.5rem; text-align: center; }
+  .inner-circle__head h2 { font-size: 2rem; margin: 0 0 0.5rem; }
+  .inner-circle__head p { color: var(--color-mute); margin: 0 0 2rem; }
+  .inner-circle__cards {
+    display: grid;
+    gap: 1rem;
+    max-width: var(--container);
+    margin: 0 auto;
+    text-align: left;
+  }
+  .inner-circle__card {
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+  }
+  .inner-circle__card-head { display: flex; align-items: center; gap: 0.5rem; }
+  .inner-circle__card-head em { color: var(--color-mute); font-style: normal; font-size: 0.75rem; letter-spacing: 0.1em; }
+  .inner-circle__icon { color: #108474; }
+  .inner-circle__card p { color: var(--color-mute); font-size: 0.85rem; }
+  .inner-circle__btn {
+    display: block;
+    text-align: center;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    padding: 0.7rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    font-size: 0.8rem;
+  }
+  .inner-circle__form { display: flex; gap: 0.5rem; }
+  .inner-circle__form input {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    color: var(--color-ink);
+    padding: 0.6rem;
+  }
+  .inner-circle__form button {
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    color: var(--color-ink);
+    padding: 0 0.9rem;
+    cursor: pointer;
+  }
+  @media (min-width: 750px) {
+    .inner-circle__cards { grid-template-columns: 1fr 1fr; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Inner Circle",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Join the Inner Circle." },
+    { "type": "text", "id": "sub", "label": "Subheading", "default": "Get early access, exclusive discounts and updates." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "blocks": [
+    {
+      "type": "whatsapp",
+      "name": "WhatsApp",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Inner Circle" },
+        { "type": "text", "id": "tag", "label": "Tag", "default": "WhatsApp" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Join our WhatsApp channel and always be one step ahead." },
+        { "type": "url", "id": "url", "label": "Link" },
+        { "type": "text", "id": "label", "label": "Button label", "default": "Join now" }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Newsletter" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Sign up and never miss a drop again." },
+        { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Your email" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Inner Circle",
+      "blocks": [{ "type": "whatsapp" }, { "type": "newsletter" }]
+    }
+  ]
+}
+{% endschema %}

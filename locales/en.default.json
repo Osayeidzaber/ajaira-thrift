@@ -267,6 +267,9 @@
     }
   },
   "sections": {
+    "inner_circle": {
+      "subscribe": "Subscribe"
+    },
     "announcements": {
       "previous_announcement": "Previous announcement",
       "next_announcement": "Next announcement",

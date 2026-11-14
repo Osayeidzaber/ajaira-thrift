@@ -2,6 +2,19 @@
   "name": "t:sections.footer.name",
   "type": "footer",
   "sections": {
+    "inner-circle": {
+      "type": "inner-circle",
+      "blocks": {
+        "wa": { "type": "whatsapp" },
+        "nl": { "type": "newsletter" }
+      },
+      "block_order": ["wa", "nl"],
+      "settings": {
+        "heading": "Join the Ajaira Inner Circle.",
+        "sub": "Get early access, exclusive discounts and updates.",
+        "color_scheme": "scheme-1"
+      }
+    },
     "footer": {
       "type": "footer",
       "blocks": {
@@ -48,6 +61,7 @@
     }
   },
   "order": [
+    "inner-circle",
     "footer"
   ]
 }
