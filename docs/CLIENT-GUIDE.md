@@ -14,7 +14,8 @@ Everything on the storefront is changed in **Shopify admin**. You never need to 
 | Social links (footer icons) | Theme settings → Social media |
 | Homepage hero image, button, height, text position | Customize → Home page → **veyroze banner** |
 | Products shown on the homepage | Customize → Home page → **Product picks** (switch it on with the eye icon; pick products by hand or from a collection) |
-| The two big "launch" features | Customize → Home page → **Product launch** → pick a product |
+| The big "launch" features | Customize → Home page → **Product launch** → pick a product. Title, photos, description and price come from the product automatically. Add more products with **Add block → Extra launch**; rows alternate sides. |
+| Customer reviews on the homepage | Customize → Home page → **Customer reviews** (replace the placeholder cards, or hide the section) |
 | FAQ questions | Customize → Home page → **FAQ** (add, remove, reorder questions) |
 | Announcement bar text | Customize → Header → Announcement bar |
 | Menus (header and footer) | Online Store → Navigation |

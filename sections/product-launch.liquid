@@ -1,113 +1,77 @@
 {%- liquid
-  assign p = section.settings.product
   assign uid = 'vzl-' | append: section.id
-  assign gal = 'vzl-g-' | append: section.id
-  assign max = section.settings.max_images
-  assign count = 0
-  if p != blank
-    assign count = p.images.size
-    if count > max
-      assign count = max
-    endif
+  assign flip_first = false
+  if section.settings.media_position == 'right'
+    assign flip_first = true
   endif
-  assign last = count | minus: 1
+  assign launch_blocks = section.blocks | where: 'type', 'launch'
+  assign feature_blocks = section.blocks | where: 'type', 'feature'
 -%}
-<section id="{{ uid }}" class="vzl" style="--vzl-title-size: {{ section.settings.title_size }}px; --vzl-align: {{ section.settings.text_align }}; {% if section.settings.accent_color != blank %}--gold: {{ section.settings.accent_color }};{% endif %} {% if section.settings.text_color != blank %}--ink: {{ section.settings.text_color }};{% endif %} {% if section.settings.muted_color != blank %}--muted: {{ section.settings.muted_color }};{% endif %} {% if section.settings.line_color != blank %}--line: {{ section.settings.line_color }};{% endif %} {% if section.settings.button_text_color != blank %}--vzl-cta-text: {{ section.settings.button_text_color }};{% endif %} {% if section.settings.button_hover_color != blank %}--vzl-cta-hover: {{ section.settings.button_hover_color }};{% endif %} {% if section.settings.media_bg != blank %}--vzl-media-bg: {{ section.settings.media_bg }};{% endif %}">
-  <div class="vzl__inner">
-    <div class="vzl__media">
-      {%- if section.settings.badge != blank -%}
-        <span class="vzl__badge">{{ section.settings.badge | escape }}</span>
-      {%- endif -%}
-      {%- if count > 0 -%}
-        {%- for img in p.images limit: count -%}
-          <input
-            type="radio"
-            class="vzl__radio"
-            name="vzl-gal-{{ section.id }}"
-            id="{{ gal }}-{{ forloop.index0 }}"
-            aria-label="{{ p.title | escape }} — {{ forloop.index }}"
-            {% if forloop.first %}
-              checked
-            {% endif %}
-          >
-        {%- endfor -%}
-        <div class="vzl__frames">
-          {%- for img in p.images limit: count -%}
-            {{
-              img
-              | image_url: width: 1200
-              | image_tag:
-                data-vzl-index: forloop.index0,
-                alt: p.title,
-                loading: 'lazy',
-                sizes: '(min-width: 900px) 50vw, 100vw',
-                widths: '400, 600, 800, 1000, 1200'
-            }}
-          {%- endfor -%}
-        </div>
-        {%- if count > 1 -%}
-          <div class="vzl__navs">
-            {%- for i in (0..last) -%}
-              {%- liquid
-                assign prev = i | minus: 1
-                if prev < 0
-                  assign prev = last
-                endif
-                assign next = i | plus: 1
-                if next > last
-                  assign next = 0
-                endif
-              -%}
-              <label class="vzl__arrow vzl__arrow--prev vzl__arrow--{{ i }}" for="{{ gal }}-{{ prev }}" title="{{ 'general.slider.previous_slide' | t }}"><span></span></label>
-              <label class="vzl__arrow vzl__arrow--next vzl__arrow--{{ i }}" for="{{ gal }}-{{ next }}" title="{{ 'general.slider.next_slide' | t }}"><span></span></label>
-            {%- endfor -%}
-          </div>
-          <div class="vzl__dots">
-            {%- for i in (0..last) -%}
-              <label class="vzl__dot vzl__dot--{{ i }}" for="{{ gal }}-{{ i }}" title="{{ i | plus: 1 }}"></label>
-            {%- endfor -%}
-          </div>
-        {%- endif -%}
-      {%- else -%}
-        <div class="vzl__media-empty">{{ 'onboarding.product_title' | t }}</div>
-      {%- endif -%}
-    </div>
-
-    <div class="vzl__body">
-      {%- if section.settings.eyebrow != blank -%}
-        <p class="vzl__eyebrow">{{ section.settings.eyebrow | escape }}</p>
-      {%- endif -%}
-      <h2 class="vzl__title">{{ section.settings.heading | default: p.title | escape }}</h2>
-      {%- if section.settings.description != blank -%}
-        <div class="vzl__text">{{ section.settings.description }}</div>
-      {%- endif -%}
-      {%- if section.blocks.size > 0 -%}
-        <ul class="vzl__features">
-          {%- for block in section.blocks -%}
-            <li {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</li>
-          {%- endfor -%}
-        </ul>
-      {%- endif -%}
-      <a class="vzl__cta" href="{{ p.url | default: routes.all_products_collection_url }}">
-        {{- section.settings.cta_label | escape -}}
-      </a>
-      {%- if section.settings.show_price and p != blank -%}
-        <span class="vzl__price">{{ p.price | money }}</span>
-      {%- endif -%}
-    </div>
-  </div>
+{%- capture features_html -%}
+  {%- for block in feature_blocks -%}<li {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</li>{%- endfor -%}
+{%- endcapture -%}
+<section id="{{ uid }}" data-autoplay="{{ section.settings.autoplay }}" class="vzl" style="--vzl-title-size: {{ section.settings.title_size }}px; --vzl-align: {{ section.settings.text_align }}; {% if section.settings.accent_color != blank %}--gold: {{ section.settings.accent_color }};{% endif %} {% if section.settings.text_color != blank %}--ink: {{ section.settings.text_color }};{% endif %} {% if section.settings.muted_color != blank %}--muted: {{ section.settings.muted_color }};{% endif %} {% if section.settings.line_color != blank %}--line: {{ section.settings.line_color }};{% endif %} {% if section.settings.button_text_color != blank %}--vzl-cta-text: {{ section.settings.button_text_color }};{% endif %} {% if section.settings.button_hover_color != blank %}--vzl-cta-hover: {{ section.settings.button_hover_color }};{% endif %} {% if section.settings.media_bg != blank %}--vzl-media-bg: {{ section.settings.media_bg }};{% endif %}">
+  {%- if section.settings.product != blank or launch_blocks.size == 0 -%}
+    {%- render 'vzl-row',
+      product: section.settings.product,
+      row_id: section.id,
+      flip: flip_first,
+      badge: section.settings.badge,
+      eyebrow: section.settings.eyebrow,
+      heading: section.settings.heading,
+      description: section.settings.description,
+      description_words: section.settings.description_words,
+      features_html: features_html,
+      cta_label: section.settings.cta_label,
+      show_price: section.settings.show_price,
+      max_images: section.settings.max_images
+    -%}
+  {%- endif -%}
+  {%- for block in launch_blocks -%}
+    {%- liquid
+      assign offset = forloop.index
+      if section.settings.product == blank
+        assign offset = forloop.index0
+      endif
+      assign is_flip = flip_first
+      assign odd = offset | modulo: 2
+      if odd == 1
+        if flip_first
+          assign is_flip = false
+        else
+          assign is_flip = true
+        endif
+      endif
+      if block.settings.media_position == 'right'
+        assign is_flip = true
+      elsif block.settings.media_position == 'left'
+        assign is_flip = false
+      endif
+      assign row_id = section.id | append: '-' | append: block.id
+      assign row_badge = block.settings.badge | default: section.settings.badge
+    -%}
+    {%- capture block_attrs -%}{{ block.shopify_attributes }}{%- endcapture -%}
+    {%- render 'vzl-row',
+      product: block.settings.product,
+      row_id: row_id,
+      flip: is_flip,
+      badge: row_badge,
+      eyebrow: block.settings.eyebrow,
+      heading: block.settings.heading,
+      description: block.settings.description,
+      description_words: section.settings.description_words,
+      features: block.settings.features,
+      cta_label: block.settings.cta_label,
+      show_price: section.settings.show_price,
+      max_images: section.settings.max_images,
+      attrs: block_attrs
+    -%}
+  {%- endfor -%}
 </section>
 
 <style>
   #{{ uid }} { padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px; }
-  {%- if section.settings.media_position == 'right' %}
-    @media (min-width: 900px) { #{{ uid }} .vzl__media { order: 2; } }
-  {%- endif %}
-  {%- for i in (0..last) %}
-    #{{ gal }}-{{ i }}:checked ~ .vzl__frames img[data-vzl-index="{{ i }}"] { display: block; }
-    #{{ gal }}-{{ i }}:checked ~ .vzl__navs .vzl__arrow--{{ i }} { display: flex; }
-    #{{ gal }}-{{ i }}:checked ~ .vzl__dots .vzl__dot--{{ i }} { background: var(--vzl-gold); border-color: var(--vzl-gold); }
-  {%- endfor %}
+  #{{ uid }} .vzl__inner + .vzl__inner { margin-top: {{ section.settings.row_gap }}px; }
 </style>
 
 {% stylesheet %}
@@ -118,8 +82,12 @@
     color: var(--vzl-ink); font-family: var(--font-body-family, 'Jost', sans-serif);
   }
   .vzl *, .vzl *::before, .vzl *::after { box-sizing: border-box; }
-  .vzl__inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
-  @media (min-width: 900px) { .vzl__inner { grid-template-columns: 1fr 1fr; gap: 64px; } }
+  .vzl__inner { max-width: 1200px; margin: 0 auto; position: relative; display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
+  @media (min-width: 900px) { .vzl__inner { grid-template-columns: 1fr 1fr; gap: 64px; } .vzl__inner--flip .vzl__media { order: 2; } }
+  .vzl__placeholder { position: absolute; inset: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.04); fill: rgba(255, 255, 255, 0.25); }
+  .vzl__title a { color: inherit; text-decoration: none; }
+  .vzl__compare { opacity: 0.5; font-size: 0.7em; margin-left: 8px; }
+  .vzl__media { touch-action: pan-y; }
   .vzl__media { position: relative; aspect-ratio: 4 / 5; border: 1px solid var(--vzl-line); border-radius: 12px; overflow: hidden; background: var(--vzl-media-bg, #0a0a0a); }
   .vzl__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .vzl__media-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255, 255, 255, 0.28); }
@@ -160,6 +128,43 @@
   @media (max-width: 899px) { .vzl__cta { width: 100%; padding: 0 20px; } }
   @media (prefers-reduced-motion: reduce) { .vzl * { transition: none !important; } }
 {% endstylesheet %}
+
+{% javascript %}
+  (() => {
+    const init = (section) => {
+      if (section.dataset.vzlReady) return;
+      section.dataset.vzlReady = '1';
+      const autoplay = Number(section.dataset.autoplay || 0);
+      section.querySelectorAll('[data-vzl-gallery]').forEach((gallery) => {
+        const radios = [...gallery.querySelectorAll('.vzl__radio')];
+        if (radios.length < 2) return;
+        const go = (dir) => {
+          const i = radios.findIndex((r) => r.checked);
+          radios[(i + dir + radios.length) % radios.length].checked = true;
+        };
+        let x0 = null;
+        gallery.addEventListener('pointerdown', (e) => { x0 = e.clientX; }, { passive: true });
+        gallery.addEventListener('pointerup', (e) => {
+          if (x0 === null) return;
+          const dx = e.clientX - x0;
+          x0 = null;
+          if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+        });
+        if (autoplay > 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          let timer = setInterval(() => go(1), autoplay * 1000);
+          gallery.addEventListener('mouseenter', () => clearInterval(timer));
+          gallery.addEventListener('mouseleave', () => {
+            clearInterval(timer);
+            timer = setInterval(() => go(1), autoplay * 1000);
+          });
+        }
+      });
+    };
+    const all = () => document.querySelectorAll('.vzl').forEach(init);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', all); else all();
+    document.addEventListener('shopify:section:load', all);
+  })();
+{% endjavascript %}
 
 {% schema %}
 {
@@ -212,12 +217,13 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "info": "Defaults to the product title"
+      "info": "Leave empty to use the product title."
     },
     {
       "type": "richtext",
       "id": "description",
-      "label": "Description"
+      "label": "Description",
+      "info": "Leave empty to use the product description."
     },
     {
       "type": "text",
@@ -230,6 +236,34 @@
       "id": "show_price",
       "label": "Show price",
       "default": true
+    },
+    {
+      "type": "range",
+      "id": "description_words",
+      "label": "Words of product description to show",
+      "min": 10,
+      "max": 120,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "autoplay",
+      "label": "Auto-switch photos every (seconds, 0 = off)",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Space between launches",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 64
     },
     {
       "type": "range",
@@ -341,7 +375,7 @@
   "blocks": [
     {
       "type": "feature",
-      "name": "Feature",
+      "name": "Feature line",
       "settings": [
         {
           "type": "text",
@@ -349,11 +383,92 @@
           "label": "Text"
         }
       ]
+    },
+    {
+      "type": "launch",
+      "name": "Extra launch",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Adds another product row. Rows alternate sides automatically."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge",
+          "info": "Leave empty to use the section badge."
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "info": "Leave empty to use the product title."
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "info": "Leave empty to use the product description."
+        },
+        {
+          "type": "textarea",
+          "id": "features",
+          "label": "Feature lines",
+          "info": "One per line."
+        },
+        {
+          "type": "text",
+          "id": "cta_label",
+          "label": "Button label",
+          "default": "Discover"
+        },
+        {
+          "type": "select",
+          "id": "media_position",
+          "label": "Image position",
+          "default": "auto",
+          "options": [
+            {
+              "value": "auto",
+              "label": "Alternate automatically"
+            },
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ]
+        }
+      ]
     }
   ],
   "presets": [
     {
       "name": "Product launch"
+    },
+    {
+      "name": "Product launches (multiple)",
+      "blocks": [
+        {
+          "type": "launch"
+        },
+        {
+          "type": "launch"
+        }
+      ]
     }
   ]
 }

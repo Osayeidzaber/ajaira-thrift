@@ -60,29 +60,12 @@
     },
     "launch1": {
       "type": "product-launch",
-      "blocks": {
-        "f0": {
-          "type": "feature",
-          "settings": {
-            "text": "One of one"
-          }
-        },
-        "f1": {
-          "type": "feature",
-          "settings": {
-            "text": "Hand-picked vintage"
-          }
-        }
-      },
-      "block_order": [
-        "f0",
-        "f1"
-      ],
+      "blocks": {},
+      "block_order": [],
       "settings": {
         "badge": "New",
         "media_position": "right",
         "eyebrow": "New — Vintage Reworks",
-        "description": "<p>One-of-one reworked vintage, hand-picked and restored — fitted where it matters, with the character only real wear can give.</p>",
         "cta_label": "Discover the piece",
         "show_price": true,
         "padding_top": 36,
@@ -93,29 +76,12 @@
     },
     "launch2": {
       "type": "product-launch",
-      "blocks": {
-        "f0": {
-          "type": "feature",
-          "settings": {
-            "text": "Inspected & measured"
-          }
-        },
-        "f1": {
-          "type": "feature",
-          "settings": {
-            "text": "Ships from Bangladesh"
-          }
-        }
-      },
-      "block_order": [
-        "f0",
-        "f1"
-      ],
+      "blocks": {},
+      "block_order": [],
       "settings": {
         "badge": "New",
         "media_position": "left",
         "eyebrow": "New — Vintage Original",
-        "description": "<p>Original vintage, inspected and measured flat — every flaw described honestly, every piece built to be worn for years.</p>",
         "cta_label": "Discover the piece",
         "show_price": true,
         "padding_top": 48,
@@ -189,6 +155,76 @@
         "button_label": "View all",
         "limit": 8
       }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "r0": {
+          "type": "review",
+          "settings": {
+            "author": "Customer name",
+            "text": "<p>Placeholder review: the jacket arrived exactly as described, and the measurements were spot on.</p>",
+            "rating": 5
+          }
+        },
+        "r1": {
+          "type": "review",
+          "settings": {
+            "author": "Customer name",
+            "text": "<p>Placeholder review: great condition for vintage, fast shipping and lovely packaging.</p>",
+            "rating": 5
+          }
+        },
+        "r2": {
+          "type": "review",
+          "settings": {
+            "author": "Customer name",
+            "text": "<p>Placeholder review: fits perfectly. The size guide made it easy to choose.</p>",
+            "rating": 5
+          }
+        },
+        "r3": {
+          "type": "review",
+          "settings": {
+            "author": "Customer name",
+            "text": "<p>Placeholder review: one of a kind and better in person than in the photos.</p>",
+            "rating": 5
+          }
+        },
+        "r4": {
+          "type": "review",
+          "settings": {
+            "author": "Customer name",
+            "text": "<p>Placeholder review: quick replies to my questions and smooth delivery.</p>",
+            "rating": 5
+          }
+        },
+        "r5": {
+          "type": "review",
+          "settings": {
+            "author": "Customer name",
+            "text": "<p>Placeholder review: honest condition notes, no surprises. Will order again.</p>",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": [
+        "r0",
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5"
+      ],
+      "settings": {
+        "heading": "Worn & loved",
+        "rows": "2",
+        "card_width": 260,
+        "heading_size": 44,
+        "color_scheme": "scheme-1",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
     }
   },
   "order": [
@@ -199,6 +235,7 @@
     "launch1",
     "launch2",
     "faq",
+    "testimonials",
     "reviews"
   ]
 }

@@ -1,0 +1,149 @@
+{% doc %}
+  One product launch row (veyroze "product launch"). Everything falls back to
+  the product: title, photos, description and price.
+
+  @param {object} product - the product to feature (may be blank: shows placeholders)
+  @param {string} row_id - unique id for this row's gallery
+  @param {boolean} flip - put the image on the right on desktop
+  @param {string} [badge] - badge text
+  @param {string} [eyebrow] - small text above the title
+  @param {string} [heading] - overrides the product title
+  @param {string} [description] - rich text; overrides the product description
+  @param {number} [description_words] - words of the product description to show
+  @param {string} [features] - feature lines, one per line
+  @param {string} [features_html] - pre-rendered <li> items (section feature blocks)
+  @param {string} [cta_label] - button label
+  @param {boolean} [show_price] - show the price
+  @param {number} [max_images] - gallery image limit
+  @param {string} [attrs] - extra attributes (theme editor block attributes)
+{% enddoc %}
+{%- liquid
+  assign p = product
+  assign gal = 'vzl-g-' | append: row_id
+  assign max = max_images | default: 5
+  assign count = 0
+  if p != blank
+    assign count = p.images.size
+    if count > max
+      assign count = max
+    endif
+  endif
+  assign last = count | minus: 1
+  assign title = heading | default: p.title
+  if title == blank
+    assign title = 'onboarding.product_title' | t
+  endif
+  assign words = description_words | default: 40
+  assign button_label = cta_label
+  if button_label == blank
+    assign button_label = 'products.product.view_full_details' | t
+  endif
+-%}
+<div class="vzl__inner{% if flip %} vzl__inner--flip{% endif %}" data-vzl-row {{ attrs }}>
+  <div class="vzl__media" data-vzl-gallery>
+    {%- if badge != blank -%}
+      <span class="vzl__badge">{{ badge | escape }}</span>
+    {%- endif -%}
+    {%- if count > 0 -%}
+      {%- for img in p.images limit: count -%}
+        <input
+          type="radio"
+          class="vzl__radio"
+          name="{{ gal }}"
+          id="{{ gal }}-{{ forloop.index0 }}"
+          aria-label="{{ title | escape }} — {{ forloop.index }}"
+          {% if forloop.first %}
+            checked
+          {% endif %}
+        >
+      {%- endfor -%}
+      <div class="vzl__frames">
+        {%- for img in p.images limit: count -%}
+          {%- liquid
+            assign img_loading = 'lazy'
+            if forloop.first
+              assign img_loading = 'eager'
+            endif
+          -%}
+          {{
+            img
+            | image_url: width: 1200
+            | image_tag:
+              data-vzl-index: forloop.index0,
+              alt: title,
+              loading: img_loading,
+              sizes: '(min-width: 900px) 50vw, 100vw',
+              widths: '400, 600, 800, 1000, 1200'
+          }}
+        {%- endfor -%}
+      </div>
+      {%- if count > 1 -%}
+        <div class="vzl__navs">
+          {%- for i in (0..last) -%}
+            {%- liquid
+              assign prev = i | minus: 1
+              if prev < 0
+                assign prev = last
+              endif
+              assign next = i | plus: 1
+              if next > last
+                assign next = 0
+              endif
+            -%}
+            <label class="vzl__arrow vzl__arrow--prev vzl__arrow--{{ i }}" for="{{ gal }}-{{ prev }}" title="{{ 'general.slider.previous_slide' | t }}" data-vzl-prev><span></span></label>
+            <label class="vzl__arrow vzl__arrow--next vzl__arrow--{{ i }}" for="{{ gal }}-{{ next }}" title="{{ 'general.slider.next_slide' | t }}" data-vzl-next><span></span></label>
+          {%- endfor -%}
+        </div>
+        <div class="vzl__dots">
+          {%- for i in (0..last) -%}
+            <label class="vzl__dot vzl__dot--{{ i }}" for="{{ gal }}-{{ i }}" title="{{ i | plus: 1 }}"></label>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      {{ 'product-apparel-1' | placeholder_svg_tag: 'vzl__placeholder' }}
+    {%- endif -%}
+  </div>
+
+  <div class="vzl__body">
+    {%- if eyebrow != blank -%}
+      <p class="vzl__eyebrow">{{ eyebrow | escape }}</p>
+    {%- endif -%}
+    <h2 class="vzl__title">
+      {%- if p != blank -%}<a href="{{ p.url }}">{{ title | escape }}</a>{%- else -%}{{ title | escape }}{%- endif -%}
+    </h2>
+    {%- if description != blank -%}
+      <div class="vzl__text">{{ description }}</div>
+    {%- elsif p.description != blank -%}
+      <div class="vzl__text"><p>{{ p.description | strip_html | truncatewords: words }}</p></div>
+    {%- endif -%}
+    {%- liquid
+      assign feature_lines = features | newline_to_br | split: '<br />'
+    -%}
+    {%- if features_html != blank or features != blank -%}
+      <ul class="vzl__features">
+        {{ features_html }}
+        {%- for line in feature_lines -%}
+          {%- assign line = line | strip -%}
+          {%- if line != blank -%}<li>{{ line | escape }}</li>{%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+    <a class="vzl__cta" href="{{ p.url | default: routes.all_products_collection_url }}">
+      {{- button_label | escape -}}
+    </a>
+    {%- if show_price and p != blank -%}
+      <span class="vzl__price">
+        {{- p.price | money -}}
+        {%- if p.compare_at_price > p.price %} <s class="vzl__compare">{{ p.compare_at_price | money }}</s>{% endif -%}
+      </span>
+    {%- endif -%}
+  </div>
+</div>
+<style>
+  {%- for i in (0..last) %}
+    #{{ gal }}-{{ i }}:checked ~ .vzl__frames img[data-vzl-index="{{ i }}"] { display: block; }
+    #{{ gal }}-{{ i }}:checked ~ .vzl__navs .vzl__arrow--{{ i }} { display: flex; }
+    #{{ gal }}-{{ i }}:checked ~ .vzl__dots .vzl__dot--{{ i }} { background: var(--vzl-gold); border-color: var(--vzl-gold); }
+  {%- endfor %}
+</style>
