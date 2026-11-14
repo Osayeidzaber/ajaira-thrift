@@ -1,0 +1,47 @@
+<div class="collection-tabs color-{{ section.settings.color_scheme }}">
+  {% for c in section.settings.collections %}
+    <a
+      class="collection-tabs__tab{% if c.id == collection.id %} is-active{% endif %}"
+      href="{{ c.url }}"
+    >
+      <strong>{{ c.title }}</strong>
+      <span>{{ c.products_count }}</span>
+    </a>
+  {% endfor %}
+</div>
+
+{% stylesheet %}
+  .collection-tabs {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--color-line-soft);
+  }
+  .collection-tabs__tab {
+    flex: 1;
+    min-width: 6rem;
+    text-align: center;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--color-ink);
+    background: var(--color-panel);
+  }
+  .collection-tabs__tab strong { display: block; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .collection-tabs__tab span { color: var(--color-mute); font-size: 0.7rem; }
+  .collection-tabs__tab.is-active { background: var(--color-ink); color: var(--color-bg); }
+  .collection-tabs__tab.is-active span { color: var(--color-bg); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection tabs",
+  "settings": [
+    { "type": "collection_list", "id": "collections", "label": "Collections", "limit": 8 },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "Collection tabs" }]
+}
+{% endschema %}

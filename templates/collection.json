@@ -8,6 +8,10 @@
         "color_scheme": "scheme-1"
       }
     },
+    "tabs": {
+      "type": "collection-tabs",
+      "settings": { "color_scheme": "scheme-1" }
+    },
     "product-grid": {
       "type": "main-collection-product-grid",
       "settings": {
@@ -27,6 +31,7 @@
   },
   "order": [
     "banner",
+    "tabs",
     "product-grid"
   ]
 }
