@@ -100,27 +100,35 @@ function onKeydown(event: KeyboardEvent) {
 
 let unsubscribe: (() => void) | undefined
 
+async function refresh() {
+  cart.value = await getCart()
+  syncBubble()
+}
+
 onMounted(() => {
   const host = document.querySelector('cart-drawer') as HTMLElement & {
-    renderContents?: (state: CartState) => void
+    renderContents?: (state?: unknown) => void
+    getSectionsToRender?: () => unknown[]
+    setActiveElement?: (element: Element | null) => void
   }
   if (host) {
-    host.renderContents = (state) => {
-      cart.value = state
-      syncBubble()
-      void setOpen(true)
+    // product-form.js hands us the /cart/add.js line-item payload, not a cart,
+    // so re-read the authoritative cart instead of trusting the argument.
+    host.renderContents = () => {
+      void refresh().then(() => setOpen(true))
     }
+    // Dawn's product-form.js calls these on the cart host before add-to-cart.
+    // The Vue drawer fetches its own state, so it needs no server-rendered sections.
+    host.getSectionsToRender ??= () => []
+    host.setActiveElement ??= () => {}
   }
   document.getElementById('cart-icon-bubble')?.addEventListener('click', (event) => {
     event.preventDefault()
     void openDrawer()
   })
   document.addEventListener('keydown', onKeydown)
-  unsubscribe = window.subscribe?.(PUB_SUB_EVENTS.cartUpdate, (data: { cartData?: CartState }) => {
-    if (data?.cartData) {
-      cart.value = data.cartData
-      syncBubble()
-    }
+  unsubscribe = window.subscribe?.(PUB_SUB_EVENTS.cartUpdate, () => {
+    void refresh()
   })
 })
 

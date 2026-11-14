@@ -1,65 +1,83 @@
 {
   "sections": {
     "main": {
-      "type": "main-product",
+      "type": "product-hero",
       "blocks": {
-        "eyebrow": {
-          "type": "text",
+        "spec-fabric": {
+          "type": "spec",
+          "settings": { "label": "Fabric", "source": "fabric" }
+        },
+        "spec-fit": {
+          "type": "spec",
+          "settings": { "label": "Fit", "source": "fits_like" }
+        },
+        "spec-tag": {
+          "type": "spec",
+          "settings": { "label": "Tag size", "source": "tag_size" }
+        },
+        "spec-condition": {
+          "type": "spec",
+          "settings": { "label": "Condition", "source": "condition" }
+        },
+        "acc-fabric": {
+          "type": "accordion",
           "settings": {
-            "text": "Vintage",
-            "text_style": "uppercase"
+            "heading": "Fabric & construction",
+            "content": "<p>Each piece is inspected and described honestly. See the specs above for fabric and condition.</p>"
           }
         },
-        "title": {
-          "type": "title"
-        },
-        "price": {
-          "type": "price"
-        },
-        "thrift-specs": {
-          "type": "thrift_specs"
-        },
-        "buy_buttons": {
-          "type": "buy_buttons",
+        "acc-fit": {
+          "type": "accordion",
           "settings": {
-            "show_dynamic_checkout": true,
-            "show_gift_card_recipient": false
+            "heading": "Fit & size guide",
+            "show_size_table": true,
+            "table_columns": "cm,XS,S,M,L,XL",
+            "table_rows": "Length,72,74,76,78,80\nChest,52,54,56,58,60",
+            "table_note": "Tolerance ±1 cm. Measured flat."
           }
         },
-        "thrift-timeline": {
-          "type": "thrift_timeline",
+        "acc-shipping": {
+          "type": "accordion",
           "settings": {
-            "step1_label": "Order placed",
-            "step1_dates": "14 Nov",
-            "step2_label": "Shipped",
-            "step2_dates": "15 Nov – 18 Nov",
-            "step3_label": "Delivered",
-            "step3_dates": "18 Nov – 21 Nov"
+            "heading": "Shipping & returns",
+            "content": "<p>Shipped with care. 14-day returns on unworn pieces.</p>"
           }
         },
-        "description": {
-          "type": "description"
+        "acc-care": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Care",
+            "content": "<p>Follow the care label. When in doubt, hand wash cold and air dry.</p>"
+          }
         }
       },
       "block_order": [
-        "eyebrow",
-        "title",
-        "price",
-        "thrift-specs",
-        "buy_buttons",
-        "thrift-timeline",
-        "description"
+        "spec-fabric",
+        "spec-fit",
+        "spec-tag",
+        "spec-condition",
+        "acc-fabric",
+        "acc-fit",
+        "acc-shipping",
+        "acc-care"
       ],
       "settings": {
-        "enable_sticky_info": true,
-        "gallery_layout": "thumbnail_slider",
-        "media_size": "large",
-        "constrain_to_viewport": true,
-        "mobile_thumbnails": "show",
-        "hide_variants": true,
-        "enable_video_looping": false,
-        "padding_top": 36,
-        "padding_bottom": 12
+        "eyebrow": "Ajaira",
+        "tagline": "",
+        "color_bg": "#121212",
+        "color_gold": "#c8a45c",
+        "color_ink": "#f4f1ea",
+        "color_stage": "#0a0a0a",
+        "font_ui": "Jost",
+        "font_display": "Cormorant Garamond",
+        "show_tax_note": true,
+        "show_stock": true,
+        "stock_threshold": 5,
+        "show_dynamic_checkout": true,
+        "show_gift_card_recipient": false,
+        "enable_sticky_gallery": true,
+        "padding_top": 64,
+        "padding_bottom": 80
       }
     },
     "trust": {
@@ -72,17 +90,6 @@
       },
       "block_order": ["b1", "b2", "b3", "b4"],
       "settings": { "color_scheme": "scheme-1" }
-    },
-    "thrift-details": {
-      "type": "thrift-details",
-      "settings": {
-        "measurements_heading": "Measurements",
-        "condition_heading": "Condition",
-        "note": "Measured flat — compare with a well-fitting pair of jeans.",
-        "care_label": "More about our vintage conditions & care",
-        "care_url": "",
-        "color_scheme": "scheme-1"
-      }
     },
     "related-products": {
       "type": "related-products",
@@ -104,7 +111,6 @@
   "order": [
     "main",
     "trust",
-    "thrift-details",
     "related-products"
   ]
 }

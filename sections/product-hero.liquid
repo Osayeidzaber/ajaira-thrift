@@ -1,0 +1,586 @@
+{%- comment -%}
+  Veyroze-style product hero (vzh). Editor-driven replica: gallery island,
+  serif title/price, gold size pills, Dawn add-to-cart, metafield specs and
+  accordion blocks. Reuses Dawn product-info / product-form machinery.
+{%- endcomment -%}
+
+{%- liquid
+  assign v = product.selected_or_first_available_variant
+  assign product_form_id = 'product-form-' | append: section.id
+  assign spec_blocks = section.blocks | where: 'type', 'spec'
+  assign acc_blocks = section.blocks | where: 'type', 'accordion'
+  assign ui_family = section.settings.font_ui | default: 'Jost'
+  assign display_family = section.settings.font_display | default: 'Cormorant Garamond'
+  assign ink = section.settings.color_ink
+-%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family={{ ui_family | replace: ' ', '+' }}:wght@300;400;500&family={{ display_family | replace: ' ', '+' }}:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+>
+
+{%- capture gallery_images -%}
+  [{%- assign first_img = true -%}
+  {%- for media in product.media -%}
+    {%- if media.media_type == 'image' -%}
+      {%- unless first_img %},{% endunless -%}{%- assign first_img = false -%}
+      {"src":{{ media | image_url: width: 1040 | json }},"srcset":"{{ media | image_url: width: 520 }} 520w, {{ media | image_url: width: 1040 }} 1040w","alt":{{ media.alt | default: product.title | json }}}
+    {%- endif -%}
+  {%- endfor -%}]
+{%- endcapture -%}
+
+<product-info
+  id="MainProduct-{{ section.id }}"
+  class="vzh-section"
+  data-section="{{ section.id }}"
+  data-product-id="{{ product.id }}"
+  data-update-url="true"
+  data-url="{{ product.url }}"
+>
+  {%- style -%}
+    .vzh-section {
+      --vzh-gold: {{ section.settings.color_gold }};
+      --vzh-gold-hover: {{ section.settings.color_gold | color_lighten: 8 }};
+      --vzh-ink: {{ ink }};
+      --vzh-ink-rgb: {{ ink.red }}, {{ ink.green }}, {{ ink.blue }};
+      --vzh-muted: rgba(var(--vzh-ink-rgb), 0.55);
+      --vzh-line: rgba(var(--vzh-ink-rgb), 0.09);
+      --vzh-line2: rgba(var(--vzh-ink-rgb), 0.2);
+      --vzh-stage: {{ section.settings.color_stage }};
+      --vzh-font-ui: '{{ ui_family }}', sans-serif;
+      --vzh-font-display: '{{ display_family }}', serif;
+      background: {{ section.settings.color_bg }};
+    }
+    .vzh {
+      padding: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px 20px {{ section.settings.padding_bottom }}px;
+    }
+    @media (min-width: 990px) {
+      .vzh { padding-top: {{ section.settings.padding_top }}px; }
+    }
+  {%- endstyle -%}
+
+  <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+
+  <div class="vzh">
+    <div class="vzh__grid">
+      <div class="vzh__gallery{% if section.settings.enable_sticky_gallery %} vzh__gallery--sticky{% endif %}">
+        {%- if product.media.size > 0 -%}
+          <div data-island="product-gallery" data-island-id="{{ section.id }}">
+            <div class="vzh__stage">
+              <div class="vzh__frames">
+                <div class="vzh__frame is-active">
+                  <img
+                    class="vzh__stage-img"
+                    src="{{ product.featured_media | image_url: width: 1040 }}"
+                    alt="{{ product.featured_media.alt | default: product.title | escape }}"
+                    width="1040"
+                    height="1300"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <script type="application/json" data-island-props="{{ section.id }}">{"images":{{ gallery_images }},"strings":{"prev":{{ 'sections.product_hero.gallery_prev' | t | json }},"next":{{ 'sections.product_hero.gallery_next' | t | json }},"thumb":{{ 'sections.product_hero.gallery_thumb' | t | json }}}}</script>
+        {%- else -%}
+          <div class="vzh__stage vzh__stage--empty">
+            {{ 'product-apparel-1' | placeholder_svg_tag: 'vzh-placeholder' }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="vzh__info">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="vzh__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+
+        <h1 class="vzh__title">{{ product.title | escape }}</h1>
+
+        {%- assign tagline = section.settings.tagline | default: product.metafields.thrift.tagline.value -%}
+        {%- if tagline != blank -%}
+          <p class="vzh__tagline">{{ tagline }}</p>
+        {%- endif -%}
+
+        <div id="price-{{ section.id }}" class="vzh__price-row" role="status">
+          <span class="vzh__price">{{ v.price | money }}</span>
+          {%- if v.compare_at_price > v.price -%}
+            <span class="vzh__compare">{{ v.compare_at_price | money }}</span>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.show_tax_note -%}
+          <p class="vzh__tax">
+            {%- if section.settings.tax_note != blank -%}
+              {{ section.settings.tax_note }}
+            {%- else -%}
+              {{ 'products.product.tax_note' | t }}
+            {%- endif -%}
+            {%- if shop.shipping_policy.body != blank -%}
+              {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+
+        {%- unless product.has_only_default_variant -%}
+          <variant-selects
+            id="variant-selects-{{ section.id }}"
+            data-section="{{ section.id }}"
+            data-product-url="{{ product.url }}"
+          >
+            {%- for option in product.options_with_values -%}
+              <fieldset class="vzh__sizes product-form__input">
+                <div class="vzh__sizes-head">
+                  <span class="vzh__sizes-label">
+                    {{ option.name }} <b data-selected-value>{{ option.selected_value }}</b>
+                  </span>
+                  {%- if section.settings.size_guide_page != blank -%}
+                    <modal-opener data-modal="#SizeGuide-{{ section.id }}">
+                      <button type="button" class="vzh__sizes-guide" aria-haspopup="dialog">
+                        {%- if section.settings.size_guide_label != blank -%}
+                          {{ section.settings.size_guide_label }}
+                        {%- else -%}
+                          {{ 'products.product.size_guide' | t }}
+                        {%- endif -%}
+                      </button>
+                    </modal-opener>
+                  {%- endif -%}
+                </div>
+                <div class="vzh__pills">
+                  {%- for value in option.values -%}
+                    {%- capture input_id -%}{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}{%- endcapture -%}
+                    <label class="vzh__pill{% unless value.available %} is-soldout{% endunless %}" for="{{ input_id }}">
+                      <input
+                        type="radio"
+                        id="{{ input_id }}"
+                        name="{{ option.name | escape }}-{{ option.position }}"
+                        value="{{ value | escape }}"
+                        form="{{ product_form_id }}"
+                        data-option-value-id="{{ value.id }}"
+                        data-product-url="{{ value.product_url }}"
+                        {% if value.selected %}
+                          checked
+                        {% endif %}
+                        {% unless value.available %}
+                          class="disabled"
+                        {% endunless %}
+                      >
+                      <span>{{ value }}</span>
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            {%- endfor -%}
+            <script type="application/json" data-selected-variant>
+              {{ product.selected_or_first_available_variant | json }}
+            </script>
+          </variant-selects>
+        {%- endunless -%}
+
+        {%- if section.settings.show_stock -%}
+          <p class="vzh__stock" id="Inventory-{{ section.id }}" role="status">
+            {%- if v.available == false -%}
+              {{ 'products.product.sold_out' | t }}
+            {%- elsif v.inventory_management == 'shopify' and v.inventory_quantity > 0 and v.inventory_quantity <= section.settings.stock_threshold -%}
+              {{ 'products.product.inventory_low_stock_show_count' | t: quantity: v.inventory_quantity }}
+            {%- else -%}
+              {{ 'products.product.inventory_in_stock' | t }}
+            {%- endif -%}
+          </p>
+        {%- else -%}
+          <p class="vzh__stock hidden" id="Inventory-{{ section.id }}" role="status"></p>
+        {%- endif -%}
+
+        <div class="vzh__buy">
+          {%- render 'buy-buttons',
+            block: section,
+            product: product,
+            product_form_id: product_form_id,
+            section_id: section.id,
+            show_pickup_availability: false
+          -%}
+        </div>
+
+        {%- if spec_blocks.size > 0 -%}
+          <dl class="vzh__specs">
+            {%- for block in spec_blocks -%}
+              {%- liquid
+                assign spec_value = block.settings.custom_value
+                assign key = block.settings.source
+                if key != 'custom' and key != blank
+                  assign mf = product.metafields.thrift[key]
+                  if mf != blank
+                    assign spec_value = mf.value
+                    if key == 'condition'
+                      assign spec_value = spec_value | replace: '_', ' ' | capitalize
+                    endif
+                  endif
+                endif
+              -%}
+              {%- if spec_value != blank -%}
+                <div class="vzh__spec" {{ block.shopify_attributes }}>
+                  <dt>{{ block.settings.label }}</dt>
+                  <dd>{{ spec_value }}</dd>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </dl>
+        {%- endif -%}
+
+        {%- if product.description != blank -%}
+          <div class="vzh__desc">{{ product.description }}</div>
+        {%- endif -%}
+
+        {%- if acc_blocks.size > 0 -%}
+          <div class="vzh__accs">
+            {%- for block in acc_blocks -%}
+              <details class="vzh__acc" {{ block.shopify_attributes }}>
+                <summary>{{ block.settings.heading }}</summary>
+                <div class="vzh__acc-body">
+                  {{ block.settings.content }}
+                  {{ block.settings.page.content }}
+                  {%- if block.settings.show_size_table and block.settings.table_columns != blank -%}
+                    <div class="vzh__table-wrap">
+                      <table class="vzh__table">
+                        <thead>
+                          <tr>
+                            {%- assign cols = block.settings.table_columns | split: ',' -%}
+                            {%- for c in cols -%}
+                              <th>{{ c | strip }}</th>
+                            {%- endfor -%}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {%- assign rows = block.settings.table_rows | strip | newline_to_br | split: '<br />' -%}
+                          {%- for row in rows -%}
+                            {%- if row != blank -%}
+                              <tr>
+                                {%- assign cells = row | split: ',' -%}
+                                {%- for cell in cells -%}
+                                  <td>{{ cell | strip }}</td>
+                                {%- endfor -%}
+                              </tr>
+                            {%- endif -%}
+                          {%- endfor -%}
+                        </tbody>
+                      </table>
+                    </div>
+                    {%- if block.settings.table_note != blank -%}
+                      <p class="vzh__table-note">{{ block.settings.table_note }}</p>
+                    {%- endif -%}
+                  {%- endif -%}
+                </div>
+              </details>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- if section.settings.size_guide_page != blank -%}
+    <modal-dialog id="SizeGuide-{{ section.id }}" class="vzh-modal">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="{{ section.settings.size_guide_page.title | escape }}"
+        class="vzh-modal__content"
+        tabindex="-1"
+      >
+        <button
+          id="ModalClose-{{ section.id }}"
+          type="button"
+          class="vzh-modal__close"
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          {{ 'icon-close.svg' | inline_asset_content }}
+        </button>
+        <h2 class="vzh-modal__title">{{ section.settings.size_guide_page.title }}</h2>
+        <div class="vzh-modal__body rte">{{ section.settings.size_guide_page.content }}</div>
+      </div>
+    </modal-dialog>
+  {%- endif -%}
+
+  <script type="application/ld+json">
+    {{ product | structured_data }}
+  </script>
+</product-info>
+
+{% stylesheet %}
+  .vzh {
+    color: var(--vzh-ink);
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: var(--vzh-font-ui);
+    font-weight: 300;
+  }
+  .vzh *, .vzh *::before, .vzh *::after { box-sizing: border-box; }
+  .vzh a { color: inherit; }
+  .vzh__grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
+  .vzh__gallery { max-width: 520px; width: 100%; margin: 0 auto; }
+  @media (min-width: 990px) {
+    .vzh__grid { grid-template-columns: minmax(0, 520px) minmax(0, 1fr); gap: 72px; align-items: start; }
+    .vzh__gallery--sticky { position: sticky; top: 110px; }
+  }
+  .vzh__stage {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--vzh-line);
+    background: var(--vzh-stage);
+  }
+  .vzh__stage--empty { display: flex; align-items: center; justify-content: center; }
+  .vzh__stage--empty .vzh-placeholder { width: 100%; height: 100%; opacity: 0.4; }
+  .vzh__frames { position: absolute; inset: 0; }
+  .vzh__frame { position: absolute; inset: 0; display: none; }
+  .vzh__frame.is-active { display: block; }
+  .vzh__frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vzh__navs { position: absolute; inset: 0; pointer-events: none; }
+  .vzh__nav {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-50%);
+    background: rgba(70, 70, 70, 0.55);
+    border: 0;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background-color 0.15s ease;
+  }
+  .vzh__nav:hover { background: rgba(70, 70, 70, 0.8); }
+  .vzh__nav:focus-visible { outline: 2px solid var(--vzh-gold); outline-offset: 2px; }
+  .vzh__nav--prev { left: 14px; }
+  .vzh__nav--next { right: 14px; }
+  .vzh__nav span { width: 10px; height: 10px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; }
+  .vzh__nav--prev span { transform: rotate(-135deg); margin-left: 4px; }
+  .vzh__nav--next span { transform: rotate(45deg); margin-right: 4px; }
+  .vzh__thumbs { display: flex; gap: 10px; margin-top: 14px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+  .vzh__thumb {
+    flex: 0 0 auto;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--vzh-line);
+    background: var(--vzh-stage);
+    padding: 0;
+    cursor: pointer;
+    display: block;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .vzh__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vzh__thumb:hover { border-color: var(--vzh-line2); }
+  .vzh__thumb.is-active { border-color: var(--vzh-gold); box-shadow: inset 0 0 0 1px var(--vzh-gold); }
+  .vzh__thumb:focus-visible { outline: 2px solid var(--vzh-gold); outline-offset: 2px; }
+  @media (max-width: 749px) {
+    .vzh__nav { width: 40px; height: 40px; }
+    .vzh__nav--prev { left: 10px; }
+    .vzh__nav--next { right: 10px; }
+  }
+  .vzh__eyebrow { font-size: 11px; letter-spacing: 0.38em; text-transform: uppercase; color: var(--vzh-gold); margin: 0 0 14px; }
+  .vzh__title { font-family: var(--vzh-font-display); font-weight: 500; font-size: clamp(30px, 4vw, 42px); line-height: 1.12; letter-spacing: 0.01em; margin: 0 0 6px; color: var(--vzh-ink); }
+  .vzh__tagline { font-family: var(--vzh-font-display); font-style: italic; font-size: 17px; color: var(--vzh-muted); margin: 0 0 22px; }
+  .vzh__price-row { display: flex; align-items: baseline; gap: 14px; margin: 0 0 4px; }
+  .vzh__price { font-family: var(--vzh-font-display); font-size: 27px; letter-spacing: 0.02em; }
+  .vzh__compare { font-family: var(--vzh-font-display); font-size: 18px; color: var(--vzh-muted); text-decoration: line-through; }
+  .vzh__tax { font-size: 11.5px; color: var(--vzh-muted); letter-spacing: 0.04em; margin: 0 0 28px; }
+  .vzh__tax a { text-decoration: underline; text-underline-offset: 2px; }
+  .vzh__sizes { border: 0; padding: 0; margin: 0 0 8px; min-width: 0; }
+  .vzh__sizes-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; gap: 12px; }
+  .vzh__sizes-label { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--vzh-ink); }
+  .vzh__sizes-label b { font-weight: 400; color: var(--vzh-gold); margin-left: 8px; letter-spacing: 0.14em; }
+  .vzh__sizes-guide { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--vzh-muted); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-family: inherit; }
+  .vzh__sizes-guide:hover { color: var(--vzh-gold); }
+  .vzh__pills { display: flex; flex-wrap: wrap; gap: 10px; }
+  .vzh__pill { position: relative; }
+  .vzh__pill input { position: absolute; width: 1px; height: 1px; clip: rect(0 0 0 0); clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
+  .vzh__pill span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 62px;
+    height: 52px;
+    padding: 0 16px;
+    border: 1px solid var(--vzh-line2);
+    border-radius: 8px;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .vzh__pill:hover span { border-color: var(--vzh-gold); }
+  .vzh__pill input:checked + span { border-color: var(--vzh-gold); box-shadow: inset 0 0 0 1px var(--vzh-gold); background: rgba(var(--vzh-ink-rgb), 0.04); background: color-mix(in srgb, var(--vzh-gold) 7%, transparent); }
+  .vzh__pill input:focus-visible + span { outline: 2px solid var(--vzh-gold); outline-offset: 2px; }
+  .vzh__pill.is-soldout span { opacity: 0.32; cursor: not-allowed; text-decoration: line-through; }
+  .vzh__pill.is-soldout:hover span { border-color: var(--vzh-line2); }
+  .vzh__stock { font-size: 12px; letter-spacing: 0.08em; color: var(--vzh-gold); margin: 10px 0 0; min-height: 16px; }
+  .vzh__stock.hidden { display: none; }
+  .vzh__buy { margin-top: 26px; }
+  .vzh__buy .product-form { margin: 0; }
+  .vzh__buy .product-form__buttons { display: block; }
+  .vzh__buy .product-form__submit {
+    width: 100%;
+    height: 58px;
+    min-height: 58px;
+    margin: 0;
+    background: var(--vzh-gold);
+    color: #0a0a0a;
+    border: 1px solid var(--vzh-gold);
+    border-radius: 8px;
+    font-family: var(--vzh-font-ui);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+  .vzh__buy .product-form__submit:hover { background: var(--vzh-gold-hover); border-color: var(--vzh-gold-hover); }
+  .vzh__buy .product-form__submit:focus-visible { outline: 2px solid var(--vzh-ink); outline-offset: 3px; }
+  .vzh__buy .product-form__submit[disabled], .vzh__buy .product-form__submit[aria-disabled='true'] {
+    background: transparent;
+    color: var(--vzh-muted);
+    border-color: var(--vzh-line2);
+    cursor: not-allowed;
+  }
+  .vzh__buy .product-form__submit .loading__spinner { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); width: 18px; }
+  .vzh__buy .product-form__submit { position: relative; }
+  .vzh__buy .product-form__error-message-wrapper { font-size: 12.5px; color: #e08f8f; margin: 10px 0 0; min-height: 16px; align-items: center; gap: 6px; }
+  .vzh__buy .product-form__error-message-wrapper .svg-wrapper { width: 16px; height: 16px; }
+  .vzh__buy .shopify-payment-button { margin-top: 12px; }
+  .vzh__buy .shopify-payment-button__button--unbranded { background: var(--vzh-ink); color: #0a0a0a; border-radius: 8px; font-family: var(--vzh-font-ui); letter-spacing: 0.18em; text-transform: uppercase; }
+  .vzh__specs { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; margin: 30px 0 0; }
+  .vzh__spec { padding: 14px 0; border-top: 1px solid var(--vzh-line); }
+  .vzh__spec dt { font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--vzh-gold); margin: 0 0 5px; }
+  .vzh__spec dd { font-size: 14px; margin: 0; color: var(--vzh-ink); }
+  .vzh__desc { margin: 30px 0 0; font-size: 14.5px; line-height: 1.75; color: var(--vzh-muted); }
+  .vzh__desc p { margin: 0 0 12px; }
+  .vzh__accs { margin-top: 34px; border-bottom: 1px solid var(--vzh-line); }
+  .vzh__acc { border-top: 1px solid var(--vzh-line); }
+  .vzh__acc summary { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; cursor: pointer; list-style: none; font-size: 12px; letter-spacing: 0.26em; text-transform: uppercase; }
+  .vzh__acc summary::-webkit-details-marker { display: none; }
+  .vzh__acc summary::after { content: '+'; font-family: var(--vzh-font-display); font-size: 20px; color: var(--vzh-gold); line-height: 1; }
+  .vzh__acc[open] summary::after { content: '\2013'; }
+  .vzh__acc-body { padding: 0 0 22px; font-size: 14px; line-height: 1.75; color: var(--vzh-muted); }
+  .vzh__acc-body p { margin: 0 0 12px; }
+  .vzh__acc-body p:last-child { margin-bottom: 0; }
+  .vzh__table-wrap { overflow-x: auto; }
+  .vzh__table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  .vzh__table th { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--vzh-gold); font-weight: 400; text-align: left; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--vzh-line2); white-space: nowrap; }
+  .vzh__table td { font-size: 13.5px; color: var(--vzh-ink); padding: 9px 10px 9px 0; border-bottom: 1px solid var(--vzh-line); white-space: nowrap; }
+  .vzh__table td:first-child { color: var(--vzh-muted); }
+  .vzh__table tr:last-child td { border-bottom: 0; }
+  .vzh__table-note { font-size: 12px; color: var(--vzh-muted); margin: 12px 0 0; }
+  .vzh-modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0, 0, 0, 0.7); }
+  .vzh-modal[open] { display: flex; }
+  .vzh-modal__content { position: relative; width: min(640px, 100%); max-height: 85vh; overflow-y: auto; background: #141414; border: 1px solid var(--vzh-line2); border-radius: 12px; padding: 40px 32px 32px; color: var(--vzh-ink); font-family: var(--vzh-font-ui); }
+  .vzh-modal__close { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: none; border: 0; color: var(--vzh-muted); cursor: pointer; }
+  .vzh-modal__close:hover { color: var(--vzh-gold); }
+  .vzh-modal__close .svg-wrapper { width: 18px; height: 18px; }
+  .vzh-modal__title { font-family: var(--vzh-font-display); font-weight: 500; font-size: 26px; margin: 0 0 18px; }
+  .vzh-modal__body { font-size: 14px; line-height: 1.75; color: var(--vzh-muted); }
+  .vzh-modal__body table { width: 100%; border-collapse: collapse; }
+  .vzh-modal__body th, .vzh-modal__body td { text-align: left; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--vzh-line); }
+  @media (prefers-reduced-motion: reduce) { .vzh * { transition: none !important; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product hero",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Ajaira" },
+    { "type": "text", "id": "tagline", "label": "Tagline (optional)", "info": "Falls back to the thrift.tagline metafield when empty." },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#121212" },
+    { "type": "color", "id": "color_gold", "label": "Accent (gold)", "default": "#c8a45c" },
+    { "type": "color", "id": "color_ink", "label": "Text", "default": "#f4f1ea" },
+    { "type": "color", "id": "color_stage", "label": "Gallery background", "default": "#0a0a0a" },
+    { "type": "header", "content": "Typography" },
+    { "type": "text", "id": "font_ui", "label": "UI font (Google Fonts)", "default": "Jost" },
+    { "type": "text", "id": "font_display", "label": "Display font (Google Fonts)", "default": "Cormorant Garamond" },
+    { "type": "header", "content": "Purchase" },
+    { "type": "checkbox", "id": "show_tax_note", "label": "Show tax note", "default": true },
+    { "type": "text", "id": "tax_note", "label": "Tax note override" },
+    { "type": "checkbox", "id": "show_stock", "label": "Show stock status", "default": true },
+    { "type": "range", "id": "stock_threshold", "label": "Low stock threshold", "min": 1, "max": 20, "step": 1, "default": 5 },
+    { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show dynamic checkout button", "default": true },
+    { "type": "checkbox", "id": "show_gift_card_recipient", "label": "Show gift card recipient form", "default": false },
+    { "type": "page", "id": "size_guide_page", "label": "Size guide page" },
+    { "type": "text", "id": "size_guide_label", "label": "Size guide button label" },
+    { "type": "checkbox", "id": "enable_sticky_gallery", "label": "Sticky gallery on desktop", "default": true },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "spec",
+      "name": "Spec",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Fabric" },
+        {
+          "type": "select",
+          "id": "source",
+          "label": "Value source",
+          "options": [
+            { "value": "fabric", "label": "Metafield: fabric" },
+            { "value": "material", "label": "Metafield: material" },
+            { "value": "model", "label": "Metafield: model / brand" },
+            { "value": "fits_like", "label": "Metafield: fits like" },
+            { "value": "tag_size", "label": "Metafield: tag size" },
+            { "value": "condition", "label": "Metafield: condition" },
+            { "value": "details", "label": "Metafield: details" },
+            { "value": "era", "label": "Metafield: era" },
+            { "value": "custom", "label": "Custom value" }
+          ],
+          "default": "fabric"
+        },
+        { "type": "text", "id": "custom_value", "label": "Custom / fallback value" }
+      ]
+    },
+    {
+      "type": "accordion",
+      "name": "Accordion",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Details" },
+        { "type": "richtext", "id": "content", "label": "Content" },
+        { "type": "page", "id": "page", "label": "Or pull from a page" },
+        { "type": "checkbox", "id": "show_size_table", "label": "Show size table", "default": false },
+        { "type": "text", "id": "table_columns", "label": "Table columns (comma separated)", "default": "cm,XS,S,M,L,XL" },
+        { "type": "textarea", "id": "table_rows", "label": "Table rows (one per line, comma separated)", "default": "Length,72,74,76,78,80" },
+        { "type": "text", "id": "table_note", "label": "Table note", "default": "Tolerance ±1 cm. Measured flat." }
+      ]
+    },
+    { "type": "@app" }
+  ],
+  "presets": [
+    {
+      "name": "Product hero",
+      "blocks": [
+        { "type": "spec", "settings": { "label": "Fabric", "source": "fabric" } },
+        { "type": "spec", "settings": { "label": "Fit", "source": "fits_like" } },
+        { "type": "spec", "settings": { "label": "Tag size", "source": "tag_size" } },
+        { "type": "spec", "settings": { "label": "Condition", "source": "condition" } },
+        { "type": "accordion", "settings": { "heading": "Fabric & construction", "content": "<p>Each piece is inspected and described honestly. See the specs above for fabric and condition.</p>" } },
+        { "type": "accordion", "settings": { "heading": "Fit & size guide", "show_size_table": true } },
+        { "type": "accordion", "settings": { "heading": "Shipping & returns", "content": "<p>Shipped with care. 14-day returns on unworn pieces.</p>" } },
+        { "type": "accordion", "settings": { "heading": "Care", "content": "<p>Follow the care label. When in doubt, hand wash cold and air dry.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -194,7 +194,9 @@
       "taxes_included": "Taxes included.",
       "duties_included": "Duties included.",
       "duties_and_taxes_included": "Duties and taxes included.",
-      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout."
+      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
+      "tax_note": "Tax included.",
+      "size_guide": "Size guide"
     },
     "modal": {
       "label": "Media gallery"
@@ -282,6 +284,11 @@
     }
   },
   "sections": {
+    "product_hero": {
+      "gallery_prev": "Previous image",
+      "gallery_next": "Next image",
+      "gallery_thumb": "View image {index}"
+    },
     "inner_circle": {
       "subscribe": "Subscribe"
     },
