@@ -1,4 +1,4 @@
-<section class="vc-section color-{{ section.settings.color_scheme }}">
+<section class="vc-section color-{{ section.settings.color_scheme }}" style="--vc-heading: {{ section.settings.heading_size }}px; --vc-align: {{ section.settings.text_align }};">
   <h2 class="vc-heading">{{ section.settings.heading }}</h2>
 
   {% capture slides_json %}[
@@ -44,15 +44,15 @@
 {% stylesheet %}
   .vc-section { width: 100%; padding: 35px 0 40px; overflow: hidden; background: transparent; }
   .vc-heading {
-    text-align: center;
+    text-align: var(--vc-align, center);
     margin: 0 0 36px;
-    font-size: 34px;
+    font-size: var(--vc-heading, 34px);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     font-weight: 500;
     line-height: 1.2;
   }
-  @media (max-width: 768px) { .vc-heading { font-size: 26px; margin-bottom: 28px; } }
+  @media (max-width: 768px) { .vc-heading { font-size: calc(var(--vc-heading, 34px) * 0.765); margin-bottom: 28px; } }
   @media (max-width: 480px) { .vc-heading { font-size: 22px; margin-bottom: 24px; } }
   .vc-fallback { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); max-width: var(--container); margin: 0 auto; padding: 0 1.5rem; }
   .vc-fallback__card { position: relative; border: 1px solid var(--color-line); overflow: hidden; background: var(--color-panel); }
@@ -65,10 +65,63 @@
 {
   "name": "Collections carousel",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Collections" },
-    { "type": "collection_list", "id": "collections", "label": "Collections", "limit": 8 },
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Collections"
+    },
+    {
+      "type": "collection_list",
+      "id": "collections",
+      "label": "Collections",
+      "limit": 8
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Typography & layout"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 16,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Heading alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    }
   ],
-  "presets": [{ "name": "Collections carousel" }]
+  "presets": [
+    {
+      "name": "Collections carousel"
+    }
+  ]
 }
 {% endschema %}

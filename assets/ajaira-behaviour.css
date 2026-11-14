@@ -1,0 +1,30 @@
+/* Global behaviour styles (Theme settings → "Ajaira behaviour"). */
+html.aj-native-smooth { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html.aj-native-smooth { scroll-behavior: auto; } }
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* Back to top */
+.aj-top {
+  position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 9998;
+  width: 44px; height: 44px; border-radius: 50%; padding: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--aj-top-bg, rgba(8, 8, 8, 0.88)); color: var(--aj-top-fg, #fff);
+  border: 1.5px solid var(--aj-top-border, rgba(255, 255, 255, 0.45));
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  opacity: 0; visibility: hidden; transform: translateY(12px);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.3s;
+}
+.aj-top.is-visible { opacity: 1; visibility: visible; transform: none; }
+.aj-top:hover { transform: translateY(-2px) scale(1.06); }
+.aj-top:focus-visible { outline: 1.5px solid rgba(255, 255, 255, 0.6); outline-offset: 3px; }
+.aj-top svg { width: 16px; height: 16px; }
+@media (max-width: 749px) { .aj-top { width: 40px; height: 40px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); } }
+
+/* Image fade-in */
+img.aj-fade { opacity: 0; transition: opacity 0.6s ease; }
+img.aj-fade.aj-fade--in { opacity: 1; }

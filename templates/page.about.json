@@ -1,0 +1,101 @@
+{
+  "sections": {
+    "banner": {
+      "type": "veyroze-banner",
+      "blocks": {
+        "h": {
+          "type": "heading",
+          "settings": {
+            "text": "Our story",
+            "size": "h1"
+          }
+        }
+      },
+      "block_order": [
+        "h"
+      ],
+      "settings": {
+        "height_desktop": 525,
+        "height_mobile": 400,
+        "content_y": 50
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "story": {
+      "type": "image-with-text",
+      "blocks": {
+        "h": {
+          "type": "heading",
+          "settings": {
+            "heading": "Why second-hand",
+            "heading_size": "h1"
+          }
+        },
+        "t": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Tell your customers why you started, where your pieces come from, and how you choose them.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "h",
+        "t"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "layout": "image_first"
+      }
+    },
+    "values": {
+      "type": "multicolumn",
+      "blocks": {
+        "c0": {
+          "type": "column",
+          "settings": {
+            "title": "Hand-picked",
+            "text": "<p>A short line about this value.</p>"
+          }
+        },
+        "c1": {
+          "type": "column",
+          "settings": {
+            "title": "Honestly graded",
+            "text": "<p>A short line about this value.</p>"
+          }
+        },
+        "c2": {
+          "type": "column",
+          "settings": {
+            "title": "Shipped with care",
+            "text": "<p>A short line about this value.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "c0",
+        "c1",
+        "c2"
+      ],
+      "settings": {
+        "title": "What we stand for",
+        "columns_desktop": 3,
+        "color_scheme": "scheme-1",
+        "image_width": "third",
+        "background_style": "none"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "main",
+    "story",
+    "values"
+  ]
+}

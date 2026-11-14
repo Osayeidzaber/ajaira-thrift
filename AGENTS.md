@@ -89,6 +89,14 @@ Current islands: `carousel`, `gallery`, `product-gallery`, `condition-scale`,
 Thrift product data lives in `product.metafields.thrift.*`
 (see `docs/thrift-metafields.md`).
 
+## Global behaviour
+
+`assets/ajaira-behaviour.{js,css}` (smooth scroll via vendored `assets/lenis.min.js`, back-to-top, image fade) is driven by Theme settings → "Ajaira behaviour" through data attributes on `<html>` in `layout/theme.liquid`. Scrollable overlays must stay in the `NESTED` selector list so they keep native scrolling.
+
+## Client editability
+
+This is a client theme: every section needs content settings plus a **Style** group (colours/padding) and, where text is large, **Typography & layout** (size, alignment). Colour settings have no default; blank keeps the CSS fallback (the veyroze value). New templates live in `templates/page.*.json` / `collection.featured.json`; `docs/CLIENT-GUIDE.md` is the owner's manual. Never write legal text (terms, policies) yourself.
+
 ## Reference material
 
 - `reference/veyroze/` — HTML, CSS and full-page screenshots of home,

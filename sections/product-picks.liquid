@@ -1,0 +1,133 @@
+{%- liquid
+  assign source = section.settings.source
+  assign limit = section.settings.limit
+  if source == 'manual'
+    assign items = section.settings.products
+  else
+    assign items = section.settings.collection.products
+  endif
+  assign heading_tag = 'h2'
+-%}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
+
+<div
+  class="aj-picks color-{{ section.settings.color_scheme }} gradient"
+  id="aj-picks-{{ section.id }}"
+  style="--aj-picks-pt: {{ section.settings.padding_top }}px; --aj-picks-pb: {{ section.settings.padding_bottom }}px; --aj-picks-heading: {{ section.settings.heading_size }}px; --aj-picks-align: {{ section.settings.text_align }};"
+>
+  <div class="page-width">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="aj-picks__head">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="aj-picks__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <{{ heading_tag }} class="aj-picks__heading">{{ section.settings.heading | escape }}</{{ heading_tag }}>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="aj-picks__text rte">{{ section.settings.text }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <ul class="grid product-grid grid--{{ section.settings.columns_mobile }}-col-tablet-down grid--{{ section.settings.columns_desktop }}-col-desktop" role="list">
+      {%- if items.size > 0 -%}
+        {%- for product in items limit: limit -%}
+          <li class="grid__item">
+            {% render 'card-product',
+              card_product: product,
+              media_aspect_ratio: section.settings.image_ratio,
+              image_shape: 'default',
+              show_secondary_image: section.settings.show_secondary_image,
+              show_vendor: section.settings.show_vendor,
+              show_rating: false,
+              lazy_load: true,
+              quick_add: 'none',
+              section_id: section.id
+            %}
+          </li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..4) -%}
+          <li class="grid__item">
+            {% render 'card-product', show_vendor: section.settings.show_vendor %}
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+
+    {%- if section.settings.button_label != blank -%}
+      {%- liquid
+        assign button_url = section.settings.button_link
+        if button_url == blank and section.settings.collection != blank
+          assign button_url = section.settings.collection.url
+        endif
+        if button_url == blank
+          assign button_url = routes.all_products_collection_url
+        endif
+      -%}
+      <div class="aj-picks__footer">
+        <a href="{{ button_url }}" class="button button--secondary">{{ section.settings.button_label | escape }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .aj-picks { padding: var(--aj-picks-pt, 48px) 0 var(--aj-picks-pb, 48px); }
+  .aj-picks__head { text-align: var(--aj-picks-align, center); margin: 0 0 32px; }
+  .aj-picks__eyebrow { font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: rgba(var(--color-foreground), 0.6); margin: 0 0 12px; }
+  .aj-picks__heading { font-size: var(--aj-picks-heading, 34px); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; line-height: 1.2; margin: 0; }
+  .aj-picks__text { margin: 12px 0 0; color: rgba(var(--color-foreground), 0.7); }
+  .aj-picks__text > * { margin: 0; }
+  .aj-picks__footer { text-align: var(--aj-picks-align, center); margin-top: 32px; }
+  @media (max-width: 749px) {
+    .aj-picks__heading { font-size: calc(var(--aj-picks-heading, 34px) * 0.72); }
+    .aj-picks__head { margin-bottom: 24px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product picks",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "header", "content": "Products" },
+    {
+      "type": "select", "id": "source", "label": "Show", "default": "manual",
+      "options": [
+        { "value": "manual", "label": "Products I pick" },
+        { "value": "collection", "label": "Products from a collection" }
+      ]
+    },
+    { "type": "product_list", "id": "products", "label": "Products", "limit": 24, "info": "Used when Show is \"Products I pick\"." },
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "Used when Show is \"Products from a collection\"; also the default button link." },
+    { "type": "range", "id": "limit", "label": "Maximum products", "min": 2, "max": 24, "step": 1, "default": 8 },
+    { "type": "header", "content": "Text" },
+    { "type": "text", "id": "eyebrow", "label": "Small text above heading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "New arrivals" },
+    { "type": "richtext", "id": "text", "label": "Description" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "View all" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "columns_desktop", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "select", "id": "columns_mobile", "label": "Columns on mobile", "default": "2", "options": [{ "value": "1", "label": "1" }, { "value": "2", "label": "2" }] },
+    { "type": "select", "id": "text_align", "label": "Text alignment", "default": "center", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }] },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 16, "max": 64, "step": 2, "unit": "px", "default": 34 },
+    {
+      "type": "select", "id": "image_ratio", "label": "Image shape", "default": "portrait",
+      "options": [{ "value": "adapt", "label": "Original" }, { "value": "portrait", "label": "Portrait" }, { "value": "square", "label": "Square" }]
+    },
+    { "type": "checkbox", "id": "show_secondary_image", "label": "Show second image on hover", "default": true },
+    { "type": "checkbox", "id": "show_vendor", "label": "Show brand", "default": false },
+    { "type": "header", "content": "Style" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 }
+  ],
+  "presets": [{ "name": "Product picks" }]
+}
+{% endschema %}

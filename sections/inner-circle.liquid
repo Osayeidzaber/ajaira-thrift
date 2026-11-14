@@ -1,5 +1,5 @@
 {%- assign form_id = 'anic-form-' | append: section.id -%}
-<section class="anic color-{{ section.settings.color_scheme }}" id="anic-{{ section.id }}" style="{% if section.settings.card_color != blank %}--anic-card: {{ section.settings.card_color }};{% endif %} {% if section.settings.border_color != blank %}--anic-border: {{ section.settings.border_color }};{% endif %} {% if section.settings.button_color != blank %}--anic-btn-bg: {{ section.settings.button_color }};{% endif %} {% if section.settings.button_text_color != blank %}--anic-btn-text: {{ section.settings.button_text_color }};{% endif %} {% if section.settings.whatsapp_icon_color != blank %}--anic-wa: {{ section.settings.whatsapp_icon_color }};{% endif %} {% if section.settings.padding_top != blank %}--anic-pt: {{ section.settings.padding_top }}px;{% endif %} {% if section.settings.padding_bottom != blank %}--anic-pb: {{ section.settings.padding_bottom }}px;{% endif %}">
+<section class="anic color-{{ section.settings.color_scheme }}" id="anic-{{ section.id }}" style="--anic-h: {{ section.settings.heading_size }}px; --anic-align: {{ section.settings.text_align }}; {% if section.settings.card_color != blank %}--anic-card: {{ section.settings.card_color }};{% endif %} {% if section.settings.border_color != blank %}--anic-border: {{ section.settings.border_color }};{% endif %} {% if section.settings.button_color != blank %}--anic-btn-bg: {{ section.settings.button_color }};{% endif %} {% if section.settings.button_text_color != blank %}--anic-btn-text: {{ section.settings.button_text_color }};{% endif %} {% if section.settings.whatsapp_icon_color != blank %}--anic-wa: {{ section.settings.whatsapp_icon_color }};{% endif %} {% if section.settings.padding_top != blank %}--anic-pt: {{ section.settings.padding_top }}px;{% endif %} {% if section.settings.padding_bottom != blank %}--anic-pb: {{ section.settings.padding_bottom }}px;{% endif %}">
   <div class="anic__inner">
     <h2 class="anic__heading">{{ section.settings.heading | escape }}</h2>
     {%- if section.settings.sub != blank -%}
@@ -70,9 +70,9 @@
 
 {% stylesheet %}
   /* Copied from veyroze.com "Inner Circle" footer section. */
-  .anic { padding: var(--anic-pt, 44px) 48px var(--anic-pb, 40px); text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+  .anic { padding: var(--anic-pt, 44px) 48px var(--anic-pb, 40px); text-align: var(--anic-align, center); border-top: 1px solid rgba(255, 255, 255, 0.08); }
   .anic__inner { max-width: 1100px; margin: 0 auto; }
-  .anic__heading { font-family: var(--font-heading-family, 'Cormorant Garamond', Georgia, serif); font-weight: var(--font-heading-weight, 300); font-size: clamp(32px, 4.5vw, 54px); line-height: 1.06; letter-spacing: -0.01em; margin: 0 0 14px; }
+  .anic__heading { font-family: var(--font-heading-family, 'Cormorant Garamond', Georgia, serif); font-weight: var(--font-heading-weight, 300); font-size: clamp(calc(var(--anic-h, 54px) * 0.6), 4.5vw, var(--anic-h, 54px)); line-height: 1.06; letter-spacing: -0.01em; margin: 0 0 14px; }
   .anic__sub { font-family: var(--font-body-family, inherit); font-size: 13px; opacity: 0.5; line-height: 1.75; margin: 0 0 44px; font-weight: 300; letter-spacing: 0.03em; }
   .anic__cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
   .anic__card { background: var(--anic-card, rgba(0, 0, 0, 0.3)); border: 1px solid var(--anic-border, rgba(255, 255, 255, 0.09)); border-radius: 6px; padding: 22px; display: flex; flex-direction: column; text-align: left; }
@@ -187,6 +187,40 @@
       "step": 4,
       "unit": "px",
       "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Typography & layout"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 54
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Heading alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
     }
   ],
   "blocks": [

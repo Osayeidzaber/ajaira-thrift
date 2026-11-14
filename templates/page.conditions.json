@@ -1,0 +1,61 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "grades": {
+      "type": "multicolumn",
+      "blocks": {
+        "c0": {
+          "type": "column",
+          "settings": {
+            "title": "Like new",
+            "text": "<p>No visible signs of wear.</p>"
+          }
+        },
+        "c1": {
+          "type": "column",
+          "settings": {
+            "title": "Very good",
+            "text": "<p>Light wear that only adds character.</p>"
+          }
+        },
+        "c2": {
+          "type": "column",
+          "settings": {
+            "title": "Good",
+            "text": "<p>Visible wear such as fading or small marks, shown in the photos.</p>"
+          }
+        },
+        "c3": {
+          "type": "column",
+          "settings": {
+            "title": "Worn",
+            "text": "<p>Clear signs of a long life, priced to match.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "c0",
+        "c1",
+        "c2",
+        "c3"
+      ],
+      "settings": {
+        "title": "Condition grades",
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_width": "third",
+        "background_style": "none"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "grades"
+  ]
+}

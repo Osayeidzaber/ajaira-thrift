@@ -1,0 +1,82 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "how": {
+      "type": "multicolumn",
+      "blocks": {
+        "c0": {
+          "type": "column",
+          "settings": {
+            "title": "Waist",
+            "text": "<p>Measure straight across the top of the waistband, laid flat. Double it for the full waist.</p>"
+          }
+        },
+        "c1": {
+          "type": "column",
+          "settings": {
+            "title": "Length",
+            "text": "<p>Measure the inside leg from the crotch seam to the hem.</p>"
+          }
+        },
+        "c2": {
+          "type": "column",
+          "settings": {
+            "title": "Chest",
+            "text": "<p>Measure armpit to armpit, laid flat.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "c0",
+        "c1",
+        "c2"
+      ],
+      "settings": {
+        "title": "How we measure",
+        "columns_desktop": 3,
+        "color_scheme": "scheme-1",
+        "image_width": "third",
+        "background_style": "none"
+      }
+    },
+    "tips": {
+      "type": "rich-text",
+      "blocks": {
+        "h": {
+          "type": "heading",
+          "settings": {
+            "heading": "Compare with your own clothes",
+            "heading_size": "h1"
+          }
+        },
+        "t": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Lay a piece that fits you well flat and measure it the same way. Match those numbers to the measurements on each product page.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "h",
+        "t"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    }
+  },
+  "order": [
+    "main",
+    "how",
+    "tips"
+  ]
+}

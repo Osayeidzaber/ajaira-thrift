@@ -10,23 +10,199 @@
   {
     "name": "Ajaira design tokens",
     "settings": [
-      { "type": "color", "id": "color_bg", "label": "Background", "default": "#121212" },
-      { "type": "color", "id": "color_panel", "label": "Panel", "default": "#1a1a1a" },
-      { "type": "color", "id": "color_ink", "label": "Text", "default": "#ffffff" },
-      { "type": "color", "id": "color_mute", "label": "Muted text", "default": "#b3b3b3" },
-      { "type": "color", "id": "color_faint", "label": "Faint text", "default": "#808080" },
-      { "type": "color", "id": "color_line", "label": "Border", "default": "#2a2a2a" },
-      { "type": "color", "id": "color_line_soft", "label": "Soft border", "default": "#222222" },
-      { "type": "color", "id": "color_wine", "label": "Accent (wine)", "default": "#7a1320" },
-      { "type": "color", "id": "color_wine_bright", "label": "Accent hover", "default": "#9b2230" },
-      { "type": "color", "id": "color_ok", "label": "Success", "default": "#22a05a" },
-      { "type": "color", "id": "color_cta", "label": "Button (gold)", "default": "#c8a45c" },
-      { "type": "color", "id": "color_cta_hover", "label": "Button hover", "default": "#d4b26e" },
-      { "type": "font_picker", "id": "font_heading", "label": "Heading font", "default": "baskervville_n4" },
-      { "type": "font_picker", "id": "font_body", "label": "Body font", "default": "assistant_n4" },
-      { "type": "range", "id": "container_width", "label": "Container width", "min": 900, "max": 1600, "step": 20, "default": 1200, "unit": "px" },
-      { "type": "range", "id": "section_spacing", "label": "Section spacing", "min": 24, "max": 120, "step": 4, "default": 64, "unit": "px" },
-      { "type": "range", "id": "radius", "label": "Corner radius", "min": 0, "max": 24, "step": 1, "default": 4, "unit": "px" }
+      {
+        "type": "color",
+        "id": "color_bg",
+        "label": "Background",
+        "default": "#121212"
+      },
+      {
+        "type": "color",
+        "id": "color_panel",
+        "label": "Panel",
+        "default": "#1a1a1a"
+      },
+      {
+        "type": "color",
+        "id": "color_ink",
+        "label": "Text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_mute",
+        "label": "Muted text",
+        "default": "#b3b3b3"
+      },
+      {
+        "type": "color",
+        "id": "color_faint",
+        "label": "Faint text",
+        "default": "#808080"
+      },
+      {
+        "type": "color",
+        "id": "color_line",
+        "label": "Border",
+        "default": "#2a2a2a"
+      },
+      {
+        "type": "color",
+        "id": "color_line_soft",
+        "label": "Soft border",
+        "default": "#222222"
+      },
+      {
+        "type": "color",
+        "id": "color_wine",
+        "label": "Accent (wine)",
+        "default": "#7a1320"
+      },
+      {
+        "type": "color",
+        "id": "color_wine_bright",
+        "label": "Accent hover",
+        "default": "#9b2230"
+      },
+      {
+        "type": "color",
+        "id": "color_ok",
+        "label": "Success",
+        "default": "#22a05a"
+      },
+      {
+        "type": "color",
+        "id": "color_cta",
+        "label": "Button (gold)",
+        "default": "#c8a45c"
+      },
+      {
+        "type": "color",
+        "id": "color_cta_hover",
+        "label": "Button hover",
+        "default": "#d4b26e"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading font",
+        "default": "baskervville_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "range",
+        "id": "container_width",
+        "label": "Container width",
+        "min": 900,
+        "max": 1600,
+        "step": 20,
+        "default": 1200,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "section_spacing",
+        "label": "Section spacing",
+        "min": 24,
+        "max": 120,
+        "step": 4,
+        "default": 64,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "radius",
+        "label": "Corner radius",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "default": 4,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Ajaira behaviour",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Scrolling"
+      },
+      {
+        "type": "checkbox",
+        "id": "smooth_scroll",
+        "label": "Smooth scrolling",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "smooth_scroll_mode",
+        "label": "Smooth scroll style",
+        "default": "inertia",
+        "options": [
+          {
+            "value": "inertia",
+            "label": "Inertia (soft, gliding)"
+          },
+          {
+            "value": "native",
+            "label": "Native (browser default, lightest)"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "smooth_scroll_intensity",
+        "label": "Inertia intensity",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 5,
+        "info": "Higher feels floatier. Turned off automatically for visitors who prefer reduced motion and inside the theme editor."
+      },
+      {
+        "type": "range",
+        "id": "anchor_offset",
+        "label": "Anchor link offset",
+        "min": 0,
+        "max": 200,
+        "step": 10,
+        "unit": "px",
+        "default": 90,
+        "info": "Space left above a section when a link jumps to it (keeps it below the sticky header)."
+      },
+      {
+        "type": "header",
+        "content": "Extras"
+      },
+      {
+        "type": "checkbox",
+        "id": "back_to_top",
+        "label": "Show back-to-top button",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "back_to_top_bg",
+        "label": "Back-to-top background",
+        "info": "Leave empty for the default dark glass."
+      },
+      {
+        "type": "color",
+        "id": "back_to_top_fg",
+        "label": "Back-to-top icon color"
+      },
+      {
+        "type": "checkbox",
+        "id": "image_fade",
+        "label": "Fade images in as they load",
+        "default": true
+      }
     ]
   },
   {

@@ -3,7 +3,7 @@
   `item` blocks hold rich-text answers; `page` blocks render a page's content
   (e.g. the shipping calculator) in a full-width card.
 {% endcomment %}
-<section class="veyroze-faq color-{{ section.settings.color_scheme }}" id="veyroze-faq-{{ section.id }}" style="{% if section.settings.card_color != blank %}--faq-card: {{ section.settings.card_color }};{% endif %} {% if section.settings.border_color != blank %}--faq-border: {{ section.settings.border_color }};{% endif %} {% if section.settings.border_hover_color != blank %}--faq-border-hover: {{ section.settings.border_hover_color }};{% endif %} {% if section.settings.question_color != blank %}--faq-q: {{ section.settings.question_color }};{% endif %} {% if section.settings.answer_color != blank %}--faq-a: {{ section.settings.answer_color }};{% endif %} {% if section.settings.padding_top != blank %}--faq-pt: {{ section.settings.padding_top }}px;{% endif %} {% if section.settings.padding_bottom != blank %}--faq-pb: {{ section.settings.padding_bottom }}px;{% endif %}">
+<section class="veyroze-faq color-{{ section.settings.color_scheme }}" id="veyroze-faq-{{ section.id }}" style="--faq-title: {{ section.settings.heading_size }}px; --faq-qsize: {{ section.settings.question_size }}px; --faq-align: {{ section.settings.text_align }}; {% if section.settings.card_color != blank %}--faq-card: {{ section.settings.card_color }};{% endif %} {% if section.settings.border_color != blank %}--faq-border: {{ section.settings.border_color }};{% endif %} {% if section.settings.border_hover_color != blank %}--faq-border-hover: {{ section.settings.border_hover_color }};{% endif %} {% if section.settings.question_color != blank %}--faq-q: {{ section.settings.question_color }};{% endif %} {% if section.settings.answer_color != blank %}--faq-a: {{ section.settings.answer_color }};{% endif %} {% if section.settings.padding_top != blank %}--faq-pt: {{ section.settings.padding_top }}px;{% endif %} {% if section.settings.padding_bottom != blank %}--faq-pb: {{ section.settings.padding_bottom }}px;{% endif %}">
   <div class="veyroze-faq__header">
     <h2 class="veyroze-faq__title">{{ section.settings.heading | escape }}</h2>
   </div>
@@ -42,13 +42,13 @@
 
 {% stylesheet %}
   .veyroze-faq { padding: var(--faq-pt, 64px) 24px var(--faq-pb, 64px); background: transparent; }
-  .veyroze-faq__header { text-align: center; margin-bottom: 40px; }
-  .veyroze-faq__title { font-family: var(--font-heading-family, sans-serif); font-size: 28px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin: 0; }
+  .veyroze-faq__header { text-align: var(--faq-align, center); margin-bottom: 40px; }
+  .veyroze-faq__title { font-family: var(--font-heading-family, sans-serif); font-size: 28px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin: 0; font-size: var(--faq-title, 28px); }
   .veyroze-faq__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 1000px; margin: 0 auto; align-items: start; }
   .veyroze-faq__card { background: var(--faq-card, #0a0a0a); border: 1px solid var(--faq-border, #222); border-radius: 4px; overflow: hidden; transition: border-color 0.2s; }
   .veyroze-faq__card:hover { border-color: var(--faq-border-hover, #444); }
   .veyroze-faq__question { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 20px; width: 100%; background: transparent; border: none; cursor: pointer; text-align: left; color: inherit; }
-  .veyroze-faq__q-text { font-family: var(--font-heading-family, sans-serif); font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.35; color: var(--faq-q, #fff); }
+  .veyroze-faq__q-text { font-family: var(--font-heading-family, sans-serif); font-size: var(--faq-qsize, 12.5px); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.35; color: var(--faq-q, #fff); }
   .veyroze-faq__icon { width: 18px; height: 18px; flex-shrink: 0; position: relative; }
   .veyroze-faq__icon::before, .veyroze-faq__icon::after { content: ""; position: absolute; background: var(--faq-q, #fff); border-radius: 1px; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: 0.3s; }
   .veyroze-faq__icon::before { width: 12px; height: 1.5px; }
@@ -66,7 +66,7 @@
   @media screen and (max-width: 749px) {
     .veyroze-faq { padding: calc(var(--faq-pt, 64px) * 0.625) 16px calc(var(--faq-pb, 64px) * 0.625); }
     .veyroze-faq__grid { grid-template-columns: 1fr; }
-    .veyroze-faq__title { font-size: 22px; }
+    .veyroze-faq__title { font-size: calc(var(--faq-title, 28px) * 0.785); }
   }
 {% endstylesheet %}
 
@@ -151,6 +151,50 @@
       "step": 4,
       "unit": "px",
       "default": 64
+    },
+    {
+      "type": "header",
+      "content": "Typography & layout"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 16,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "label": "Question text size",
+      "min": 10,
+      "max": 20,
+      "step": 0.5,
+      "unit": "px",
+      "default": 12.5
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Heading alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
     }
   ],
   "blocks": [

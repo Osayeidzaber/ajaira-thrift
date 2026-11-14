@@ -179,12 +179,23 @@
       "settings": {
         "include_margins": true
       }
+    },
+    "picks": {
+      "type": "product-picks",
+      "disabled": true,
+      "settings": {
+        "source": "manual",
+        "heading": "New arrivals",
+        "button_label": "View all",
+        "limit": 8
+      }
     }
   },
   "order": [
     "banner",
     "trust",
     "collections",
+    "picks",
     "launch1",
     "launch2",
     "faq",

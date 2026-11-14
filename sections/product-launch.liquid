@@ -12,7 +12,7 @@
   endif
   assign last = count | minus: 1
 -%}
-<section id="{{ uid }}" class="vzl" style="{% if section.settings.accent_color != blank %}--gold: {{ section.settings.accent_color }};{% endif %} {% if section.settings.text_color != blank %}--ink: {{ section.settings.text_color }};{% endif %} {% if section.settings.muted_color != blank %}--muted: {{ section.settings.muted_color }};{% endif %} {% if section.settings.line_color != blank %}--line: {{ section.settings.line_color }};{% endif %} {% if section.settings.button_text_color != blank %}--vzl-cta-text: {{ section.settings.button_text_color }};{% endif %} {% if section.settings.button_hover_color != blank %}--vzl-cta-hover: {{ section.settings.button_hover_color }};{% endif %} {% if section.settings.media_bg != blank %}--vzl-media-bg: {{ section.settings.media_bg }};{% endif %}">
+<section id="{{ uid }}" class="vzl" style="--vzl-title-size: {{ section.settings.title_size }}px; --vzl-align: {{ section.settings.text_align }}; {% if section.settings.accent_color != blank %}--gold: {{ section.settings.accent_color }};{% endif %} {% if section.settings.text_color != blank %}--ink: {{ section.settings.text_color }};{% endif %} {% if section.settings.muted_color != blank %}--muted: {{ section.settings.muted_color }};{% endif %} {% if section.settings.line_color != blank %}--line: {{ section.settings.line_color }};{% endif %} {% if section.settings.button_text_color != blank %}--vzl-cta-text: {{ section.settings.button_text_color }};{% endif %} {% if section.settings.button_hover_color != blank %}--vzl-cta-hover: {{ section.settings.button_hover_color }};{% endif %} {% if section.settings.media_bg != blank %}--vzl-media-bg: {{ section.settings.media_bg }};{% endif %}">
   <div class="vzl__inner">
     <div class="vzl__media">
       {%- if section.settings.badge != blank -%}
@@ -143,8 +143,9 @@
   }
   .vzl__dots { position: absolute; bottom: 14px; left: 0; right: 0; z-index: 2; display: flex; justify-content: center; gap: 8px; }
   .vzl__dot { display: block; width: 7px; height: 7px; padding: 0; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.5); background: none; cursor: pointer; transition: background-color 0.15s ease, border-color 0.15s ease; }
+  .vzl__body { text-align: var(--vzl-align, left); }
   .vzl__eyebrow { font-size: 11px; letter-spacing: 0.38em; text-transform: uppercase; color: var(--vzl-gold); margin: 0 0 16px; }
-  .vzl__title { font-family: var(--font-heading-family, 'Cormorant Garamond', serif); font-weight: 500; font-size: clamp(30px, 3.6vw, 44px); line-height: 1.1; letter-spacing: 0.01em; margin: 0 0 14px; }
+  .vzl__title { font-family: var(--font-heading-family, 'Cormorant Garamond', serif); font-weight: 500; font-size: clamp(calc(var(--vzl-title-size, 44px) * 0.68), 3.6vw, var(--vzl-title-size, 44px)); line-height: 1.1; letter-spacing: 0.01em; margin: 0 0 14px; }
   .vzl__text { font-size: 15px; line-height: 1.75; color: var(--vzl-muted); margin: 0 0 26px; max-width: 46ch; }
   .vzl__text p { margin: 0 0 12px; }
   .vzl__text p:last-child { margin-bottom: 0; }
@@ -301,6 +302,40 @@
       "id": "media_bg",
       "label": "Image background",
       "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "header",
+      "content": "Typography & layout"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
     }
   ],
   "blocks": [
