@@ -24,3 +24,10 @@ export interface CartState {
   total_price: number
   items: CartLine[]
 }
+
+declare global {
+  const PUB_SUB_EVENTS: { cartUpdate: string }
+  interface Window {
+    subscribe?: (event: string, callback: (data: never) => void) => () => void
+  }
+}

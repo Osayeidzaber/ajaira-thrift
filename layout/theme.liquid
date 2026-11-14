@@ -34,7 +34,7 @@
     <script src="{{ 'details-disclosure.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'details-modal.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'search-form.js' | asset_url }}" defer="defer"></script>
-    <script src="{{ 'islands.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'islands.js' | asset_url }}" type="module"></script>
 
     {%- if settings.animations_reveal_on_scroll -%}
       <script src="{{ 'animations.js' | asset_url }}" defer="defer"></script>
@@ -261,14 +261,6 @@
     {{ 'islands.css' | asset_url | stylesheet_tag }}
     <link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
 
-    {%- if settings.cart_type == 'drawer' -%}
-      {{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
-      {{ 'component-cart.css' | asset_url | stylesheet_tag }}
-      {{ 'component-totals.css' | asset_url | stylesheet_tag }}
-      {{ 'component-price.css' | asset_url | stylesheet_tag }}
-      {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
-    {%- endif -%}
-
     {%- unless settings.type_body_font.system? -%}
       {% comment %}theme-check-disable AssetPreload{% endcomment %}
       <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
@@ -307,7 +299,37 @@
     </a>
 
     {%- if settings.cart_type == 'drawer' -%}
-      {%- render 'cart-drawer' -%}
+      <cart-drawer data-island="cart-drawer" data-island-id="cart-drawer">
+        <a href="{{ routes.cart_url }}">{{ 'sections.cart.title' | t }}</a>
+      </cart-drawer>
+      {%- assign placeholder_title = '{{ title }}' -%}
+      {%- assign placeholder_product = '{{ product }}' -%}
+      {%- capture cart_drawer_props -%}
+        {
+          "strings": {
+            "title": {{ 'sections.cart.title' | t | json }},
+            "empty": {{ 'sections.cart.empty' | t | json }},
+            "continue": {{ 'general.continue_shopping' | t | json }},
+            "subtotal": {{ 'sections.cart.estimated_total' | t | json }},
+            "checkout": {{ 'sections.cart.checkout' | t | json }},
+            "viewCart": {{ 'sections.cart.view_cart' | t | json }},
+            "close": {{ 'accessibility.close' | t | json }},
+            "remove": {{ 'sections.cart.remove_title' | t: title: placeholder_title | json }},
+            "increase": {{ 'products.product.quantity.increase' | t: product: placeholder_product | json }},
+            "decrease": {{ 'products.product.quantity.decrease' | t: product: placeholder_product | json }},
+            "loading": {{ 'accessibility.loading' | t | json }},
+            "countOne": {{ 'sections.header.cart_count.one' | t: count: '{count}' | json }},
+            "countOther": {{ 'sections.header.cart_count.other' | t: count: '{count}' | json }}
+          },
+          "moneyFormat": {{ shop.money_format | json }},
+          "iconCart": {{ 'icon-cart.svg' | inline_asset_content | json }},
+          "iconCartEmpty": {{ 'icon-cart-empty.svg' | inline_asset_content | json }},
+          "cartUrl": {{ routes.cart_url | json }},
+          "checkoutUrl": {{ routes.checkout_url | json }},
+          "continueUrl": {{ routes.all_products_collection_url | json }}
+        }
+      {%- endcapture -%}
+      <script type="application/json" data-island-props="cart-drawer">{{ cart_drawer_props }}</script>
     {%- endif -%}
 
     {% sections 'header-group' %}
@@ -370,10 +392,6 @@
 
     {%- if settings.predictive_search_enabled -%}
       <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
-    {%- endif -%}
-
-    {%- if settings.cart_type == 'drawer' -%}
-      <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
   </body>
 </html>
