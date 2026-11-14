@@ -521,7 +521,7 @@
       ],
       "default": "center",
       "label": "t:sections.header.settings.mobile_logo_position.label"
-    },    
+    },
     {
       "type": "link_list",
       "id": "menu",
@@ -547,6 +547,47 @@
       ],
       "default": "dropdown",
       "label": "t:sections.header.settings.menu_type_desktop.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "dropdown_hover",
+      "label": "Open dropdowns on hover (desktop)",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Collections dropdown"
+    },
+    {
+      "type": "paragraph",
+      "content": "Adds a dropdown to the menu, built from the collections you pick here. Useful when the menu itself has no sub-items."
+    },
+    {
+      "type": "checkbox",
+      "id": "extra_dropdown_enable",
+      "label": "Show collections dropdown",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "extra_dropdown_label",
+      "label": "Label",
+      "default": "Collections"
+    },
+    {
+      "type": "collection_list",
+      "id": "extra_dropdown_collections",
+      "label": "Collections",
+      "limit": 20
+    },
+    {
+      "type": "range",
+      "id": "extra_dropdown_position",
+      "label": "Position in menu",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3
     },
     {
       "type": "select",
@@ -603,14 +644,14 @@
       "id": "enable_country_selector",
       "default": true,
       "label": "t:sections.header.settings.enable_country_selector.label",
-      "info":"t:sections.header.settings.enable_country_selector.info"
+      "info": "t:sections.header.settings.enable_country_selector.info"
     },
     {
       "type": "checkbox",
       "id": "enable_language_selector",
       "default": true,
       "label": "t:sections.header.settings.enable_language_selector.label",
-      "info":"t:sections.header.settings.enable_language_selector.info"
+      "info": "t:sections.header.settings.enable_language_selector.info"
     },
     {
       "type": "checkbox",

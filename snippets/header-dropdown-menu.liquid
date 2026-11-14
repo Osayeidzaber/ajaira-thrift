@@ -5,8 +5,50 @@
   {% render 'header-dropdown-menu' %}
 {% endcomment %}
 
-<nav class="header__inline-menu">
+{%- liquid
+  assign extra_pos = -1
+  if section.settings.extra_dropdown_enable and section.settings.extra_dropdown_collections.size > 0
+    assign extra_pos = section.settings.extra_dropdown_position | minus: 1
+    if extra_pos > section.settings.menu.links.size
+      assign extra_pos = section.settings.menu.links.size
+    endif
+  endif
+-%}
+{%- capture extra_dropdown -%}
+  <li>
+    <header-menu>
+      <details id="Details-HeaderMenu-extra">
+        <summary id="HeaderMenu-extra" class="header__menu-item list-menu__item link focus-inset">
+          <span>{{ section.settings.extra_dropdown_label | escape }}</span>
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </summary>
+        <ul
+          id="HeaderMenu-MenuList-extra"
+          class="header__submenu list-menu list-menu--disclosure color-{{ section.settings.menu_color_scheme }} gradient caption-large motion-reduce global-settings-popup"
+          role="list"
+          tabindex="-1"
+        >
+          {%- for c in section.settings.extra_dropdown_collections -%}
+            <li>
+              <a
+                href="{{ c.url }}"
+                class="header__menu-item list-menu__item link link--text focus-inset caption-large{% if collection.handle == c.handle %} list-menu__item--active{% endif %}"
+                {% if collection.handle == c.handle %}
+                  aria-current="page"
+                {% endif %}
+              >
+                {{- c.title | escape -}}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </details>
+    </header-menu>
+  </li>
+{%- endcapture -%}
+<nav class="header__inline-menu"{% if section.settings.dropdown_hover %} data-hover-menu{% endif %}>
   <ul class="list-menu list-menu--inline" role="list">
+    {%- if extra_pos == 0 or section.settings.menu.links.size == 0 -%}{{ extra_dropdown }}{%- endif -%}
     {%- for link in section.settings.menu.links -%}
       <li>
         {%- if link.links != blank -%}
@@ -98,6 +140,7 @@
           </a>
         {%- endif -%}
       </li>
+    {%- if extra_pos > 0 and forloop.index == extra_pos -%}{{ extra_dropdown }}{%- endif -%}
     {%- endfor -%}
   </ul>
 </nav>

@@ -19,6 +19,7 @@ Everything on the storefront is changed in **Shopify admin**. You never need to 
 | FAQ questions | Customize → Home page → **FAQ** (add, remove, reorder questions) |
 | Announcement bar text | Customize → Header → Announcement bar |
 | Menus (header and footer) | Online Store → Navigation |
+| "Collections" dropdown in the header | Customize → Header → **Collections dropdown**: pick collections, set the label and its position. Turn on **Open dropdowns on hover** if you prefer hover over click. |
 | Footer columns, withdrawal link, payment icons | Customize → Footer → **veyroze footer** |
 | Products, prices, photos, stock | Products |
 | Collections and their order | Products → Collections |

@@ -21,6 +21,34 @@
         <div class="menu-drawer__navigation-container">
           <nav class="menu-drawer__navigation">
             <ul class="menu-drawer__menu has-submenu list-menu" role="list">
+{%- if section.settings.extra_dropdown_enable and section.settings.extra_dropdown_collections.size > 0 -%}
+                <li>
+                  <details id="Details-menu-drawer-menu-item-extra">
+                    <summary id="HeaderDrawer-extra" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+                      {{ section.settings.extra_dropdown_label | escape }}
+                      <span class="svg-wrapper">{{- 'icon-arrow.svg' | inline_asset_content -}}</span>
+                      <span class="svg-wrapper">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+                    </summary>
+                    <div id="link-extra" class="menu-drawer__submenu has-submenu gradient motion-reduce" tabindex="-1">
+                      <div class="menu-drawer__inner-submenu">
+                        <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
+                          <span class="svg-wrapper">{{- 'icon-arrow.svg' | inline_asset_content -}}</span>
+                          {{ section.settings.extra_dropdown_label | escape }}
+                        </button>
+                        <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
+                          {%- for c in section.settings.extra_dropdown_collections -%}
+                            <li>
+                              <a href="{{ c.url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset{% if collection.handle == c.handle %} menu-drawer__menu-item--active{% endif %}">
+                                {{- c.title | escape -}}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                    </div>
+                  </details>
+                </li>
+              {%- endif -%}
               {%- for link in section.settings.menu.links -%}
                 <li>
                   {%- if link.links != blank -%}

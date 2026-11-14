@@ -80,7 +80,29 @@
     }).observe(document.querySelector('main') || document.body, { childList: true, subtree: true });
   };
 
+  /* ---------- Hover-open dropdowns ---------- */
+  const startHoverMenus = () => {
+    if (!window.matchMedia('(hover: hover)').matches) return;
+    document.querySelectorAll('[data-hover-menu] header-menu > details').forEach((details) => {
+      let timer = null;
+      const item = details.closest('li') || details;
+      item.addEventListener('mouseenter', () => {
+        clearTimeout(timer);
+        document.querySelectorAll('[data-hover-menu] header-menu > details[open]').forEach((d) => { if (d !== details) d.removeAttribute('open'); });
+        details.setAttribute('open', '');
+        details.querySelector('summary')?.setAttribute('aria-expanded', 'true');
+      });
+      item.addEventListener('mouseleave', () => {
+        timer = setTimeout(() => {
+          details.removeAttribute('open');
+          details.querySelector('summary')?.setAttribute('aria-expanded', 'false');
+        }, 180);
+      });
+    });
+  };
+
   const init = () => {
+    startHoverMenus();
     startSmooth();
     startBackToTop();
     startImageFade();
