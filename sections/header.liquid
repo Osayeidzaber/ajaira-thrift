@@ -94,6 +94,28 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+
+  {%- if section.settings.transparent_header -%}
+    .section-header .header-wrapper {
+      background: transparent !important;
+      border-bottom: none !important;
+    }
+    .section-header .header {
+      background-color: transparent !important;
+      position: absolute !important;
+      width: 100%;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      max-width: 100%;
+      padding-left: 2rem;
+      padding-right: 2rem;
+      margin: 0 auto;
+    }
+    .section-header .header__inline-menu { justify-self: start; }
+    .section-header .header__heading { justify-self: center; }
+    .section-header .header__icons { justify-self: end; }
+  {%- endif -%}
 {%- endstyle -%}
 
 <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
@@ -452,6 +474,13 @@
   "class": "section-header",
   "max_blocks": 3,
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "transparent_header",
+      "label": "Transparent overlay header",
+      "info": "Makes the header transparent and overlays it on the first section (hero).",
+      "default": true
+    },
     {
       "type": "select",
       "id": "logo_position",
