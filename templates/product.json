@@ -6,7 +6,7 @@
         "eyebrow": {
           "type": "text",
           "settings": {
-            "text": "{{ product.type }}",
+            "text": "Vintage",
             "text_style": "uppercase"
           }
         },

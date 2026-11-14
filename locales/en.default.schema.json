@@ -2318,6 +2318,10 @@
             "heading_3": {
               "label": "Heading",
               "default": "Heading"
+            },
+            "content": {
+              "label": "Content",
+              "info": "Pair icons with headings to highlight product or store information."
             }
           }
         }

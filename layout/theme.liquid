@@ -304,6 +304,7 @@
       </cart-drawer>
       {%- assign placeholder_title = '{{ title }}' -%}
       {%- assign placeholder_product = '{{ product }}' -%}
+      {%- assign placeholder_count = '{count}' -%}
       {%- capture cart_drawer_props -%}
         {
           "strings": {
@@ -318,8 +319,8 @@
             "increase": {{ 'products.product.quantity.increase' | t: product: placeholder_product | json }},
             "decrease": {{ 'products.product.quantity.decrease' | t: product: placeholder_product | json }},
             "loading": {{ 'accessibility.loading' | t | json }},
-            "countOne": {{ 'sections.header.cart_count.one' | t: count: '{count}' | json }},
-            "countOther": {{ 'sections.header.cart_count.other' | t: count: '{count}' | json }}
+            "countOne": {{ 'sections.header.cart_count.one' | t: count: placeholder_count | json }},
+            "countOther": {{ 'sections.header.cart_count.other' | t: count: placeholder_count | json }}
           },
           "moneyFormat": {{ shop.money_format | json }},
           "iconCart": {{ 'icon-cart.svg' | inline_asset_content | json }},
