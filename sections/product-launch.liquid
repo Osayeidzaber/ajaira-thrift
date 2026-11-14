@@ -1,12 +1,18 @@
 <div class="product-launch color-{{ section.settings.color_scheme }}">
   {% assign p = section.settings.product %}
 
-  {% capture images_json %}[{% for img in p.images %}{ "src": {{ img | image_url: width: 900 | json }}, "alt": {{ img.alt | default: p.title | json }} }{% unless forloop.last %},{% endunless %}{% endfor %}]{% endcapture %}
+  {% if p != blank %}
+    {% capture images_json %}[{% for img in p.images %}{ "src": {{ img | image_url: width: 900 | json }}, "alt": {{ img.alt | default: p.title | json }} }{% unless forloop.last %},{% endunless %}{% endfor %}]{% endcapture %}
 
-  <div class="product-launch__media" data-island="gallery" data-island-id="{{ section.id }}">
-    {% if p.featured_image %}{{ p.featured_image | image_url: width: 900 | image_tag: loading: 'lazy' }}{% endif %}
-  </div>
-  <script type="application/json" data-island-props="{{ section.id }}">{{ images_json }}</script>
+    <div class="product-launch__media" data-island="gallery" data-island-id="{{ section.id }}">
+      {% if p.featured_image %}{{ p.featured_image | image_url: width: 900 | image_tag: loading: 'lazy' }}{% endif %}
+    </div>
+    <script type="application/json" data-island-props="{{ section.id }}">{{ images_json }}</script>
+  {% else %}
+    <div class="product-launch__media">
+      {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder' }}
+    </div>
+  {% endif %}
 
   <div class="product-launch__body">
     <p class="product-launch__eyebrow">{{ section.settings.eyebrow }}</p>
@@ -21,7 +27,7 @@
       </ul>
     {% endif %}
 
-    <a class="product-launch__cta" href="{{ p.url }}">{{ section.settings.cta_label }}</a>
+    <a class="product-launch__cta" href="{{ p.url | default: routes.all_products_collection_url }}">{{ section.settings.cta_label }}</a>
     {% if section.settings.show_price and p != blank %}
       <p class="product-launch__price">{{ p.price | money }}</p>
     {% endif %}
@@ -32,6 +38,7 @@
   .product-launch { padding: var(--spacing) 1.5rem; max-width: var(--container); margin: 0 auto; }
   .product-launch__media { border: 1px solid var(--color-line); border-radius: var(--radius); overflow: hidden; background: var(--color-panel); }
   .product-launch__media img { width: 100%; display: block; object-fit: cover; }
+  .product-launch__media svg { width: 100%; height: auto; display: block; background: var(--color-panel); }
   .product-launch__eyebrow { color: var(--color-cta); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; margin: 1.5rem 0 0.4rem; }
   .product-launch__title { font-size: 1.8rem; margin: 0 0 0.6rem; }
   .product-launch__desc { color: var(--color-mute); font-size: 0.9rem; }

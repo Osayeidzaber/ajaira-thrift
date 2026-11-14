@@ -1,13 +1,22 @@
 <div class="collection-tabs color-{{ section.settings.color_scheme }}">
-  {% for c in section.settings.collections %}
-    <a
-      class="collection-tabs__tab{% if c.id == collection.id %} is-active{% endif %}"
-      href="{{ c.url }}"
-    >
-      <strong>{{ c.title }}</strong>
-      <span>{{ c.products_count }}</span>
-    </a>
-  {% endfor %}
+  {% if section.settings.collections.size > 0 %}
+    {% for c in section.settings.collections %}
+      <a
+        class="collection-tabs__tab{% if c.id == collection.id %} is-active{% endif %}"
+        href="{{ c.url }}"
+      >
+        <strong>{{ c.title }}</strong>
+        <span>{{ c.products_count }}</span>
+      </a>
+    {% endfor %}
+  {% else %}
+    {% for i in (1..4) %}
+      <a class="collection-tabs__tab" href="{{ routes.all_products_collection_url }}">
+        <strong>{{ 'onboarding.collection_title' | t }}</strong>
+        <span>0</span>
+      </a>
+    {% endfor %}
+  {% endif %}
 </div>
 
 {% stylesheet %}

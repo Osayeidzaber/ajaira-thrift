@@ -1301,8 +1301,7 @@
             },
             "button_label_2": {
               "label": "Label",
-              "info": "Leave blank to hide",
-              "default": "Button label"
+              "info": "Leave blank to hide"
             },
             "button_link_2": {
               "label": "Link"
