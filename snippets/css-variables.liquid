@@ -23,6 +23,6 @@
   }
   body { background: var(--color-bg); color: var(--color-ink); font-family: var(--font-body); }
   h1, h2, h3, h4 { font-family: var(--font-heading); }
+  {{ settings.font_heading | font_face }}
+  {{ settings.font_body | font_face }}
 </style>
-{{ settings.font_heading | font_face }}
-{{ settings.font_body | font_face }}

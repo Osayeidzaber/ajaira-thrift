@@ -3,11 +3,10 @@
     "banner": {
       "type": "image-banner",
       "blocks": {
-        "heading": { "type": "heading", "settings": { "heading": "Ajaira Thrift", "heading_size": "h1" } },
-        "buttons": { "type": "buttons", "settings": { "button_label_1": "Shop all", "button_link_1": "shopify://collections/all" } }
+        "buttons": { "type": "buttons", "settings": { "button_label_1": "Shop all", "button_link_1": "shopify://collections/all", "button_style_secondary_1": true } }
       },
-      "block_order": ["heading", "buttons"],
-      "settings": { "color_scheme": "scheme-1" }
+      "block_order": ["buttons"],
+      "settings": { "color_scheme": "scheme-1", "show_text_box": false, "desktop_content_position": "middle-center", "image_height": "large" }
     },
     "trust": {
       "type": "trust-badges",
