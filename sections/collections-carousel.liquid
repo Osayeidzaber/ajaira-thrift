@@ -1,0 +1,39 @@
+<div class="collections-carousel color-{{ section.settings.color_scheme }}">
+  <h2 class="collections-carousel__title">{{ section.settings.heading }}</h2>
+
+  {% capture slides_json %}[{% for c in section.settings.collections %}{% if c.featured_image %}{ "image": {{ c.featured_image | image_url: width: 600 | json }}, "alt": {{ c.title | json }}, "url": {{ c.url | json }}, "label": {{ c.title | json }} }{% unless forloop.last %},{% endunless %}{% endif %}{% endfor %}]{% endcapture %}
+
+  <div data-island="carousel" data-island-id="{{ section.id }}">
+    <div class="collections-carousel__fallback">
+      {% for c in section.settings.collections %}
+        <a class="collections-carousel__card" href="{{ c.url }}">
+          {% if c.featured_image %}{{ c.featured_image | image_url: width: 600 | image_tag: loading: 'lazy' }}{% endif %}
+          <span>{{ c.title }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  <script type="application/json" data-island-props="{{ section.id }}">{{ slides_json }}</script>
+</div>
+
+{% stylesheet %}
+  .collections-carousel { padding: var(--spacing) 1.5rem; }
+  .collections-carousel__title { text-align: center; font-size: 1.8rem; letter-spacing: 0.08em; margin: 0 0 2rem; }
+  .collections-carousel__fallback { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); max-width: var(--container); margin: 0 auto; }
+  .collections-carousel__card { position: relative; border: 1px solid var(--color-line); border-radius: var(--radius); overflow: hidden; background: var(--color-panel); }
+  .collections-carousel__card img { width: 100%; display: block; object-fit: cover; }
+  .collections-carousel__card span { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; padding: 0.6rem; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; background: linear-gradient(transparent, rgba(0,0,0,0.6)); }
+  @media (min-width: 750px) { .collections-carousel__fallback { grid-template-columns: repeat(4, 1fr); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collections carousel",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Collections" },
+    { "type": "collection_list", "id": "collections", "label": "Collections", "limit": 8 },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "Collections carousel" }]
+}
+{% endschema %}
