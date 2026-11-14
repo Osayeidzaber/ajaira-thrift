@@ -1,41 +1,191 @@
-<div class="faq color-{{ section.settings.color_scheme }}">
-  <h2 class="faq__title">{{ section.settings.heading }}</h2>
-  <div class="faq__grid">
-    {% for block in section.blocks %}
-      <details class="faq__item" {{ block.shopify_attributes }}>
-        <summary>{{ block.settings.question }}</summary>
-        <div class="faq__answer">{{ block.settings.answer }}</div>
-      </details>
-    {% endfor %}
+{% comment %}
+  veyroze FAQ: 2-column cards with animated +/− toggle.
+  `item` blocks hold rich-text answers; `page` blocks render a page's content
+  (e.g. the shipping calculator) in a full-width card.
+{% endcomment %}
+<section class="veyroze-faq color-{{ section.settings.color_scheme }}" id="veyroze-faq-{{ section.id }}" style="{% if section.settings.card_color != blank %}--faq-card: {{ section.settings.card_color }};{% endif %} {% if section.settings.border_color != blank %}--faq-border: {{ section.settings.border_color }};{% endif %} {% if section.settings.border_hover_color != blank %}--faq-border-hover: {{ section.settings.border_hover_color }};{% endif %} {% if section.settings.question_color != blank %}--faq-q: {{ section.settings.question_color }};{% endif %} {% if section.settings.answer_color != blank %}--faq-a: {{ section.settings.answer_color }};{% endif %} {% if section.settings.padding_top != blank %}--faq-pt: {{ section.settings.padding_top }}px;{% endif %} {% if section.settings.padding_bottom != blank %}--faq-pb: {{ section.settings.padding_bottom }}px;{% endif %}">
+  <div class="veyroze-faq__header">
+    <h2 class="veyroze-faq__title">{{ section.settings.heading | escape }}</h2>
   </div>
-</div>
+  <div class="veyroze-faq__grid">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign answer_id = 'faq-answer-' | append: section.id | append: '-' | append: forloop.index
+        assign question = block.settings.question
+        if block.type == 'page' and question == blank and block.settings.page != blank
+          assign question = block.settings.page.title
+        endif
+      -%}
+      <div class="veyroze-faq__card{% if block.type == 'page' %} veyroze-faq__card--wide{% endif %}" {{ block.shopify_attributes }}>
+        <button
+          type="button"
+          class="veyroze-faq__question"
+          aria-expanded="false"
+          aria-controls="{{ answer_id }}"
+        >
+          <span class="veyroze-faq__q-text">{{ question | escape }}</span>
+          <span class="veyroze-faq__icon" aria-hidden="true"></span>
+        </button>
+        <div class="veyroze-faq__answer" id="{{ answer_id }}" role="region">
+          <div class="veyroze-faq__answer-inner rte">
+            {%- if block.type == 'page' -%}
+              {{ block.settings.page.content }}
+            {%- else -%}
+              {{ block.settings.answer }}
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
 
 {% stylesheet %}
-  .faq { padding: var(--spacing) 1.5rem; max-width: var(--container); margin: 0 auto; }
-  .faq__title { text-align: center; font-size: 1.8rem; margin: 0 0 2rem; }
-  .faq__grid { display: grid; gap: 0.8rem; }
-  .faq__item { border: 1px solid var(--color-line); border-radius: var(--radius); background: var(--color-panel); }
-  .faq__item summary { cursor: pointer; padding: 1rem; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; list-style: none; display: flex; justify-content: space-between; }
-  .faq__item summary::after { content: "+"; }
-  .faq__item[open] summary::after { content: "–"; }
-  .faq__answer { padding: 0 1rem 1rem; color: var(--color-mute); font-size: 0.9rem; }
-  @media (min-width: 750px) { .faq__grid { grid-template-columns: 1fr 1fr; } }
+  .veyroze-faq { padding: var(--faq-pt, 64px) 24px var(--faq-pb, 64px); background: transparent; }
+  .veyroze-faq__header { text-align: center; margin-bottom: 40px; }
+  .veyroze-faq__title { font-family: var(--font-heading-family, sans-serif); font-size: 28px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin: 0; }
+  .veyroze-faq__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 1000px; margin: 0 auto; align-items: start; }
+  .veyroze-faq__card { background: var(--faq-card, #0a0a0a); border: 1px solid var(--faq-border, #222); border-radius: 4px; overflow: hidden; transition: border-color 0.2s; }
+  .veyroze-faq__card:hover { border-color: var(--faq-border-hover, #444); }
+  .veyroze-faq__question { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 20px; width: 100%; background: transparent; border: none; cursor: pointer; text-align: left; color: inherit; }
+  .veyroze-faq__q-text { font-family: var(--font-heading-family, sans-serif); font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.35; color: var(--faq-q, #fff); }
+  .veyroze-faq__icon { width: 18px; height: 18px; flex-shrink: 0; position: relative; }
+  .veyroze-faq__icon::before, .veyroze-faq__icon::after { content: ""; position: absolute; background: var(--faq-q, #fff); border-radius: 1px; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: 0.3s; }
+  .veyroze-faq__icon::before { width: 12px; height: 1.5px; }
+  .veyroze-faq__icon::after { width: 1.5px; height: 12px; }
+  .veyroze-faq__card.is-open .veyroze-faq__icon::after { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
+  .veyroze-faq__answer { max-height: 0; overflow: hidden; transition: max-height 0.35s; border-top: 0 solid var(--faq-border, #222); }
+  .veyroze-faq__card.is-open .veyroze-faq__answer { max-height: 400px; border-top-width: 1px; }
+  .veyroze-faq__answer-inner { padding: 16px 20px 20px; font-size: 13px; color: var(--faq-a, #888); line-height: 1.75; }
+  .veyroze-faq__answer-inner a { color: var(--faq-q, #fff); }
+  .veyroze-faq__card--wide { overflow: visible; position: relative; z-index: 5; }
+  .veyroze-faq__card--wide .veyroze-faq__answer { transition: none; }
+  .veyroze-faq__card--wide.is-open .veyroze-faq__answer { max-height: none; overflow: visible; }
+  .veyroze-faq__card--wide #vz-ship-root { background: transparent; border: none; max-width: none; padding: 0; margin: 0; }
+  @media screen and (min-width: 750px) { .veyroze-faq__card--wide { grid-column: 1 / -1; } }
+  @media screen and (max-width: 749px) {
+    .veyroze-faq { padding: calc(var(--faq-pt, 64px) * 0.625) 16px calc(var(--faq-pb, 64px) * 0.625); }
+    .veyroze-faq__grid { grid-template-columns: 1fr; }
+    .veyroze-faq__title { font-size: 22px; }
+  }
 {% endstylesheet %}
+
+{% javascript %}
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('.veyroze-faq__question');
+    if (!button) return;
+    const card = button.closest('.veyroze-faq__card');
+    const open = !card.classList.contains('is-open');
+    card.classList.toggle('is-open', open);
+    button.setAttribute('aria-expanded', String(open));
+  });
+{% endjavascript %}
 
 {% schema %}
 {
   "name": "FAQ",
+  "class": "veyroze-faq-section",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "FAQ" },
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "FAQ"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Card background",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Card border",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "border_hover_color",
+      "label": "Card border (hover)",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Question & icon color",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Answer color",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
   ],
   "blocks": [
     {
       "type": "item",
       "name": "Question",
       "settings": [
-        { "type": "text", "id": "question", "label": "Question" },
-        { "type": "richtext", "id": "answer", "label": "Answer" }
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "name": "Page (full width)",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "info": "Defaults to the page title"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Page",
+          "info": "Its content is shown in the answer, e.g. the shipping calculator"
+        }
       ]
     }
   ],
@@ -43,8 +193,20 @@
     {
       "name": "FAQ",
       "blocks": [
-        { "type": "item", "settings": { "question": "When will my order arrive?", "answer": "<p>Orders ship within 1-2 business days.</p>" } },
-        { "type": "item", "settings": { "question": "How can I return my order?", "answer": "<p>You have 14 days to return your order.</p>" } }
+        {
+          "type": "item",
+          "settings": {
+            "question": "When will my order arrive?",
+            "answer": "<p>All orders will be shipped within the next 2 business days.</p>"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "question": "How can I return my order?",
+            "answer": "<p>You have a 14-day right of return after receiving your order.</p>"
+          }
+        }
       ]
     }
   ]

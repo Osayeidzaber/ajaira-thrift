@@ -1,69 +1,325 @@
-<div class="product-launch color-{{ section.settings.color_scheme }}">
-  {% assign p = section.settings.product %}
-
-  {% if p != blank %}
-    {% capture images_json %}[{% for img in p.images %}{ "src": {{ img | image_url: width: 900 | json }}, "alt": {{ img.alt | default: p.title | json }} }{% unless forloop.last %},{% endunless %}{% endfor %}]{% endcapture %}
-
-    <div class="product-launch__media" data-island="gallery" data-island-id="{{ section.id }}">
-      {% if p.featured_image %}{{ p.featured_image | image_url: width: 900 | image_tag: loading: 'lazy' }}{% endif %}
+{%- liquid
+  assign p = section.settings.product
+  assign uid = 'vzl-' | append: section.id
+  assign gal = 'vzl-g-' | append: section.id
+  assign max = section.settings.max_images
+  assign count = 0
+  if p != blank
+    assign count = p.images.size
+    if count > max
+      assign count = max
+    endif
+  endif
+  assign last = count | minus: 1
+-%}
+<section id="{{ uid }}" class="vzl" style="{% if section.settings.accent_color != blank %}--gold: {{ section.settings.accent_color }};{% endif %} {% if section.settings.text_color != blank %}--ink: {{ section.settings.text_color }};{% endif %} {% if section.settings.muted_color != blank %}--muted: {{ section.settings.muted_color }};{% endif %} {% if section.settings.line_color != blank %}--line: {{ section.settings.line_color }};{% endif %} {% if section.settings.button_text_color != blank %}--vzl-cta-text: {{ section.settings.button_text_color }};{% endif %} {% if section.settings.button_hover_color != blank %}--vzl-cta-hover: {{ section.settings.button_hover_color }};{% endif %} {% if section.settings.media_bg != blank %}--vzl-media-bg: {{ section.settings.media_bg }};{% endif %}">
+  <div class="vzl__inner">
+    <div class="vzl__media">
+      {%- if section.settings.badge != blank -%}
+        <span class="vzl__badge">{{ section.settings.badge | escape }}</span>
+      {%- endif -%}
+      {%- if count > 0 -%}
+        {%- for img in p.images limit: count -%}
+          <input
+            type="radio"
+            class="vzl__radio"
+            name="vzl-gal-{{ section.id }}"
+            id="{{ gal }}-{{ forloop.index0 }}"
+            aria-label="{{ p.title | escape }} — {{ forloop.index }}"
+            {% if forloop.first %}
+              checked
+            {% endif %}
+          >
+        {%- endfor -%}
+        <div class="vzl__frames">
+          {%- for img in p.images limit: count -%}
+            {{
+              img
+              | image_url: width: 1200
+              | image_tag:
+                data-vzl-index: forloop.index0,
+                alt: p.title,
+                loading: 'lazy',
+                sizes: '(min-width: 900px) 50vw, 100vw',
+                widths: '400, 600, 800, 1000, 1200'
+            }}
+          {%- endfor -%}
+        </div>
+        {%- if count > 1 -%}
+          <div class="vzl__navs">
+            {%- for i in (0..last) -%}
+              {%- liquid
+                assign prev = i | minus: 1
+                if prev < 0
+                  assign prev = last
+                endif
+                assign next = i | plus: 1
+                if next > last
+                  assign next = 0
+                endif
+              -%}
+              <label class="vzl__arrow vzl__arrow--prev vzl__arrow--{{ i }}" for="{{ gal }}-{{ prev }}" title="{{ 'general.slider.previous_slide' | t }}"><span></span></label>
+              <label class="vzl__arrow vzl__arrow--next vzl__arrow--{{ i }}" for="{{ gal }}-{{ next }}" title="{{ 'general.slider.next_slide' | t }}"><span></span></label>
+            {%- endfor -%}
+          </div>
+          <div class="vzl__dots">
+            {%- for i in (0..last) -%}
+              <label class="vzl__dot vzl__dot--{{ i }}" for="{{ gal }}-{{ i }}" title="{{ i | plus: 1 }}"></label>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <div class="vzl__media-empty">{{ 'onboarding.product_title' | t }}</div>
+      {%- endif -%}
     </div>
-    <script type="application/json" data-island-props="{{ section.id }}">{{ images_json }}</script>
-  {% else %}
-    <div class="product-launch__media">
-      {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder' }}
+
+    <div class="vzl__body">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="vzl__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h2 class="vzl__title">{{ section.settings.heading | default: p.title | escape }}</h2>
+      {%- if section.settings.description != blank -%}
+        <div class="vzl__text">{{ section.settings.description }}</div>
+      {%- endif -%}
+      {%- if section.blocks.size > 0 -%}
+        <ul class="vzl__features">
+          {%- for block in section.blocks -%}
+            <li {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      <a class="vzl__cta" href="{{ p.url | default: routes.all_products_collection_url }}">
+        {{- section.settings.cta_label | escape -}}
+      </a>
+      {%- if section.settings.show_price and p != blank -%}
+        <span class="vzl__price">{{ p.price | money }}</span>
+      {%- endif -%}
     </div>
-  {% endif %}
-
-  <div class="product-launch__body">
-    <p class="product-launch__eyebrow">{{ section.settings.eyebrow }}</p>
-    <h2 class="product-launch__title">{{ p.title | default: section.settings.heading }}</h2>
-    <p class="product-launch__desc">{{ section.settings.description }}</p>
-
-    {% if section.blocks.size > 0 %}
-      <ul class="product-launch__features">
-        {% for block in section.blocks %}
-          <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-
-    <a class="product-launch__cta" href="{{ p.url | default: routes.all_products_collection_url }}">{{ section.settings.cta_label }}</a>
-    {% if section.settings.show_price and p != blank %}
-      <p class="product-launch__price">{{ p.price | money }}</p>
-    {% endif %}
   </div>
-</div>
+</section>
+
+<style>
+  #{{ uid }} { padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px; }
+  {%- if section.settings.media_position == 'right' %}
+    @media (min-width: 900px) { #{{ uid }} .vzl__media { order: 2; } }
+  {%- endif %}
+  {%- for i in (0..last) %}
+    #{{ gal }}-{{ i }}:checked ~ .vzl__frames img[data-vzl-index="{{ i }}"] { display: block; }
+    #{{ gal }}-{{ i }}:checked ~ .vzl__navs .vzl__arrow--{{ i }} { display: flex; }
+    #{{ gal }}-{{ i }}:checked ~ .vzl__dots .vzl__dot--{{ i }} { background: var(--vzl-gold); border-color: var(--vzl-gold); }
+  {%- endfor %}
+</style>
 
 {% stylesheet %}
-  .product-launch { padding: var(--spacing) 1.5rem; max-width: var(--container); margin: 0 auto; }
-  .product-launch__media { border: 1px solid var(--color-line); border-radius: var(--radius); overflow: hidden; background: var(--color-panel); }
-  .product-launch__media img { width: 100%; display: block; object-fit: cover; }
-  .product-launch__media svg { width: 100%; height: auto; display: block; background: var(--color-panel); }
-  .product-launch__eyebrow { color: var(--color-cta); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; margin: 1.5rem 0 0.4rem; }
-  .product-launch__title { font-size: 1.8rem; margin: 0 0 0.6rem; }
-  .product-launch__desc { color: var(--color-mute); font-size: 0.9rem; }
-  .product-launch__features { list-style: none; padding: 0; margin: 1rem 0; }
-  .product-launch__features li { color: var(--color-mute); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0; border-bottom: 1px solid var(--color-line-soft); }
-  .product-launch__cta { display: block; text-align: center; background: var(--color-cta); color: var(--color-bg); padding: 0.9rem; border-radius: var(--radius); text-decoration: none; letter-spacing: 0.15em; font-size: 0.8rem; text-transform: uppercase; }
-  .product-launch__cta:hover { background: var(--color-cta-hover); }
-  .product-launch__price { font-size: 1.1rem; margin-top: 0.8rem; }
+  /* Copied from veyroze.com "veyroze product launch". */
+  .vzl {
+    --vzl-gold: var(--gold, #c8a45c); --vzl-ink: var(--ink, #f4f1ea); --vzl-muted: var(--muted, rgba(255, 255, 255, 0.55));
+    --vzl-line: var(--line, rgba(255, 255, 255, 0.09)); --vzl-line2: var(--line2, rgba(255, 255, 255, 0.2));
+    color: var(--vzl-ink); font-family: var(--font-body-family, 'Jost', sans-serif);
+  }
+  .vzl *, .vzl *::before, .vzl *::after { box-sizing: border-box; }
+  .vzl__inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
+  @media (min-width: 900px) { .vzl__inner { grid-template-columns: 1fr 1fr; gap: 64px; } }
+  .vzl__media { position: relative; aspect-ratio: 4 / 5; border: 1px solid var(--vzl-line); border-radius: 12px; overflow: hidden; background: var(--vzl-media-bg, #0a0a0a); }
+  .vzl__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vzl__media-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255, 255, 255, 0.28); }
+  .vzl__badge { position: absolute; top: 16px; left: 16px; z-index: 3; font-size: 9.5px; letter-spacing: 0.28em; text-transform: uppercase; color: #0a0a0a; background: var(--vzl-gold); padding: 6px 12px; border-radius: 4px; }
+  .vzl__radio { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .vzl__frames { position: absolute; inset: 0; }
+  .vzl__frames img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+  .vzl__navs { position: absolute; inset: 0; pointer-events: none; }
+  .vzl__navs .vzl__arrow { pointer-events: auto; }
+  .vzl__arrow { position: absolute; top: 50%; z-index: 2; width: 48px; height: 48px; display: none; align-items: center; justify-content: center; transform: translateY(-50%); background: rgba(70, 70, 70, 0.55); border: 0; border-radius: 50%; color: #fff; cursor: pointer; transition: background-color 0.15s ease; }
+  .vzl__arrow:hover { background: rgba(70, 70, 70, 0.8); }
+  .vzl__arrow--prev { left: 14px; }
+  .vzl__arrow--next { right: 14px; }
+  .vzl__arrow span { width: 10px; height: 10px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; }
+  .vzl__arrow--prev span { transform: rotate(-135deg); margin-left: 4px; }
+  .vzl__arrow--next span { transform: rotate(45deg); margin-right: 4px; }
+  @media (max-width: 749px) {
+    .vzl__arrow { width: 40px; height: 40px; }
+    .vzl__arrow--prev { left: 10px; }
+    .vzl__arrow--next { right: 10px; }
+  }
+  .vzl__dots { position: absolute; bottom: 14px; left: 0; right: 0; z-index: 2; display: flex; justify-content: center; gap: 8px; }
+  .vzl__dot { display: block; width: 7px; height: 7px; padding: 0; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.5); background: none; cursor: pointer; transition: background-color 0.15s ease, border-color 0.15s ease; }
+  .vzl__eyebrow { font-size: 11px; letter-spacing: 0.38em; text-transform: uppercase; color: var(--vzl-gold); margin: 0 0 16px; }
+  .vzl__title { font-family: var(--font-heading-family, 'Cormorant Garamond', serif); font-weight: 500; font-size: clamp(30px, 3.6vw, 44px); line-height: 1.1; letter-spacing: 0.01em; margin: 0 0 14px; }
+  .vzl__text { font-size: 15px; line-height: 1.75; color: var(--vzl-muted); margin: 0 0 26px; max-width: 46ch; }
+  .vzl__text p { margin: 0 0 12px; }
+  .vzl__text p:last-child { margin-bottom: 0; }
+  .vzl__features { list-style: none; padding: 0; margin: 0 0 30px; }
+  .vzl__features li { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--vzl-muted); padding: 9px 0; border-top: 1px solid var(--vzl-line); }
+  .vzl__features li:last-child { border-bottom: 1px solid var(--vzl-line); }
+  .vzl__features li::before { content: '◆'; color: var(--vzl-gold); font-size: 8px; margin-right: 10px; vertical-align: 1px; }
+  .vzl__cta { display: inline-flex; align-items: center; justify-content: center; height: 56px; padding: 0 40px; background: var(--vzl-gold); color: var(--vzl-cta-text, #0a0a0a); border: 1px solid var(--vzl-gold); border-radius: 8px; text-decoration: none; font-size: 12px; letter-spacing: 0.26em; text-transform: uppercase; transition: background-color 0.15s ease, border-color 0.15s ease; }
+  .vzl__cta:hover { background: var(--vzl-cta-hover, #d4b26e); border-color: var(--vzl-cta-hover, #d4b26e); }
+  .vzl__cta:focus-visible, .vzl__arrow:focus-visible { outline: 2px solid var(--vzl-gold); outline-offset: 3px; }
+  .vzl__price { display: block; margin-top: 18px; font-family: var(--font-heading-family, 'Cormorant Garamond', serif); font-size: 25px; letter-spacing: 0.02em; color: var(--vzl-ink); }
+  @media (max-width: 899px) { .vzl__cta { width: 100%; padding: 0 20px; } }
+  @media (prefers-reduced-motion: reduce) { .vzl * { transition: none !important; } }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "Product launch",
+  "tag": "div",
   "settings": [
-    { "type": "product", "id": "product", "label": "Product" },
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "New — Vintage" },
-    { "type": "text", "id": "heading", "label": "Fallback heading", "default": "Featured piece" },
-    { "type": "textarea", "id": "description", "label": "Description" },
-    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Discover" },
-    { "type": "checkbox", "id": "show_price", "label": "Show price", "default": true },
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "range",
+      "id": "max_images",
+      "label": "Max gallery images",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge",
+      "default": "New"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Image position on desktop",
+      "default": "right",
+      "options": [
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "New — Vintage Original"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Defaults to the product title"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Discover"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent (badge, eyebrow, button)",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button hover",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Price & text color",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Description & features color",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "Divider lines",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "media_bg",
+      "label": "Image background",
+      "info": "Leave empty to keep the veyroze default."
+    }
   ],
   "blocks": [
-    { "type": "feature", "name": "Feature", "settings": [{ "type": "text", "id": "text", "label": "Text" }] }
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
   ],
-  "presets": [{ "name": "Product launch" }]
+  "presets": [
+    {
+      "name": "Product launch"
+    }
+  ]
 }
 {% endschema %}

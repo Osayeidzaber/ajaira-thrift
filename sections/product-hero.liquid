@@ -9,6 +9,7 @@
   assign product_form_id = 'product-form-' | append: section.id
   assign spec_blocks = section.blocks | where: 'type', 'spec'
   assign acc_blocks = section.blocks | where: 'type', 'accordion'
+  assign delivery_blocks = section.blocks | where: 'type', 'delivery'
   assign ui_family = section.settings.font_ui | default: 'Jost'
   assign display_family = section.settings.font_display | default: 'Cormorant Garamond'
   assign ink = section.settings.color_ink
@@ -201,6 +202,10 @@
             show_pickup_availability: false
           -%}
         </div>
+
+        {%- for block in delivery_blocks -%}
+          {%- render 'delivery-timeline', block: block -%}
+        {%- endfor -%}
 
         {%- if spec_blocks.size > 0 -%}
           <dl class="vzh__specs">
@@ -502,83 +507,406 @@
   "tag": "section",
   "class": "section",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Ajaira" },
-    { "type": "text", "id": "tagline", "label": "Tagline (optional)", "info": "Falls back to the thrift.tagline metafield when empty." },
-    { "type": "header", "content": "Colors" },
-    { "type": "color", "id": "color_bg", "label": "Background", "default": "#121212" },
-    { "type": "color", "id": "color_gold", "label": "Accent (gold)", "default": "#c8a45c" },
-    { "type": "color", "id": "color_ink", "label": "Text", "default": "#f4f1ea" },
-    { "type": "color", "id": "color_stage", "label": "Gallery background", "default": "#0a0a0a" },
-    { "type": "header", "content": "Typography" },
-    { "type": "text", "id": "font_ui", "label": "UI font (Google Fonts)", "default": "Jost" },
-    { "type": "text", "id": "font_display", "label": "Display font (Google Fonts)", "default": "Cormorant Garamond" },
-    { "type": "header", "content": "Purchase" },
-    { "type": "checkbox", "id": "show_tax_note", "label": "Show tax note", "default": true },
-    { "type": "text", "id": "tax_note", "label": "Tax note override" },
-    { "type": "checkbox", "id": "show_stock", "label": "Show stock status", "default": true },
-    { "type": "range", "id": "stock_threshold", "label": "Low stock threshold", "min": 1, "max": 20, "step": 1, "default": 5 },
-    { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show dynamic checkout button", "default": true },
-    { "type": "checkbox", "id": "show_gift_card_recipient", "label": "Show gift card recipient form", "default": false },
-    { "type": "page", "id": "size_guide_page", "label": "Size guide page" },
-    { "type": "text", "id": "size_guide_label", "label": "Size guide button label" },
-    { "type": "checkbox", "id": "enable_sticky_gallery", "label": "Sticky gallery on desktop", "default": true },
-    { "type": "header", "content": "Spacing" },
-    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 64 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 80 }
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Ajaira"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline (optional)",
+      "info": "Falls back to the thrift.tagline metafield when empty."
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "color_bg",
+      "label": "Background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "color_gold",
+      "label": "Accent (gold)",
+      "default": "#c8a45c"
+    },
+    {
+      "type": "color",
+      "id": "color_ink",
+      "label": "Text",
+      "default": "#f4f1ea"
+    },
+    {
+      "type": "color",
+      "id": "color_stage",
+      "label": "Gallery background",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "text",
+      "id": "font_ui",
+      "label": "UI font (Google Fonts)",
+      "default": "Jost"
+    },
+    {
+      "type": "text",
+      "id": "font_display",
+      "label": "Display font (Google Fonts)",
+      "default": "Cormorant Garamond"
+    },
+    {
+      "type": "header",
+      "content": "Purchase"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tax_note",
+      "label": "Show tax note",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "tax_note",
+      "label": "Tax note override"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stock",
+      "label": "Show stock status",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "stock_threshold",
+      "label": "Low stock threshold",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_gift_card_recipient",
+      "label": "Show gift card recipient form",
+      "default": false
+    },
+    {
+      "type": "page",
+      "id": "size_guide_page",
+      "label": "Size guide page"
+    },
+    {
+      "type": "text",
+      "id": "size_guide_label",
+      "label": "Size guide button label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_gallery",
+      "label": "Sticky gallery on desktop",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
   ],
   "blocks": [
     {
       "type": "spec",
       "name": "Spec",
       "settings": [
-        { "type": "text", "id": "label", "label": "Label", "default": "Fabric" },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Fabric"
+        },
         {
           "type": "select",
           "id": "source",
           "label": "Value source",
           "options": [
-            { "value": "fabric", "label": "Metafield: fabric" },
-            { "value": "material", "label": "Metafield: material" },
-            { "value": "model", "label": "Metafield: model / brand" },
-            { "value": "fits_like", "label": "Metafield: fits like" },
-            { "value": "tag_size", "label": "Metafield: tag size" },
-            { "value": "condition", "label": "Metafield: condition" },
-            { "value": "details", "label": "Metafield: details" },
-            { "value": "era", "label": "Metafield: era" },
-            { "value": "custom", "label": "Custom value" }
+            {
+              "value": "fabric",
+              "label": "Metafield: fabric"
+            },
+            {
+              "value": "material",
+              "label": "Metafield: material"
+            },
+            {
+              "value": "model",
+              "label": "Metafield: model / brand"
+            },
+            {
+              "value": "fits_like",
+              "label": "Metafield: fits like"
+            },
+            {
+              "value": "tag_size",
+              "label": "Metafield: tag size"
+            },
+            {
+              "value": "condition",
+              "label": "Metafield: condition"
+            },
+            {
+              "value": "details",
+              "label": "Metafield: details"
+            },
+            {
+              "value": "era",
+              "label": "Metafield: era"
+            },
+            {
+              "value": "custom",
+              "label": "Custom value"
+            }
           ],
           "default": "fabric"
         },
-        { "type": "text", "id": "custom_value", "label": "Custom / fallback value" }
+        {
+          "type": "text",
+          "id": "custom_value",
+          "label": "Custom / fallback value"
+        }
       ]
     },
     {
       "type": "accordion",
       "name": "Accordion",
       "settings": [
-        { "type": "text", "id": "heading", "label": "Heading", "default": "Details" },
-        { "type": "richtext", "id": "content", "label": "Content" },
-        { "type": "page", "id": "page", "label": "Or pull from a page" },
-        { "type": "checkbox", "id": "show_size_table", "label": "Show size table", "default": false },
-        { "type": "text", "id": "table_columns", "label": "Table columns (comma separated)", "default": "cm,XS,S,M,L,XL" },
-        { "type": "textarea", "id": "table_rows", "label": "Table rows (one per line, comma separated)", "default": "Length,72,74,76,78,80" },
-        { "type": "text", "id": "table_note", "label": "Table note", "default": "Tolerance ±1 cm. Measured flat." }
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Details"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Or pull from a page"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_size_table",
+          "label": "Show size table",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "table_columns",
+          "label": "Table columns (comma separated)",
+          "default": "cm,XS,S,M,L,XL"
+        },
+        {
+          "type": "textarea",
+          "id": "table_rows",
+          "label": "Table rows (one per line, comma separated)",
+          "default": "Length,72,74,76,78,80"
+        },
+        {
+          "type": "text",
+          "id": "table_note",
+          "label": "Table note",
+          "default": "Tolerance ±1 cm. Measured flat."
+        }
       ]
     },
-    { "type": "@app" }
+    {
+      "type": "delivery",
+      "name": "Delivery timeline",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Dates are calculated in the shopper's browser from today's date."
+        },
+        {
+          "type": "checkbox",
+          "id": "business_days",
+          "label": "Count business days only (skip Sat/Sun)",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "step1_label",
+          "label": "Step 1 label",
+          "default": "Ordered"
+        },
+        {
+          "type": "text",
+          "id": "step2_label",
+          "label": "Step 2 label",
+          "default": "Shipped"
+        },
+        {
+          "type": "range",
+          "id": "ship_min",
+          "label": "Ships after (min days)",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "default": 1
+        },
+        {
+          "type": "range",
+          "id": "ship_max",
+          "label": "Ships after (max days)",
+          "min": 0,
+          "max": 15,
+          "step": 1,
+          "default": 2
+        },
+        {
+          "type": "text",
+          "id": "step3_label",
+          "label": "Step 3 label",
+          "default": "Delivered"
+        },
+        {
+          "type": "range",
+          "id": "deliver_min",
+          "label": "Delivered after (min days)",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "default": 4
+        },
+        {
+          "type": "range",
+          "id": "deliver_max",
+          "label": "Delivered after (max days)",
+          "min": 1,
+          "max": 45,
+          "step": 1,
+          "default": 6
+        },
+        {
+          "type": "color",
+          "id": "dot_color",
+          "label": "Icon background",
+          "default": "#3a9024"
+        },
+        {
+          "type": "color",
+          "id": "line_color",
+          "label": "Line color",
+          "info": "Leave empty to keep the veyroze default."
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text color",
+          "info": "Leave empty to keep the veyroze default."
+        }
+      ]
+    },
+    {
+      "type": "@app"
+    }
   ],
   "presets": [
     {
       "name": "Product hero",
       "blocks": [
-        { "type": "spec", "settings": { "label": "Fabric", "source": "fabric" } },
-        { "type": "spec", "settings": { "label": "Fit", "source": "fits_like" } },
-        { "type": "spec", "settings": { "label": "Tag size", "source": "tag_size" } },
-        { "type": "spec", "settings": { "label": "Condition", "source": "condition" } },
-        { "type": "accordion", "settings": { "heading": "Fabric & construction", "content": "<p>Each piece is inspected and described honestly. See the specs above for fabric and condition.</p>" } },
-        { "type": "accordion", "settings": { "heading": "Fit & size guide", "show_size_table": true } },
-        { "type": "accordion", "settings": { "heading": "Shipping & returns", "content": "<p>Shipped with care. 14-day returns on unworn pieces.</p>" } },
-        { "type": "accordion", "settings": { "heading": "Care", "content": "<p>Follow the care label. When in doubt, hand wash cold and air dry.</p>" } }
+        {
+          "type": "spec",
+          "settings": {
+            "label": "Fabric",
+            "source": "fabric"
+          }
+        },
+        {
+          "type": "spec",
+          "settings": {
+            "label": "Fit",
+            "source": "fits_like"
+          }
+        },
+        {
+          "type": "spec",
+          "settings": {
+            "label": "Tag size",
+            "source": "tag_size"
+          }
+        },
+        {
+          "type": "spec",
+          "settings": {
+            "label": "Condition",
+            "source": "condition"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Fabric & construction",
+            "content": "<p>Each piece is inspected and described honestly. See the specs above for fabric and condition.</p>"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Fit & size guide",
+            "show_size_table": true
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Shipping & returns",
+            "content": "<p>Shipped with care. 14-day returns on unworn pieces.</p>"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Care",
+            "content": "<p>Follow the care label. When in doubt, hand wash cold and air dry.</p>"
+          }
+        }
       ]
     }
   ]

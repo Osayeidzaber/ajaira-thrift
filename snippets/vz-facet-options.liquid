@@ -1,0 +1,45 @@
+{% doc %}
+  Options for one storefront filter inside the veyroze filter bar/sheet.
+
+  @param {object} filter - a Shopify filter object
+{% enddoc %}
+{%- case filter.type -%}
+  {%- when 'price_range' -%}
+    <div class="vz-price">
+      <label class="vz-price__field">
+        <small>{{ 'vz_facets.from' | t }}</small>
+        <input
+          type="number"
+          name="{{ filter.min_value.param_name }}"
+          value="{{ filter.min_value.value | money_without_currency | remove: ',' }}"
+          placeholder="0"
+          min="0"
+        >
+      </label>
+      <label class="vz-price__field">
+        <small>{{ 'vz_facets.to' | t }}</small>
+        <input
+          type="number"
+          name="{{ filter.max_value.param_name }}"
+          value="{{ filter.max_value.value | money_without_currency | remove: ',' }}"
+          placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}"
+          min="0"
+        >
+      </label>
+    </div>
+  {%- else -%}
+    {%- for value in filter.values -%}
+      <label class="vz-op{% if value.count == 0 and value.active == false %} dis{% endif %}">
+        <input
+          type="checkbox"
+          name="{{ value.param_name }}"
+          value="{{ value.value }}"
+          {% if value.active %}
+            checked
+          {% endif %}
+        >
+        <span class="vz-bx"></span><span class="vz-lb">{{ value.label | escape }}</span
+        ><span class="vz-num">{{ value.count }}</span>
+      </label>
+    {%- endfor -%}
+{%- endcase -%}

@@ -1,157 +1,102 @@
-# Skeleton Theme Agent Guide
+# Ajaira Thrift — Agent Guide
 
-A minimal Shopify theme that defines page structure directly in Liquid. This
-file lists the repository conventions that aren't obvious from an individual
-file. The code is the source of truth.
+A Shopify theme for Ajaira Thrift, built on **Dawn 15.x** with **Vue 3 islands**.
+The goal is a **1:1 visual replica of https://www.veyroze.com**, with every piece
+of content editable in the theme editor / Shopify admin. The code is the source
+of truth. If this file and the code disagree, fix this file.
 
-## Non-negotiables when editing this theme
+> README.md still describes the original Skeleton theme. Ignore its
+> "no sections / no JSON templates" rules: this repo uses sections.
 
-- **No sections:** no `sections/` folder, no `{% section %}`/`{% sections %}`
-  tags, no JSON templates, no schema `presets`.
-- **No Liquid-embedded assets:** no `{% stylesheet %}`, no `{% javascript %}`.
-  All CSS and JavaScript live in `assets/`.
-- **Direct Liquid templates:** templates render page content from blocks,
-  snippets, and inline markup. Don't introduce a section for markup that is
-  used by only one page.
-- **Template-owned containers:** each `templates/*.liquid` file is the
-  composition root and wraps its page content in one or more `container`
-  blocks — one per vertical slice. `layout/theme.liquid` wraps only the
-  `header` and `footer` blocks in their own `container` blocks and renders
-  `content_for_layout` in a plain `<main>`; `layout/password.liquid` renders
-  `content_for_layout` in a plain `<main>`, and its template owns the
-  container. The exception is `gift_card.liquid` (`{% layout none %}`): it
-  manages its own document structure.
-- **Whitespace matters:** include whitespace between an HTML tag name and a
-  following Liquid delimiter (`<li {% ... %}`, not `<li{% ... %}`).
-- **Translated UI only:** every user-facing string uses a literal
-  `{{ 'key' | t }}` call.
-- **Shopify routes for storefront URLs:** use Liquid `routes.*` for every
-  storefront path; never hardcode `/cart`, `/search`, or `/collections`.
+## Stack
 
-## Page structure
+| Layer | Where | Notes |
+| --- | --- | --- |
+| Liquid (Dawn) | `layout/`, `sections/`, `snippets/`, `templates/*.json` | JSON templates + section groups (`header-group.json`, `footer-group.json`) |
+| Vue islands | `src/islands/*.vue`, registry `src/islands/index.ts` | Mounted by `src/mount.ts` |
+| Build | `vite.config.ts` → `assets/islands.js` + `assets/islands.css` | **Single bundle, `inlineDynamicImports: true`** — never split chunks (two Vue copies break refs) |
+| Tests | `vitest` (`src/__tests__`) | `src/cart.ts` is the typed Shopify AJAX cart service |
 
-```
-layout/theme.liquid    → {% block 'container' %} (header) + <main> content_for_layout + {% block 'container' %} (footer)
-layout/password.liquid → <main> content_for_layout
-templates/*.liquid     → {% block 'container' %} → blocks / snippets / inline HTML
-```
+Commands: `npm run build` · `npm run watch` · `npm test` · `npm run typecheck` ·
+`shopify theme dev` · `shopify theme check`.
 
-Neither layout wraps `content_for_layout` in a `container` block; each renders
-it in a plain `<main>`. In `theme.liquid` the `header` and `footer` blocks each
-get their own `container` block. Every template is the composition root and
-wraps its page content in one or more `container` blocks — a template may hold
-any number of containers, one per vertical slice.
+`assets/islands.js` / `islands.css` are **build output**. Edit `src/` and run the
+build again. Never hand-edit those two files.
 
-## The block tag
+## Non-negotiables
 
-```liquid
-{% block 'name', named_parameter: value %}
-  Body content
-{% endblock %}
-```
+- **Match veyroze first.** Before changing a section, read the matching markup in
+  `reference/veyroze/*.html` (or the live site). Copy its class names, spacing,
+  type sizes and colours. Pull exact CSS from the live site with
+  `document.styleSheets`, because the captures leave out section-inline CSS.
+- **Everything editable.** No hard-coded products, collections, copy, images or
+  links. Use section/block settings, menus, metafields, or page content.
+  Hard-coded text is only acceptable as a schema `default`/preset.
+- **Translated UI strings.** Fixed UI labels (buttons, aria labels) use
+  `{{ 'key' | t }}` with keys in `locales/en.default.json`. Merchant copy
+  comes from settings.
+- **Shopify routes.** Use `routes.*` and never hardcode `/cart`, `/search`,
+  `/collections`.
+- **Whitespace:** `<li {% ... %}`, not `<li{% ... %}`.
+- **Keep `{{ block.shopify_attributes }}`** on every block's root element.
+- **Theme Check stays clean.** Fix the Liquid. Don't add exceptions.
 
-The tag works like `{% render %}`, but renders `blocks/name.liquid`. Every
-named parameter is available as a plain variable inside the block. If its name
-matches a setting declared in the block's schema, it also sets
-`block.settings.<id>`. A parameter with no matching schema setting is only a
-variable.
+## Section conventions (custom veyroze sections)
 
-For example, the container schema declares `alignment`, but not `tag`:
+- One file per section in `sections/`, with a `{% schema %}` that has `presets`
+  so it can be added in the editor.
+- CSS for custom sections goes in a `{% stylesheet %}` tag in the section (the
+  existing convention). Use the tokens from `snippets/css-variables.liquid`
+  (`--color-bg`, `--color-panel`, `--color-ink`, `--color-mute`, `--color-line`,
+  `--color-wine`, `--color-cta`, `--radius`, `--container`, `--spacing`).
+- Small vanilla behaviour (toggles) goes in a `{% javascript %}` tag or in
+  `assets/*.js`. Stateful/interactive UI is a Vue island.
+- Third-party apps (Judge.me reviews, etc.) go in through `@app` blocks
+  (`sections/apps.liquid`). Never paste vendor markup.
+
+## Vue islands
 
 ```liquid
-{% block 'container', alignment: 'center', tag: 'div' %}
-  {{ page.content }}
-{% endblock %}
+<div data-island="carousel" data-island-id="{{ section.id }}"></div>
+{% render 'island-props', id: section.id, props: some_object %}
 ```
 
-Inside the container, both `alignment` and `block.settings.alignment` return
-`center`; `tag` returns `div` and does not create `block.settings.tag`. Continue
-to use `block.settings.<id>` for schema-backed controls in block implementations.
-`class` is an ordinary parameter with no special platform behavior.
+`mountIslands()` finds each `[data-island]`, reads the matching
+`<script type="application/json" data-island-props="ID">`, lazy-loads the
+component from `src/islands/index.ts` and mounts it. To add an island:
+create `src/islands/name.vue`, register it in `index.ts`, then `npm run build`.
+Islands must be props-driven (no fetched/hard-coded catalog data), except
+`cart-drawer`, which talks to the Cart AJAX API through `src/cart.ts`.
 
-`{% doc %}` documents parameters; it does not declare, validate, or bind them.
-A parameter documented only in LiquidDoc is read as a plain variable and does
-not become a schema setting. Use `{% schema %}` for merchant-editable controls.
-Inline literal arrays are supported in `{% block %}` arguments, as shown by
-`tips` in `templates/index.liquid`; `{% render %}` and `{% partial %}` do not
-accept inline literal arrays.
+Current islands: `carousel`, `gallery`, `product-gallery`, `condition-scale`,
+`cart-drawer`.
 
-The content between `{% block %}` and `{% endblock %}` is available inside the
-block as `{{ content }}`. Always include the closing `{% endblock %}` tag,
-even when the call has no body content. The body is rendered in the caller's
-scope; it cannot read the callee's settings or local assignments. Prefer body
-content for display-only text and markup instead of adding `title`, `body`, or
-`heading` parameters. Add parameters when the block needs data or must change
-how it renders.
+## Page map (veyroze → ours)
 
-Executable `{% block %}` tags are allowed only in `layout/` and `templates/`.
-Keep child calls in the caller-owned body, never in block or snippet
-implementations. LiquidDoc examples may show block calls, but must be authored
-in a layout or template when used.
+| veyroze section | Our section | Template |
+| --- | --- | --- |
+| header + announcement | `header`, `announcement-bar` | `header-group.json` |
+| bild banner | `image-banner` | `index.json` |
+| trust badges | `trust-badges` | index, product |
+| featured collection carousel | `collections-carousel` (carousel island) | index |
+| product launch ×2 | `product-launch` | index |
+| FAQ (+ shipping calculator card) | `faq` | index |
+| Judge.me reviews carousel | `apps` (`@app` block) | index |
+| Inner circle + footer | `inner-circle`, `footer` | `footer-group.json` |
+| collection tabs + grid (3×3) | `collection-tabs`, `main-collection-product-grid` | `collection.json` |
+| product hero (vzh) + specs/accordions | `product-hero`, `related-products` | `product.json` |
 
-## The partial tag
+Thrift product data lives in `product.metafields.thrift.*`
+(see `docs/thrift-metafields.md`).
 
-```liquid
-{% partial 'name' %}...{% endpartial %}
-```
+## Reference material
 
-Partials name inline regions of server-rendered HTML. JavaScript can request a
-region by name and replace the matching region in the DOM. The name in the
-Liquid template and the name in JavaScript must match.
+- `reference/veyroze/` — HTML, CSS and full-page screenshots of home,
+  collection and product (not tracked by git; used for comparison only).
+- `docs/superpowers/specs|plans/` — the original design spec and build plan.
+- `docs/veyroze-parity.md` — the current gap list. Update it when you close a gap.
 
-The `liquid-tips` block is the theme's canonical partial-refresh example: its
-tip sentence lives in a `{% partial 'liquid-tip' %}` region, and
-`assets/liquid-tips.js` calls `partials.refresh("liquid-tip")` to swap in a
-fresh server-rendered tip. Import `partials` from
-`@shopify/partial-rendering`. Use `refresh()` to fetch and apply regions from
-the current page URL, or `fetch()` followed by `apply()` when you need control
-over the request URL, method, body, or when the update appears. Fetch related
-regions together so one response keeps them synchronized. Build request URLs
-from the current page URL or Liquid `routes.*` to preserve locale and market
-routing.
+## Definition of done for a change
 
-`apply()` preserves focus, text selection, form values, and scroll position.
-It also preserves input, textarea, and select values when returned markup
-changes them: explicitly update server-adjusted controls after applying the
-partial (for example, a cart quantity corrected by inventory validation).
-Cancel stale requests with an `AbortSignal`, use `aria-busy` while loading,
-announce meaningful results in a live region, and restore transient DOM state
-such as open disclosures. Read URL state from `window.location.search` so
-shared links and browser navigation produce the same result.
-
-The `{% partial %}` tag renders on the storefront only when
-`shop.features.agentic_editor_enabled?` is on and the page is served by
-StorefrontRenderer; otherwise the storefront raises `Unknown tag 'partial'`.
-
-## Blocks
-
-Every block must:
-
-- Start with a `{% doc %}` header with typed params.
-- Include a `{% schema %}` tag without `presets`.
-- Document each named parameter that the block reads, such as `tag` or `class`.
-- Document `content` in LiquidDoc and indicate whether it is required or
-  optional: `@param {string} content` or `@param {string} [content]`. For
-  self-contained blocks, describe that callers must leave the body empty.
-- Render `{{ content }}` where caller-supplied body content belongs.
-  Self-contained blocks may omit the outlet and use an empty caller body.
-- Keep executable child block calls in layouts or templates.
-- Keep `{{ block.shopify_attributes }}` on the root element so the theme editor
-  can identify the block.
-
-Skeleton keeps `.theme-check.yml` as a pristine
-`extends: theme-check:recommended` with **zero overrides**. Fix Theme Check
-errors in the Liquid instead of adding configuration exceptions.
-
-Current blocks: `container`, `hello-world`, `header`, `footer`,
-`liquid-tips`.
-
-## Theme map
-
-```
-blocks/               container, hello-world, header, footer, liquid-tips
-templates/            *.liquid page structure (no JSON templates)
-layout/               theme.liquid document shell: header/footer container blocks + <main>
-snippets/             internal utilities (css-variables, image, meta-tags)
-assets/               CSS, JavaScript, and other static assets
-```
+`npm test && npm run typecheck && npm run build && shopify theme check`, then
+compare the page with veyroze at 1440px and 375px.

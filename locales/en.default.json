@@ -299,7 +299,6 @@
       "announcement": "Announcement",
       "announcement_bar": "Announcement bar"
     },
-
     "header": {
       "announcement": "Announcement",
       "menu": "Menu",
@@ -553,5 +552,18 @@
       "send_on": "YYYY-MM-DD",
       "send_on_label": "Send on (optional)"
     }
+  },
+  "vz_facets": {
+    "lead": "Filter —",
+    "size": "Size",
+    "sort": "Sort",
+    "clear_all": "Clear all",
+    "clear": "Clear",
+    "apply": "Apply",
+    "filter_and_sort": "Filter & Sort",
+    "count_html": "<b>{{ count }}</b> products",
+    "count_plain": "{{ count }} products",
+    "from": "From",
+    "to": "To"
   }
 }

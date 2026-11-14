@@ -1,0 +1,340 @@
+{%- capture chevron -%}
+  <svg class="vft__dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6,9 12,15 18,9"/></svg>
+{%- endcapture -%}
+{%- capture withdraw_link -%}
+  {%- if section.settings.withdraw_label != blank and section.settings.withdraw_url != blank -%}
+    <a href="{{ section.settings.withdraw_url }}" class="vft__withdraw">{{ section.settings.withdraw_label | escape }}</a>
+  {%- endif -%}
+{%- endcapture -%}
+<footer class="vft color-{{ section.settings.color_scheme }}" id="vft-{{ section.id }}" style="{% if section.settings.border_color != blank %}--vft-border: {{ section.settings.border_color }};{% endif %} {% if section.settings.padding_top != blank %}--vft-pt: {{ section.settings.padding_top }}px;{% endif %} {% if section.settings.padding_bottom != blank %}--vft-pb: {{ section.settings.padding_bottom }}px;{% endif %}">
+  <div class="vft__top">
+    <div class="vft__brand">
+      <a href="{{ routes.root_url }}" class="vft__logo-link">
+        {%- if section.settings.logo != blank -%}
+          {{
+            section.settings.logo
+            | image_url: width: 300
+            | image_tag: class: 'vft__logo-img', loading: 'lazy', alt: shop.name, widths: '150, 300'
+          }}
+        {%- else -%}
+          <span class="vft__logo-text">{{ shop.name | escape }}</span>
+        {%- endif -%}
+      </a>
+      {%- if section.settings.tagline != blank -%}
+        <p class="vft__tagline">{{ section.settings.tagline | escape }}</p>
+      {%- endif -%}
+      <div class="vft__socials">
+        {%- if settings.social_instagram_link != blank -%}
+          <a href="{{ settings.social_instagram_link }}" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/></svg>
+          </a>
+        {%- endif -%}
+        {%- if settings.social_tiktok_link != blank -%}
+          <a href="{{ settings.social_tiktok_link }}" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.whatsapp_url != blank -%}
+          <a href="{{ section.settings.whatsapp_url }}" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        {%- endif -%}
+      </div>
+      <div class="vft__withdraw-wrap vft__withdraw-wrap--mobile">{{ withdraw_link }}</div>
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- assign menu = block.settings.menu -%}
+      <div class="vft__col" {{ block.shopify_attributes }}>
+        <h2 class="vft__col-title vft__col-title--desktop">{{ block.settings.heading | default: menu.title | escape }}</h2>
+        <details class="vft__dropdown">
+          <summary class="vft__dropdown-trigger">
+            <span>{{ block.settings.heading | default: menu.title | escape }}</span>
+            {{ chevron }}
+          </summary>
+          <ul class="vft__col-list">
+            {%- for link in menu.links -%}
+              <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </details>
+        <ul class="vft__col-list vft__col-list--desktop">
+          {%- for link in menu.links -%}
+            <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endfor -%}
+
+    <div class="vft__col vft__col--payment">
+      {%- if section.settings.show_payment -%}
+        <h2 class="vft__col-title vft__col-title--desktop">{{ section.settings.payment_heading | escape }}</h2>
+        <div class="vft__payment-icons">
+          {%- for type in shop.enabled_payment_types -%}
+            {{ type | payment_type_svg_tag: class: 'vft__pay-icon' }}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+      <div class="vft__withdraw-wrap vft__withdraw-wrap--desktop">{{ withdraw_link }}</div>
+    </div>
+  </div>
+
+  <div class="vft__bottom">
+    <span class="vft__copy">© {{ section.settings.copyright | default: shop.name | upcase | escape }} {{ 'now' | date: '%Y' }}</span>
+    <div class="vft__locales">
+      {%- if section.settings.show_country and localization.available_countries.size > 1 -%}
+        {%- form 'localization', class: 'vft__locale-form', id: 'VftCountryForm' -%}
+          <div class="vft__select-wrap">
+            <select name="country_code" class="vft__select" aria-label="{{ 'localization.country_label' | t }}" data-vft-autosubmit>
+              {%- for country in localization.available_countries -%}
+                <option
+                  value="{{ country.iso_code }}"
+                  {% if country.iso_code == localization.country.iso_code %}
+                    selected
+                  {% endif %}
+                >
+                  {{ country.name }} | {{ country.currency.iso_code }} {{ country.currency.symbol }}
+                </option>
+              {%- endfor -%}
+            </select>
+            <svg class="vft__chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6,9 12,15 18,9"/></svg>
+          </div>
+        {%- endform -%}
+      {%- endif -%}
+      {%- if section.settings.show_language and localization.available_languages.size > 1 -%}
+        {%- form 'localization', class: 'vft__locale-form', id: 'VftLanguageForm' -%}
+          <div class="vft__select-wrap">
+            <select name="locale_code" class="vft__select" aria-label="{{ 'localization.language_label' | t }}" data-vft-autosubmit>
+              {%- for language in localization.available_languages -%}
+                <option
+                  value="{{ language.iso_code }}"
+                  {% if language.iso_code == localization.language.iso_code %}
+                    selected
+                  {% endif %}
+                >
+                  {{ language.endonym_name | capitalize }}
+                </option>
+              {%- endfor -%}
+            </select>
+            <svg class="vft__chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6,9 12,15 18,9"/></svg>
+          </div>
+        {%- endform -%}
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% stylesheet %}
+  /* Copied from veyroze.com footer ("vft"). */
+  .vft { border-top: 1px solid var(--vft-border, rgba(255, 255, 255, 0.08)); padding: var(--vft-pt, 52px) 48px var(--vft-pb, 18px); }
+  .vft__top { display: grid; grid-template-columns: 190px repeat(2, 1fr) 150px; gap: 36px 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255, 255, 255, 0.07); margin-bottom: 16px; align-items: start; }
+  .vft a { color: inherit; }
+  .vft__logo-link { display: inline-block; text-decoration: none; margin-bottom: 14px; }
+  .vft__logo-img { max-width: 150px; height: auto; display: block; filter: brightness(0) invert(1); }
+  .vft__logo-text { display: block; font-family: var(--font-heading-family, 'Cormorant Garamond', Georgia, serif); font-size: 18px; letter-spacing: 0.22em; font-weight: 400; color: inherit; text-transform: uppercase; }
+  .vft__tagline { font-family: var(--font-body-family, inherit); font-size: 11px; opacity: 0.4; line-height: 1.75; margin: 0 0 20px; font-weight: 300; white-space: pre-line; }
+  .vft__socials { display: flex; gap: 12px; align-items: center; }
+  .vft__socials a { color: inherit; opacity: 0.38; text-decoration: none; display: flex; align-items: center; transition: opacity 0.2s; }
+  .vft__socials a:hover { opacity: 0.9; }
+  .vft__withdraw { font-family: var(--font-body-family, inherit); font-size: 12px; letter-spacing: 0.03em; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; color: inherit; opacity: 0.85; text-decoration-thickness: 1px; transition: opacity 0.2s; display: inline-block; }
+  .vft__withdraw:hover { opacity: 1; }
+  .vft__withdraw-wrap--mobile { display: none; }
+  .vft__withdraw-wrap--desktop .vft__withdraw { margin-top: 16px; }
+  .vft__col-title { font-family: var(--font-body-family, inherit); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; margin: 0 0 16px; color: rgb(var(--color-foreground)); }
+  .vft__col-list { list-style: none; padding: 0; margin: 0; }
+  .vft__col-list li { margin-bottom: 9px; }
+  .vft__col-list a { font-family: var(--font-body-family, inherit); font-size: 12px; opacity: 0.4; text-decoration: none; color: inherit; letter-spacing: 0.03em; font-weight: 300; transition: opacity 0.2s; }
+  .vft__col-list a:hover { opacity: 0.85; }
+  .vft__payment-icons { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .vft__pay-icon { height: 20px; width: auto; border-radius: 3px; opacity: 0.6; }
+  .vft__bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .vft__copy { font-family: var(--font-body-family, inherit); font-size: 11px; opacity: 0.28; letter-spacing: 0.04em; font-weight: 300; }
+  .vft__locales { display: flex; align-items: center; gap: 8px; }
+  .vft__select-wrap { position: relative; display: flex; align-items: center; }
+  .vft__select { appearance: none; -webkit-appearance: none; background: transparent; border: 1px solid rgba(255, 255, 255, 0.13); border-radius: 4px; color: inherit; font-family: var(--font-body-family, inherit); font-size: 11px; letter-spacing: 0.04em; padding: 6px 26px 6px 10px; cursor: pointer; opacity: 0.5; transition: opacity 0.2s, border-color 0.2s; font-weight: 300; }
+  .vft__select:hover, .vft__select:focus-visible { opacity: 0.9; border-color: rgba(255, 255, 255, 0.3); }
+  .vft__select option { background: #1a1818; color: #f0ece4; }
+  .vft__chevron { position: absolute; right: 8px; pointer-events: none; opacity: 0.4; }
+  .vft__dropdown { display: none; }
+  @media screen and (max-width: 1000px) and (min-width: 601px) {
+    .vft { padding: 44px 32px 16px; }
+    .vft__top { grid-template-columns: 1fr 1fr 1fr; gap: 24px 28px; }
+    .vft__brand, .vft__col--payment { grid-column: 1 / -1; }
+  }
+  @media screen and (max-width: 600px) {
+    .vft { padding: 32px 16px 12px; }
+    .vft__top { grid-template-columns: auto 1fr; gap: 0; padding-bottom: 20px; margin-bottom: 12px; }
+    .vft__brand { grid-column: 1; grid-row: 1 / span 99; padding-right: 16px; border-right: 1px solid rgba(255, 255, 255, 0.07); min-width: 90px; max-width: 120px; }
+    .vft__logo-img { max-width: 80px; }
+    .vft__tagline { display: none; }
+    .vft__socials { gap: 10px; margin-top: 12px; }
+    .vft__socials a { opacity: 0.5; }
+    .vft__withdraw-wrap--desktop { display: none; }
+    .vft__withdraw-wrap--mobile { display: block; }
+    .vft__withdraw-wrap--mobile .vft__withdraw { margin-top: 14px; font-size: 11px; line-height: 1.4; }
+    .vft__col { grid-column: 2; border-bottom: 1px solid rgba(255, 255, 255, 0.06); margin-left: 16px; }
+    .vft__col--payment { grid-column: 2; padding: 14px 0 0 16px; margin-left: 0; border-bottom: none; }
+    .vft__col-title--desktop, .vft__col-list--desktop { display: none; }
+    .vft__dropdown { display: block; }
+    .vft__dropdown-trigger { display: flex; align-items: center; justify-content: space-between; list-style: none; cursor: pointer; padding: 12px 0; font-family: var(--font-body-family, inherit); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; opacity: 0.85; user-select: none; }
+    .vft__dropdown-trigger::-webkit-details-marker { display: none; }
+    .vft__dropdown-chevron { transition: transform 0.2s ease; flex-shrink: 0; opacity: 0.45; }
+    .vft__dropdown[open] .vft__dropdown-chevron { transform: rotate(180deg); }
+    .vft__dropdown .vft__col-list { padding-bottom: 12px; }
+    .vft__dropdown .vft__col-list li { margin-bottom: 8px; }
+    .vft__dropdown .vft__col-list a { font-size: 11px; }
+    .vft__bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .vft__locales { flex-wrap: wrap; gap: 6px; }
+    .vft__select { font-size: 10px; padding: 5px 22px 5px 9px; }
+    .vft__copy { font-size: 10px; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.addEventListener('change', (event) => {
+    if (event.target.matches('[data-vft-autosubmit]')) event.target.form.submit();
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "veyroze footer",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo",
+      "info": "Shown white (inverted). Falls back to the shop name."
+    },
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Tagline"
+    },
+    {
+      "type": "url",
+      "id": "whatsapp_url",
+      "label": "WhatsApp link",
+      "info": "Instagram and TikTok come from Theme settings → Social media."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment",
+      "label": "Show payment icons",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "payment_heading",
+      "label": "Payment heading",
+      "default": "Payment Methods"
+    },
+    {
+      "type": "text",
+      "id": "withdraw_label",
+      "label": "Withdrawal link label",
+      "default": "Withdraw from contract here"
+    },
+    {
+      "type": "url",
+      "id": "withdraw_url",
+      "label": "Withdrawal link"
+    },
+    {
+      "type": "text",
+      "id": "copyright",
+      "label": "Copyright name",
+      "info": "Defaults to the shop name"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country",
+      "label": "Show country/currency selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language",
+      "label": "Show language selector",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Divider color",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu column",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "info": "Defaults to the menu title"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "footer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "veyroze footer",
+      "blocks": [
+        {
+          "type": "menu",
+          "settings": {
+            "heading": "Customer Service"
+          }
+        },
+        {
+          "type": "menu",
+          "settings": {
+            "heading": "Information"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

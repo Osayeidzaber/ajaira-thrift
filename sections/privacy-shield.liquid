@@ -1,0 +1,141 @@
+{%- if section.settings.enabled -%}
+  <button
+    type="button"
+    id="veyroze-privacy-shield"
+    class="veyroze-shield" style="{% if section.settings.bg_color != blank %}--shield-bg: {{ section.settings.bg_color }};{% endif %} {% if section.settings.icon_color != blank %}--shield-fg: {{ section.settings.icon_color }};{% endif %} {% if section.settings.border_color != blank %}--shield-border: {{ section.settings.border_color }};{% endif %}"
+    aria-label="{{ section.settings.aria_label | escape }}"
+    data-tooltip="{{ section.settings.tooltip | escape }}"
+    data-fallback-url="{{ section.settings.fallback_url }}"
+  >
+    <span class="veyroze-shield__ripple"></span>
+    <svg class="veyroze-shield__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M12 2L3 6.5V12C3 16.418 6.582 20.5 12 22C17.418 20.5 21 16.418 21 12V6.5L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M12 5L5.5 8.25V12C5.5 15.314 8.186 18.5 12 19.75C15.814 18.5 18.5 15.314 18.5 12V8.25L12 5Z" stroke="currentColor" stroke-width="0.75" stroke-linejoin="round" opacity="0.4"/>
+      <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+{%- endif -%}
+
+{% stylesheet %}
+  /* Copied from veyroze.com "privacy shield". */
+  .veyroze-shield {
+    --shield-size: 44px; --shield-offset-x: 20px; --shield-offset-y: 20px;
+    --shield-transition: 0.28s cubic-bezier(0.34, 1.56, 0.64, 1); --shield-transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    position: fixed; bottom: calc(var(--shield-offset-y) + env(safe-area-inset-bottom, 0px)); left: var(--shield-offset-x); z-index: 9999;
+    width: var(--shield-size); height: var(--shield-size); padding: 0; border-radius: 50%;
+    background: var(--shield-bg, rgba(8, 8, 8, 0.88)); border: 1.5px solid var(--shield-border, rgba(255, 255, 255, 0.45));
+    backdrop-filter: blur(12px) saturate(180%); -webkit-backdrop-filter: blur(12px) saturate(180%);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--shield-fg, rgba(255, 255, 255, 0.8));
+    transition: background var(--shield-transition-fast), border-color var(--shield-transition-fast), box-shadow var(--shield-transition-fast), color var(--shield-transition-fast), transform var(--shield-transition);
+    outline: none; user-select: none; -webkit-tap-highlight-color: transparent; will-change: transform;
+    animation: shieldSlideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s both;
+  }
+  @keyframes shieldSlideIn { from { opacity: 0; transform: translateY(16px) scale(0.85); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .veyroze-shield:hover { background: rgba(15, 15, 15, 0.98); border-color: rgba(255, 255, 255, 0.75); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3); color: #fff; transform: scale(1.08) translateY(-2px); }
+  .veyroze-shield:active { transform: scale(0.94); transition: transform 0.1s ease; }
+  .veyroze-shield:focus-visible { outline: 1.5px solid rgba(255, 255, 255, 0.6); outline-offset: 3px; }
+  .veyroze-shield__icon { width: 20px; height: 20px; display: block; flex-shrink: 0; transition: transform var(--shield-transition); }
+  .veyroze-shield:hover .veyroze-shield__icon { transform: scale(1.05); }
+  .veyroze-shield__ripple { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; }
+  .veyroze-shield.is-clicked .veyroze-shield__ripple { animation: shieldRipple 0.5s ease-out forwards; }
+  @keyframes shieldRipple { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.25); } 100% { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0); } }
+  .veyroze-shield::after {
+    content: attr(data-tooltip); position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%) translateX(-4px);
+    background: rgba(10, 10, 10, 0.92); backdrop-filter: blur(8px); color: rgba(255, 255, 255, 0.85);
+    font-family: -apple-system, 'Helvetica Neue', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    white-space: nowrap; padding: 5px 10px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.08); pointer-events: none; opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .veyroze-shield:hover::after { opacity: 1; transform: translateY(-50%) translateX(0); transition-delay: 0.3s; }
+  @media (max-width: 749px) {
+    .veyroze-shield { --shield-size: 40px; --shield-offset-x: 16px; --shield-offset-y: 16px; }
+    .veyroze-shield::after { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .veyroze-shield { animation: none; } }
+{% endstylesheet %}
+
+{% javascript %}
+  document.addEventListener('click', (event) => {
+    const shield = event.target.closest('#veyroze-privacy-shield');
+    if (!shield) return;
+    shield.classList.remove('is-clicked');
+    void shield.offsetWidth;
+    shield.classList.add('is-clicked');
+    const open = () => {
+      if (window.privacyBanner && typeof window.privacyBanner.showPreferences === 'function') {
+        window.privacyBanner.showPreferences();
+        return true;
+      }
+      return false;
+    };
+    if (open()) return;
+    if (window.Shopify && typeof window.Shopify.loadFeatures === 'function') {
+      window.Shopify.loadFeatures([{ name: 'consent-tracking-api', version: '0.1' }, { name: 'privacy-banner', version: '0.1' }], () => {
+        if (!open() && shield.dataset.fallbackUrl) window.location.href = shield.dataset.fallbackUrl;
+      });
+    } else if (shield.dataset.fallbackUrl) {
+      window.location.href = shield.dataset.fallbackUrl;
+    }
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Privacy button",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Show floating privacy button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "tooltip",
+      "label": "Tooltip",
+      "default": "Privacy Settings"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "Accessible label",
+      "default": "Privacy & cookie settings"
+    },
+    {
+      "type": "url",
+      "id": "fallback_url",
+      "label": "Fallback link",
+      "info": "Opened if Shopify's cookie banner isn't available, e.g. your privacy policy"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Button background",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "info": "Leave empty to keep the veyroze default."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Privacy button"
+    }
+  ]
+}
+{% endschema %}

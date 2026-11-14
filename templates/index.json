@@ -1,46 +1,193 @@
 {
   "sections": {
     "banner": {
-      "type": "image-banner",
+      "type": "veyroze-banner",
       "blocks": {
-        "buttons": { "type": "buttons", "settings": { "button_label_1": "Shop all", "button_link_1": "shopify://collections/all", "button_style_secondary_1": true } }
+        "button": {
+          "type": "button",
+          "settings": {
+            "label": "Shop all",
+            "link": "shopify://collections/all",
+            "style": "outline"
+          }
+        }
       },
-      "block_order": ["buttons"],
-      "settings": { "color_scheme": "scheme-1", "show_text_box": false, "desktop_content_position": "middle-center", "image_height": "large" }
+      "block_order": [
+        "button"
+      ],
+      "settings": {}
     },
     "trust": {
       "type": "trust-badges",
       "blocks": {
-        "b1": { "type": "badge", "settings": { "icon": "globe", "text": "Worldwide Shipping" } },
-        "b2": { "type": "badge", "settings": { "icon": "return", "text": "14 Days Return Policy" } },
-        "b3": { "type": "badge", "settings": { "icon": "lock", "text": "Secure Checkout" } }
+        "b1": {
+          "type": "badge",
+          "settings": {
+            "icon": "globe",
+            "text": "Worldwide Shipping"
+          }
+        },
+        "b2": {
+          "type": "badge",
+          "settings": {
+            "icon": "return",
+            "text": "14 Days Return Policy"
+          }
+        },
+        "b3": {
+          "type": "badge",
+          "settings": {
+            "icon": "lock",
+            "text": "Secure Checkout"
+          }
+        }
       },
-      "block_order": ["b1", "b2", "b3"],
-      "settings": { "color_scheme": "scheme-1" }
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1"
+      }
     },
     "collections": {
       "type": "collections-carousel",
-      "settings": { "heading": "Collections", "color_scheme": "scheme-1" }
+      "settings": {
+        "heading": "Collections",
+        "color_scheme": "scheme-1"
+      }
     },
     "launch1": {
       "type": "product-launch",
-      "settings": { "eyebrow": "New — Vintage Reworks", "cta_label": "Discover", "show_price": true, "color_scheme": "scheme-1" }
+      "blocks": {
+        "f0": {
+          "type": "feature",
+          "settings": {
+            "text": "One of one"
+          }
+        },
+        "f1": {
+          "type": "feature",
+          "settings": {
+            "text": "Hand-picked vintage"
+          }
+        }
+      },
+      "block_order": [
+        "f0",
+        "f1"
+      ],
+      "settings": {
+        "badge": "New",
+        "media_position": "right",
+        "eyebrow": "New — Vintage Reworks",
+        "description": "<p>One-of-one reworked vintage, hand-picked and restored — fitted where it matters, with the character only real wear can give.</p>",
+        "cta_label": "Discover the piece",
+        "show_price": true,
+        "padding_top": 36,
+        "padding_bottom": 20,
+        "max_images": 5,
+        "color_scheme": "scheme-1"
+      }
     },
     "launch2": {
       "type": "product-launch",
-      "settings": { "eyebrow": "New — Vintage Original", "cta_label": "Discover", "show_price": true, "color_scheme": "scheme-1" }
+      "blocks": {
+        "f0": {
+          "type": "feature",
+          "settings": {
+            "text": "Inspected & measured"
+          }
+        },
+        "f1": {
+          "type": "feature",
+          "settings": {
+            "text": "Ships from Bangladesh"
+          }
+        }
+      },
+      "block_order": [
+        "f0",
+        "f1"
+      ],
+      "settings": {
+        "badge": "New",
+        "media_position": "left",
+        "eyebrow": "New — Vintage Original",
+        "description": "<p>Original vintage, inspected and measured flat — every flaw described honestly, every piece built to be worn for years.</p>",
+        "cta_label": "Discover the piece",
+        "show_price": true,
+        "padding_top": 48,
+        "padding_bottom": 64,
+        "max_images": 5,
+        "color_scheme": "scheme-1"
+      }
     },
     "faq": {
       "type": "faq",
       "blocks": {
-        "q1": { "type": "item", "settings": { "question": "When will my order arrive?", "answer": "<p>Orders ship within 1-2 business days.</p>" } },
-        "q2": { "type": "item", "settings": { "question": "How can I return my order?", "answer": "<p>You have 14 days to return your order.</p>" } },
-        "q3": { "type": "item", "settings": { "question": "How do I find the right size?", "answer": "<p>See the size chart on each product.</p>" } },
-        "q4": { "type": "item", "settings": { "question": "Do you ship worldwide?", "answer": "<p>Yes, we ship worldwide.</p>" } }
+        "q1": {
+          "type": "item",
+          "settings": {
+            "question": "When will my order arrive?",
+            "answer": "<p>All orders will be shipped within the next 2 business days.</p><p><strong>Shipping times</strong><br/><em>Bangladesh: 2-4 business days<br/>Worldwide: 7-21 business days</em></p>"
+          }
+        },
+        "q2": {
+          "type": "item",
+          "settings": {
+            "question": "How can I return my order?",
+            "answer": "<p>You have a 14-day right of return after receiving your order.</p>"
+          }
+        },
+        "q3": {
+          "type": "item",
+          "settings": {
+            "question": "How do I find the right size?",
+            "answer": "<p>For jeans and jackets you'll always find a \"<strong>Measurements</strong>\" section in the product description with exact sizing details.</p><p>For the best fit, compare these measurements with a similar item from your own wardrobe.</p><p>For shoes or accessories you can simply choose your usual size.</p>"
+          }
+        },
+        "q4": {
+          "type": "item",
+          "settings": {
+            "question": "Do you ship worldwide?",
+            "answer": "<p>Yes — we ship <strong>worldwide</strong> and offer <strong>tracked shipping on all orders</strong>.<br/>All available shipping destinations can be viewed directly at checkout.</p>"
+          }
+        },
+        "q5": {
+          "type": "page",
+          "settings": {
+            "question": "Shipping rates to your country"
+          }
+        }
       },
-      "block_order": ["q1", "q2", "q3", "q4"],
-      "settings": { "heading": "FAQ", "color_scheme": "scheme-1" }
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5"
+      ],
+      "settings": {
+        "heading": "FAQ",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "reviews": {
+      "type": "apps",
+      "settings": {
+        "include_margins": true
+      }
     }
   },
-  "order": ["banner", "trust", "collections", "launch1", "launch2", "faq"]
+  "order": [
+    "banner",
+    "trust",
+    "collections",
+    "launch1",
+    "launch2",
+    "faq",
+    "reviews"
+  ]
 }

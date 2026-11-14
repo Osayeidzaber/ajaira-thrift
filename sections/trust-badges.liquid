@@ -1,4 +1,4 @@
-<div class="trust-badges color-{{ section.settings.color_scheme }}">
+<div class="trust-badges color-{{ section.settings.color_scheme }}" style="{% if section.settings.text_color != blank %}--tb-text: {{ section.settings.text_color }};{% endif %} {% if section.settings.border_color != blank %}--tb-border: {{ section.settings.border_color }};{% endif %} {% if section.settings.divider_color != blank %}--tb-divider: {{ section.settings.divider_color }};{% endif %} {% if section.settings.padding_top != blank %}--tb-pt: {{ section.settings.padding_top }}px;{% endif %} {% if section.settings.padding_bottom != blank %}--tb-pb: {{ section.settings.padding_bottom }}px;{% endif %}">
   <div class="trust-badges__inner">
     {%- for block in section.blocks -%}
       <div class="trust-badges__item" {{ block.shopify_attributes }}>
@@ -35,10 +35,10 @@
 {% stylesheet %}
   .trust-badges {
     background: transparent;
-    padding: 16px 16px;
+    padding: var(--tb-pt, 16px) 16px var(--tb-pb, 16px);
     width: 100%;
-    border-top: 1px solid rgba(128, 128, 128, 0.15);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+    border-top: 1px solid var(--tb-border, rgba(128, 128, 128, 0.15));
+    border-bottom: 1px solid var(--tb-border, rgba(128, 128, 128, 0.15));
     box-sizing: border-box;
   }
   .trust-badges__inner {
@@ -68,21 +68,21 @@
     transform: translateY(-50%);
     height: 24px;
     width: 1px;
-    background: rgba(128, 128, 128, 0.25);
+    background: var(--tb-divider, rgba(128, 128, 128, 0.25));
   }
   .trust-badges__icon {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: var(--color-ink);
+    color: var(--tb-text, var(--color-ink));
   }
   .trust-badges__icon svg { width: 19px; height: 19px; }
   .trust-badges__label {
     font-family: var(--font-heading-family);
     font-size: 11.5px;
     font-weight: 600;
-    color: var(--color-ink);
+    color: var(--tb-text, var(--color-ink));
     letter-spacing: 0.12em;
     text-transform: uppercase;
     white-space: nowrap;
@@ -107,7 +107,54 @@
 {
   "name": "Trust badges",
   "settings": [
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text & icon color",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Top/bottom border",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "info": "Leave empty to keep the veyroze default."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    }
   ],
   "blocks": [
     {
@@ -119,14 +166,31 @@
           "id": "icon",
           "label": "Icon",
           "options": [
-            { "value": "none", "label": "None" },
-            { "value": "globe", "label": "Worldwide shipping (globe)" },
-            { "value": "return", "label": "Return policy (box)" },
-            { "value": "lock", "label": "Secure checkout (lock)" }
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "globe",
+              "label": "Worldwide shipping (globe)"
+            },
+            {
+              "value": "return",
+              "label": "Return policy (box)"
+            },
+            {
+              "value": "lock",
+              "label": "Secure checkout (lock)"
+            }
           ],
           "default": "globe"
         },
-        { "type": "text", "id": "text", "label": "Text", "default": "Worldwide Shipping" }
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Worldwide Shipping"
+        }
       ]
     }
   ],
@@ -134,9 +198,27 @@
     {
       "name": "Trust badges",
       "blocks": [
-        { "type": "badge", "settings": { "icon": "globe", "text": "Worldwide Shipping" } },
-        { "type": "badge", "settings": { "icon": "return", "text": "14 Days Return Policy" } },
-        { "type": "badge", "settings": { "icon": "lock", "text": "Secure Checkout" } }
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "globe",
+            "text": "Worldwide Shipping"
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "return",
+            "text": "14 Days Return Policy"
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "lock",
+            "text": "Secure Checkout"
+          }
+        }
       ]
     }
   ]

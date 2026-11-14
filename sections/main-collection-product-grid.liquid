@@ -98,8 +98,21 @@
     {%- endif -%}
 
     <div class="{% if section.settings.filter_type == 'vertical' %} facets-vertical page-width{% endif %}">
+      {%- if section.settings.veyroze_facets -%}
+        {{ 'vz-facets.css' | asset_url | stylesheet_tag }}
+        <script src="{{ 'vz-facets.js' | asset_url }}" defer="defer"></script>
+        <div class="page-width" id="main-collection-filters" style="{% if section.settings.facet_accent != blank %}--vz-accent: {{ section.settings.facet_accent }};{% endif %}{% if section.settings.facet_text != blank %}--vz-ink: {{ section.settings.facet_text }};{% endif %}{% if section.settings.facet_muted != blank %}--vz-dim: {{ section.settings.facet_muted }}; --vz-mut: {{ section.settings.facet_muted }};{% endif %}{% if section.settings.facet_panel != blank %}--vz-panel: {{ section.settings.facet_panel }};{% endif %}">
+          {% render 'vz-facets',
+            results: collection,
+            size_filters: section.settings.size_filters,
+            enable_sorting: section.settings.enable_sorting
+          %}
+        </div>
+      {%- else -%}
       {{ 'component-facets.css' | asset_url | stylesheet_tag }}
       <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
+      {%- endif -%}
+      {%- if section.settings.veyroze_facets == false -%}
       {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
         <aside
           aria-labelledby="verticalTitle"
@@ -115,6 +128,7 @@
             paginate: paginate
           %}
         </aside>
+      {%- endif -%}
       {%- endif -%}
 
       <div
@@ -348,6 +362,24 @@
       "type": "header",
       "content": "t:sections.main-collection-product-grid.settings.header__1.content"
     },
+    {
+      "type": "checkbox",
+      "id": "veyroze_facets",
+      "default": true,
+      "label": "veyroze filter bar",
+      "info": "One-line \"Filter —\" bar with dropdowns and a mobile sheet. Turn off to use the standard Dawn filters."
+    },
+    {
+      "type": "text",
+      "id": "size_filters",
+      "label": "Filters grouped under \"Size\"",
+      "default": "filter.v.option.size,filter.p.m.custom.waist,filter.p.m.custom.lange",
+      "info": "Comma-separated filter parameter names (from Search & Discovery)."
+    },
+    { "type": "color", "id": "facet_accent", "label": "Filter bar accent (badges, Clear all, size labels)", "info": "Leave empty to keep the veyroze default." },
+    { "type": "color", "id": "facet_text", "label": "Filter bar active text", "info": "Leave empty to keep the veyroze default." },
+    { "type": "color", "id": "facet_muted", "label": "Filter bar muted text", "info": "Leave empty to keep the veyroze default." },
+    { "type": "color", "id": "facet_panel", "label": "Filter dropdown background", "info": "Leave empty to keep the veyroze default." },
     {
       "type": "checkbox",
       "id": "enable_filtering",

@@ -1,0 +1,166 @@
+{
+  "sections": {
+    "main": {
+      "type": "product-hero",
+      "blocks": {
+        "spec-fabric": {
+          "type": "spec",
+          "settings": {
+            "label": "Fabric",
+            "source": "fabric"
+          }
+        },
+        "spec-fit": {
+          "type": "spec",
+          "settings": {
+            "label": "Fit",
+            "source": "fits_like"
+          }
+        },
+        "spec-tag": {
+          "type": "spec",
+          "settings": {
+            "label": "Tag size",
+            "source": "tag_size"
+          }
+        },
+        "spec-condition": {
+          "type": "spec",
+          "settings": {
+            "label": "Condition",
+            "source": "condition"
+          }
+        },
+        "acc-fabric": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Fabric & construction",
+            "content": "<p>Each piece is inspected and described honestly. See the specs above for fabric and condition.</p>"
+          }
+        },
+        "acc-fit": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Fit & size guide",
+            "show_size_table": true,
+            "table_columns": "cm,XS,S,M,L,XL",
+            "table_rows": "Length,72,74,76,78,80\nChest,52,54,56,58,60",
+            "table_note": "Tolerance ±1 cm. Measured flat."
+          }
+        },
+        "acc-shipping": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Shipping & returns",
+            "content": "<p>Shipped with care. 14-day returns on unworn pieces.</p>"
+          }
+        },
+        "acc-care": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Care",
+            "content": "<p>Follow the care label. When in doubt, hand wash cold and air dry.</p>"
+          }
+        },
+        "delivery": {
+          "type": "delivery",
+          "settings": {
+            "step3_label": "Delivered"
+          }
+        }
+      },
+      "block_order": [
+        "spec-fabric",
+        "spec-fit",
+        "spec-tag",
+        "spec-condition",
+        "acc-fabric",
+        "acc-fit",
+        "acc-shipping",
+        "acc-care",
+        "delivery"
+      ],
+      "settings": {
+        "eyebrow": "Ajaira",
+        "tagline": "",
+        "color_bg": "#121212",
+        "color_gold": "#c8a45c",
+        "color_ink": "#f4f1ea",
+        "color_stage": "#0a0a0a",
+        "font_ui": "Jost",
+        "font_display": "Cormorant Garamond",
+        "show_tax_note": true,
+        "show_stock": true,
+        "stock_threshold": 5,
+        "show_dynamic_checkout": true,
+        "show_gift_card_recipient": false,
+        "enable_sticky_gallery": true,
+        "padding_top": 64,
+        "padding_bottom": 80
+      }
+    },
+    "trust": {
+      "type": "trust-badges",
+      "blocks": {
+        "b1": {
+          "type": "badge",
+          "settings": {
+            "icon": "return",
+            "text": "14-Days Returns"
+          }
+        },
+        "b2": {
+          "type": "badge",
+          "settings": {
+            "icon": "lock",
+            "text": "Secure Payments"
+          }
+        },
+        "b3": {
+          "type": "badge",
+          "settings": {
+            "icon": "truck",
+            "text": "Fast DHL Delivery"
+          }
+        },
+        "b4": {
+          "type": "badge",
+          "settings": {
+            "icon": "checkmark",
+            "text": "True Vintage"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1"
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    }
+  },
+  "order": [
+    "main",
+    "trust",
+    "related-products"
+  ]
+}

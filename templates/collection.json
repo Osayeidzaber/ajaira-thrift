@@ -5,33 +5,56 @@
       "blocks": {
         "cat-1": {
           "type": "category",
-          "settings": { "title": "Vintage Jackets", "subtitle": "Retro · Classic" }
+          "settings": {
+            "title": "Vintage Jackets",
+            "subtitle": "Retro · Classic"
+          }
         },
         "cat-2": {
           "type": "category",
-          "settings": { "title": "Vintage Leather Jackets", "subtitle": "Leather · Biker" }
+          "settings": {
+            "title": "Vintage Leather Jackets",
+            "subtitle": "Leather · Biker"
+          }
         },
         "cat-3": {
           "type": "category",
-          "settings": { "title": "Track Jackets", "subtitle": "Sport · Retro" }
+          "settings": {
+            "title": "Track Jackets",
+            "subtitle": "Sport · Retro"
+          }
         },
         "cat-4": {
           "type": "category",
-          "settings": { "title": "Shirts", "subtitle": "Dress · Casual" }
+          "settings": {
+            "title": "Shirts",
+            "subtitle": "Dress · Casual"
+          }
         },
         "cat-5": {
           "type": "category",
-          "settings": { "title": "Formal Pants", "subtitle": "Tailored · Smart" }
+          "settings": {
+            "title": "Formal Pants",
+            "subtitle": "Tailored · Smart"
+          }
         }
       },
-      "block_order": ["cat-1", "cat-2", "cat-3", "cat-4", "cat-5"],
-      "settings": { "color_scheme": "scheme-1" }
+      "block_order": [
+        "cat-1",
+        "cat-2",
+        "cat-3",
+        "cat-4",
+        "cat-5"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1"
+      }
     },
     "product-grid": {
       "type": "main-collection-product-grid",
       "settings": {
-        "products_per_page": 9,
-        "columns_desktop": 3,
+        "products_per_page": 24,
+        "columns_desktop": 4,
         "image_ratio": "portrait",
         "show_secondary_image": true,
         "show_vendor": false,
@@ -44,5 +67,8 @@
       }
     }
   },
-  "order": ["tabs", "product-grid"]
+  "order": [
+    "tabs",
+    "product-grid"
+  ]
 }
