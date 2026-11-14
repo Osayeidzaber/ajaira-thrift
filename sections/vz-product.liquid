@@ -1,0 +1,549 @@
+{%- comment -%}
+  veyroze product page (thrift layout, ported 1:1 from veyroze.com "vz").
+  Content comes from the product and its thrift.* metafields.
+  Size charts are blocks; the first block whose rule matches the product is used.
+{%- endcomment -%}
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'product-form-' | append: section.id
+  assign ns = section.settings.metafield_namespace | default: 'thrift'
+  assign mf = product.metafields[ns]
+
+  assign material = mf[section.settings.material_key].value
+  assign details = mf.details.value
+  assign condition_raw = mf.condition.value | downcase | strip
+  assign condition_label = condition_raw | replace: '_', ' ' | capitalize
+  assign condition_level = 0
+  case condition_raw
+    when 'worn'
+      assign condition_level = 1
+    when 'good'
+      assign condition_level = 3
+    when 'very_good', 'very good'
+      assign condition_level = 4
+    when 'like_new', 'like new', 'new'
+      assign condition_level = 5
+  endcase
+
+  assign product_tags = product.tags | join: '|' | downcase | prepend: '|' | append: '|'
+  assign title_lc = product.title | downcase
+  assign type_lc = product.type | downcase
+  assign chart = nil
+  for block in section.blocks
+    if block.type != 'size_chart'
+      continue
+    endif
+    assign needle = block.settings.match_value | downcase | strip
+    assign hit = false
+    case block.settings.match_by
+      when 'tag'
+        assign tag_needle = '|' | append: needle | append: '|'
+        if product_tags contains tag_needle
+          assign hit = true
+        endif
+      when 'type'
+        if needle != blank and type_lc == needle
+          assign hit = true
+        endif
+      when 'title'
+        if needle != blank and title_lc contains needle
+          assign hit = true
+        endif
+      when 'collection'
+        for c in product.collections
+          if c.handle == needle
+            assign hit = true
+          endif
+        endfor
+      when 'all'
+        assign hit = true
+    endcase
+    if hit
+      assign chart = block
+      break
+    endif
+  endfor
+
+  assign one_of_one = false
+  if section.settings.unique_mode == 'always'
+    assign one_of_one = true
+  elsif section.settings.unique_mode == 'single_stock' and current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity == 1
+    assign one_of_one = true
+  endif
+-%}
+
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+
+<product-info
+  id="MainProduct-{{ section.id }}"
+  data-section="{{ section.id }}"
+  data-product-id="{{ product.id }}"
+  data-update-url="true"
+  data-url="{{ product.url }}"
+>
+  <div
+    class="vz color-{{ section.settings.color_scheme }}"
+    id="vz-{{ section.id }}"
+    style="--gap: {{ section.settings.gap }}px; --vz-pt: {{ section.settings.padding_top }}px; --vz-pb: {{ section.settings.padding_bottom }}px;{% if section.settings.accent_color != blank %} --gold: {{ section.settings.accent_color }};{% endif %}{% if section.settings.good_color != blank %} --green: {{ section.settings.good_color }};{% endif %}"
+    data-vz
+  >
+    {%- comment -%} Gallery {%- endcomment -%}
+    <div class="vz-gal">
+      <div class="vz-gal__main" data-vz-main>
+        {%- assign first = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+        {%- if first -%}
+          {{ first | image_url: width: 1400 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 960px) 520px, 100vw', widths: '600, 900, 1100, 1400', alt: product.title, data-vz-img: '' }}
+        {%- else -%}
+          {{ 'product-apparel-1' | placeholder_svg_tag: 'vz-gal__placeholder' }}
+        {%- endif -%}
+        {%- if product.media.size > 1 -%}
+          <button type="button" class="vz-arrow vz-arrow--prev" data-vz-arrow="-1" aria-label="{{ 'general.slider.previous_slide' | t }}">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>
+          </button>
+          <button type="button" class="vz-arrow vz-arrow--next" data-vz-arrow="1" aria-label="{{ 'general.slider.next_slide' | t }}">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+        {%- endif -%}
+      </div>
+      {%- if product.media.size > 1 -%}
+        <div class="vz-gal__row">
+          {%- for media in product.media -%}
+            {%- if media.media_type == 'image' or media.preview_image -%}
+              <button
+                type="button"
+                class="vz-gal__th{% if media.id == first.id %} on{% endif %}"
+                data-vz-thumb
+                data-src="{{ media.preview_image | image_url: width: 1400 }}"
+                data-srcset="{{ media.preview_image | image_url: width: 600 }} 600w, {{ media.preview_image | image_url: width: 900 }} 900w, {{ media.preview_image | image_url: width: 1400 }} 1400w"
+                data-media-id="{{ media.id }}"
+                aria-label="{{ product.title | escape }} {{ forloop.index }}"
+              >
+                {{ media.preview_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '' }}
+              </button>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Info {%- endcomment -%}
+    <div class="vz-info">
+      {%- if one_of_one and section.settings.unique_text != blank -%}
+        <div class="vz-uni"><span class="vz-uni__dot"></span><span class="vz-uni__txt">{{ section.settings.unique_text | escape }}</span><span class="vz-uni__line"></span></div>
+      {%- elsif section.settings.show_vendor and product.vendor != blank -%}
+        <div class="vz-vendor">{{ product.vendor | escape }}</div>
+      {%- endif -%}
+
+      <h1 class="vz-h1">{{ product.title | escape }}</h1>
+
+      <div class="vz-price" id="price-{{ section.id }}" role="status">
+        <span class="vz-price__main">{{ current_variant.price | money }}</span>
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          <span class="vz-price__compare">{{ current_variant.compare_at_price | money }}</span>
+        {%- endif -%}
+        {%- if section.settings.tax_note != blank -%}<span class="vz-price__tax">{{ section.settings.tax_note | escape }}</span>{%- endif -%}
+      </div>
+
+      {%- if material != blank or condition_label != blank or details != blank -%}
+        <div class="vz-fit">
+          {%- if material != blank -%}
+            <div class="vz-fit__row">
+              <div class="vz-fit__cell">
+                <div class="vz-fit__lbl">{{ section.settings.material_label | escape }}</div>
+                <div class="vz-fit__val vz-fit__val--s">{{ material | escape }}</div>
+              </div>
+            </div>
+          {%- endif -%}
+          {%- if condition_label != blank or details != blank -%}
+            <div class="vz-chips{% if material == blank %} vz-chips--top{% endif %}">
+              {%- if condition_label != blank -%}<span class="vz-chip">{{ section.settings.condition_chip_label | escape }}:&nbsp;<b{% if condition_level >= 3 %} class="vz-chip__good"{% endif %}>{{ condition_label | escape }}</b></span>{%- endif -%}
+              {%- if details != blank -%}<span class="vz-chip">{{ section.settings.details_chip_label | escape }}:&nbsp;<b>{{ details | escape }}</b></span>{%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- unless product.has_only_default_variant -%}
+        <variant-selects id="variant-selects-{{ section.id }}" data-section="{{ section.id }}" data-product-url="{{ product.url }}" class="vz-variants">
+          {%- for option in product.options_with_values -%}
+            <fieldset class="vz-opt product-form__input">
+              <legend class="vz-opt__lbl">{{ option.name }} <b data-selected-value>{{ option.selected_value }}</b></legend>
+              <div class="vz-opt__pills">
+                {%- for value in option.values -%}
+                  {%- capture input_id -%}{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}{%- endcapture -%}
+                  <label class="vz-pill{% unless value.available %} is-soldout{% endunless %}" for="{{ input_id }}">
+                    <input
+                      type="radio"
+                      id="{{ input_id }}"
+                      name="{{ option.name | escape }}-{{ option.position }}"
+                      value="{{ value | escape }}"
+                      form="{{ product_form_id }}"
+                      data-option-value-id="{{ value.id }}"
+                      data-product-url="{{ value.product_url }}"
+                      {% if value.selected %}
+                        checked
+                      {% endif %}
+                      {% unless value.available %}
+                        class="disabled"
+                      {% endunless %}
+                    >
+                    <span>{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+          <script type="application/json" data-selected-variant>{{ current_variant | json }}</script>
+        </variant-selects>
+      {%- endunless -%}
+
+      <div class="vz-form-wrap vz-product-form">
+        {%- render 'buy-buttons', block: section, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: false -%}
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'trust_icons' -%}
+              {% render 'trust-icons', block: block %}
+            {%- when 'delivery' -%}
+              {% render 'delivery-timeline', block: block %}
+            {%- when '@app' -%}
+              {% render block %}
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} Measurements (from the matching size chart block) {%- endcomment -%}
+      {%- if chart -%}
+        {%- liquid
+          assign has_rows = false
+          for i in (1..4)
+            assign key_id = 'm' | append: i | append: '_key'
+            assign mkey = chart.settings[key_id]
+            if mkey != blank and mf[mkey].value != blank
+              assign has_rows = true
+            endif
+          endfor
+        -%}
+        {%- if has_rows or chart.settings.image != blank -%}
+          <div class="vz-sh" {{ chart.shopify_attributes }}>{{ chart.settings.heading | escape }}</div>
+          <div class="vz-mblock">
+            {%- if chart.settings.image != blank -%}
+              {{ chart.settings.image | image_url: width: 600 | image_tag: class: 'vz-msketch', loading: 'lazy', widths: '200, 400, 600', alt: chart.settings.image.alt }}
+            {%- endif -%}
+            <div class="vz-mtable">
+              {%- assign numerals = 'I,II,III,IV' | split: ',' -%}
+              {%- for i in (1..4) -%}
+                {%- liquid
+                  assign key_id = 'm' | append: i | append: '_key'
+                  assign label_id = 'm' | append: i | append: '_label'
+                  assign mkey = chart.settings[key_id]
+                  assign mval = blank
+                  if mkey != blank
+                    assign mval = mf[mkey].value
+                  endif
+                  assign idx = i | minus: 1
+                -%}
+                {%- if mval != blank -%}
+                  <div class="vz-mr"><span class="vz-mr__l"><span class="vz-mlbl">{{ numerals[idx] }}</span>{{ chart.settings[label_id] | escape }}</span><span class="vz-mr__v">{{ mval }} {{ chart.settings.unit | escape }}</span></div>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if chart.settings.note != blank -%}<p class="vz-mr-note">{{ chart.settings.note | escape }}</p>{%- endif -%}
+              {%- if chart.settings.page != blank -%}<a class="vz-mr-link" href="{{ chart.settings.page.url }}">{{ chart.settings.page_label | default: chart.settings.page.title | escape }}</a>{%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- comment -%} Condition bar {%- endcomment -%}
+      {%- if condition_level > 0 and section.settings.show_condition_bar -%}
+        <div class="vz-sh" style="margin-top: 24px;">{{ section.settings.condition_heading | escape }}</div>
+        <div class="vz-cbar" role="img" aria-label="{{ condition_label | escape }}">
+          {%- for i in (1..5) -%}<span{% if i <= condition_level %} class="f"{% endif %}></span>{%- endfor -%}
+        </div>
+        <div class="vz-cscale"><span>{{ section.settings.scale_low | escape }}</span><span>{{ section.settings.scale_mid | escape }}</span><span>{{ section.settings.scale_high | escape }}</span></div>
+      {%- endif -%}
+      {%- if section.settings.condition_page != blank -%}
+        <a href="{{ section.settings.condition_page.url }}" class="vz-cond-link">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+          {{ section.settings.condition_link_label | escape }}
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.show_description and product.description != blank -%}
+        <div class="vz-desc rte">{{ product.description }}</div>
+      {%- endif -%}
+    </div>
+  </div>
+</product-info>
+
+{% stylesheet %}
+  /* Ported from veyroze.com product section "vz". */
+  .vz { --gap: 52px; --rad: 12px; --gold: #c8a45c; --muted: rgba(255, 255, 255, 0.55); --line: rgba(255, 255, 255, 0.09); --line2: rgba(255, 255, 255, 0.2); --green: #5db07a; --ink: #f4f1ea; }
+  .vz * { box-sizing: border-box; }
+  .vz-gal__th, .vz-gal__main, .vz-arrow, .vz-gal__th img, .vz-gal__main img { -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+  .vz-gal__th img, .vz-gal__main img { -webkit-user-drag: none; }
+  .vz { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--gap); max-width: 1380px; margin: 0 auto; padding: var(--vz-pt, 72px) 40px var(--vz-pb, 100px); align-items: start; }
+  @media (max-width: 960px) { .vz { grid-template-columns: 1fr; padding: 48px 20px 80px; gap: 28px 0; } }
+  .vz-gal { position: sticky; top: 100px; max-width: 520px; margin: 0 auto; width: 100%; }
+  .vz-gal__main { position: relative; width: 100%; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 12px; background: #0f0f11; touch-action: pan-y; }
+  .vz-gal__main img, .vz-gal__placeholder { width: 100%; height: 100%; object-fit: contain; display: block; transition: opacity 0.25s ease; }
+  .vz-gal__main img.is-swapping { opacity: 0.35; }
+  .vz-gal__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 7px; }
+  .vz-gal__th { aspect-ratio: 1; overflow: hidden; border-radius: 6px; cursor: pointer; background: #0f0f11; border: 1px solid transparent; padding: 0; transition: border-color 0.15s, opacity 0.15s; opacity: 0.5; }
+  .vz-gal__th:hover { opacity: 0.85; }
+  .vz-gal__th.on { border-color: var(--gold); opacity: 1; }
+  .vz-gal__th:focus-visible { outline: 1px solid var(--gold); outline-offset: 2px; }
+  .vz-gal__th img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+  @media (max-width: 960px) { .vz-gal { position: static; } }
+  .vz-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 52px; height: 52px; border-radius: 50%; background: rgba(11, 11, 12, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.25); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; opacity: 0.55; transition: opacity 0.2s, background 0.15s, transform 0.15s; }
+  .vz-arrow:hover { background: rgba(11, 11, 12, 0.9); transform: translateY(-50%) scale(1.08); opacity: 1; }
+  .vz-arrow--prev { left: 16px; }
+  .vz-arrow--next { right: 16px; }
+  .vz-gal__main:hover .vz-arrow { opacity: 1; }
+  @media (hover: none) { .vz-arrow { opacity: 0.85; } }
+  @media (max-width: 960px) { .vz-arrow { width: 44px; height: 44px; opacity: 0.8; } }
+  .vz-info { padding-top: 4px; color: var(--ink); }
+  .vz-uni { display: flex; align-items: center; gap: 9px; margin-bottom: 16px; }
+  .vz-uni__dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px rgba(200, 164, 92, 0.55); flex: none; }
+  .vz-uni__txt { font-size: 0.78rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); font-weight: 500; }
+  .vz-uni__line { flex: 1; height: 1px; background: rgba(200, 164, 92, 0.18); }
+  .vz-vendor { font-size: 0.78rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; font-weight: 500; }
+  .vz-h1 { font-family: var(--font-heading-family, inherit); font-size: clamp(2.8rem, 4.6vw, 4rem) !important; font-weight: 400; line-height: 1.04; letter-spacing: 0.005em; margin: 0 0 26px; color: inherit; }
+  .vz-price { display: flex; align-items: baseline; gap: 16px; margin-bottom: 32px; }
+  .vz-price__main { font-family: var(--font-heading-family, inherit); font-size: clamp(2.2rem, 3.4vw, 2.8rem) !important; font-weight: 400; }
+  .vz-price__compare { font-size: 1.2rem; opacity: 0.32; text-decoration: line-through; }
+  .vz-price__tax { font-size: 0.86rem; color: var(--muted); }
+  .vz-fit { border: 1px solid var(--line2); border-radius: var(--rad); overflow: hidden; background: linear-gradient(160deg, rgba(200, 164, 92, 0.05) 0%, transparent 60%); margin-bottom: 28px; }
+  .vz-fit__row { display: flex; }
+  .vz-fit__cell { padding: 20px 24px; flex: 1; }
+  .vz-fit__lbl { font-size: 0.82rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 9px; font-weight: 500; }
+  .vz-fit__val { font-family: var(--font-heading-family, inherit); font-size: clamp(1.9rem, 2.9vw, 2.5rem); line-height: 1; font-weight: 400; }
+  .vz-fit__val--s { font-size: clamp(1.4rem, 2.1vw, 1.85rem); color: var(--muted); }
+  .vz-chips { display: flex; flex-wrap: wrap; gap: 10px; padding: 6px 20px 20px; }
+  .vz-chips--top { padding-top: 20px; }
+  .vz-chip { font-size: 1.18rem; border: 1px solid var(--line2); border-radius: 30px; padding: 13px 24px; letter-spacing: 0.01em; color: var(--muted); }
+  .vz-chip b { color: var(--ink); font-weight: 500; }
+  .vz-chip__good { color: var(--green) !important; }
+  .vz-variants { display: block; margin-bottom: 24px; }
+  .vz-opt { border: 0; padding: 0; margin: 0 0 16px; }
+  .vz-opt__lbl { font-size: 0.82rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; padding: 0; }
+  .vz-opt__lbl b { color: var(--ink); font-weight: 500; margin-left: 6px; letter-spacing: 0.05em; }
+  .vz-opt__pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vz-pill { position: relative; cursor: pointer; }
+  .vz-pill input { position: absolute; opacity: 0; pointer-events: none; }
+  .vz-pill span { display: inline-flex; min-width: 52px; justify-content: center; padding: 12px 16px; border: 1px solid var(--line2); border-radius: 30px; font-size: 1.2rem; color: var(--muted); transition: border-color 0.15s, color 0.15s; }
+  .vz-pill input:checked + span { border-color: var(--ink); color: var(--ink); }
+  .vz-pill input:focus-visible + span { outline: 1px solid var(--gold); outline-offset: 2px; }
+  .vz-pill.is-soldout span { opacity: 0.4; text-decoration: line-through; }
+  .vz-form-wrap { margin-bottom: 32px; }
+  .vz-product-form .product-form__buttons { display: flex; flex-direction: column; gap: 16px !important; max-width: none; }
+  .vz-product-form .shopify-payment-button { margin-top: 0 !important; }
+  .vz-product-form .shopify-payment-button__button { border-radius: 0 !important; min-height: 70px !important; font-size: 1.5rem !important; font-weight: 500 !important; font-family: var(--font-body-family, inherit) !important; text-transform: none !important; width: 100% !important; box-shadow: none !important; }
+  .vz-product-form .product-form__submit { background: transparent !important; color: #fff !important; border: 1px solid #fff !important; border-radius: 0 !important; font-size: 1.75rem !important; font-weight: 400 !important; font-family: var(--font-body-family, inherit) !important; min-height: 70px !important; padding: 20px !important; text-transform: none !important; letter-spacing: 0.01em !important; box-shadow: none !important; }
+  .vz-product-form .product-form__submit:hover { background: rgba(255, 255, 255, 0.05) !important; }
+  .vz-product-form .product-form__submit::before, .vz-product-form .product-form__submit::after { display: none !important; }
+  .vz-product-form .product-form__submit[disabled] { opacity: 0.45; cursor: not-allowed; }
+  .vz-sh { display: flex; align-items: center; gap: 14px; margin: 36px 0 18px; font-family: var(--font-heading-family, inherit); font-size: clamp(1.8rem, 2.6vw, 2.2rem); font-weight: 400; letter-spacing: 0.005em; }
+  .vz-sh::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .vz-mblock { display: flex; gap: 24px; align-items: flex-start; margin-top: 6px; }
+  .vz-msketch { flex: none; width: 260px; height: auto; background: transparent; display: block; }
+  .vz-mtable { flex: 1; max-width: 340px; }
+  .vz-mlbl { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #c0392b; color: #c0392b; font-size: 0.72rem; font-weight: 700; font-family: Georgia, serif; margin-right: 12px; flex: none; line-height: 1; }
+  .vz-mr { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted var(--line); padding: 14px 0; font-size: 1.1rem; }
+  .vz-mr:last-of-type { border-bottom: none; }
+  .vz-mr__l { color: var(--ink); display: flex; align-items: center; font-size: 1.1rem; }
+  .vz-mr__v { font-weight: 400; font-family: var(--font-heading-family, inherit); font-size: 1.35rem; }
+  .vz-mr-note { font-size: 0.95rem; color: var(--muted); margin-top: 14px; line-height: 1.55; }
+  .vz-mr-link { display: inline-block; margin-top: 8px; font-size: 0.95rem; color: var(--gold); text-underline-offset: 3px; }
+  .vz-cbar { display: flex; gap: 5px; margin: 16px 0 10px; }
+  .vz-cbar span { height: 7px; flex: 1; border-radius: 4px; background: var(--line2); }
+  .vz-cbar span.f { background: var(--green); }
+  .vz-cscale { display: flex; justify-content: space-between; font-size: 0.92rem; color: var(--muted); margin-bottom: 12px; }
+  .vz-cond-link { display: inline-flex; align-items: center; gap: 9px; margin-top: 32px; padding: 14px 20px; border: 1px solid var(--line2); border-radius: var(--rad); color: var(--muted); font-size: 0.95rem; text-decoration: none; transition: border-color 0.15s, color 0.15s; }
+  .vz-cond-link:hover { border-color: var(--gold); color: var(--gold); }
+  .vz-cond-link svg { flex: none; opacity: 0.8; }
+  .vz-desc { margin-top: 32px; color: var(--muted); font-size: 1.2rem; line-height: 1.7; }
+  @media (max-width: 960px) {
+    .vz-mblock { gap: 16px; }
+    .vz-msketch { width: 120px; }
+    .vz-mr, .vz-mr__l { font-size: 0.95rem; }
+    .vz-mr__l { flex-shrink: 1; min-width: 0; }
+    .vz-mr__v { font-size: 1.05rem; white-space: nowrap; flex-shrink: 0; margin-left: 10px; }
+    .vz-mlbl { width: 24px; height: 24px; margin-right: 8px; }
+    .vz-product-form .product-form__submit { font-size: 1.35rem !important; min-height: 64px !important; }
+    .vz-product-form .shopify-payment-button__button { min-height: 64px !important; font-size: 1.3rem !important; }
+  }
+  @media (max-width: 600px) { .vz-mblock { gap: 12px; } .vz-msketch { width: 90px; } .vz-mtable { width: 100%; } }
+{% endstylesheet %}
+
+{% javascript %}
+  (() => {
+    const init = (root) => {
+      if (root.dataset.vzReady) return;
+      root.dataset.vzReady = '1';
+      const img = root.querySelector('[data-vz-main] img');
+      const thumbs = [...root.querySelectorAll('[data-vz-thumb]')];
+      if (!img || thumbs.length < 2) return;
+      const show = (i) => {
+        const t = thumbs[(i + thumbs.length) % thumbs.length];
+        img.classList.add('is-swapping');
+        const pre = new Image();
+        pre.onload = pre.onerror = () => {
+          img.srcset = t.dataset.srcset;
+          img.src = t.dataset.src;
+          img.classList.remove('is-swapping');
+        };
+        pre.src = t.dataset.src;
+        thumbs.forEach((x) => x.classList.toggle('on', x === t));
+      };
+      const current = () => Math.max(0, thumbs.findIndex((t) => t.classList.contains('on')));
+      thumbs.forEach((t, i) => t.addEventListener('click', () => show(i)));
+      root.querySelectorAll('[data-vz-arrow]').forEach((b) => b.addEventListener('click', () => show(current() + Number(b.dataset.vzArrow))));
+      const main = root.querySelector('[data-vz-main]');
+      let x0 = null;
+      main.addEventListener('pointerdown', (e) => { x0 = e.clientX; }, { passive: true });
+      main.addEventListener('pointerup', (e) => {
+        if (x0 === null) return;
+        const dx = e.clientX - x0;
+        x0 = null;
+        if (Math.abs(dx) > 40) show(current() + (dx < 0 ? 1 : -1));
+      });
+      main.tabIndex = 0;
+      main.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') show(current() + 1);
+        if (e.key === 'ArrowLeft') show(current() - 1);
+      });
+    };
+    const all = () => document.querySelectorAll('[data-vz]').forEach(init);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', all); else all();
+    document.addEventListener('shopify:section:load', all);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Product page (veyroze)",
+  "tag": "section",
+  "class": "section",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "header", "content": "Product details" },
+    { "type": "paragraph", "content": "Material, condition, details and measurements come from each product's metafields (namespace below). See docs/thrift-metafields.md." },
+    { "type": "text", "id": "metafield_namespace", "label": "Metafield namespace", "default": "thrift" },
+    { "type": "text", "id": "material_key", "label": "Material metafield key", "default": "material" },
+    { "type": "text", "id": "material_label", "label": "Material label", "default": "Material" },
+    { "type": "text", "id": "condition_chip_label", "label": "Condition chip label", "default": "Condition" },
+    { "type": "text", "id": "details_chip_label", "label": "Details chip label", "default": "Details" },
+    {
+      "type": "select", "id": "unique_mode", "label": "Show \"one of one\" line", "default": "always",
+      "options": [
+        { "value": "always", "label": "Always" },
+        { "value": "single_stock", "label": "Only when 1 left in stock" },
+        { "value": "never", "label": "Never" }
+      ]
+    },
+    { "type": "text", "id": "unique_text", "label": "\"One of one\" text", "default": "One of a kind · 1 of 1" },
+    { "type": "checkbox", "id": "show_vendor", "label": "Show brand when not \"one of one\"", "default": false },
+    { "type": "text", "id": "tax_note", "label": "Note next to price", "default": "incl. VAT" },
+    { "type": "checkbox", "id": "show_description", "label": "Show product description", "default": false },
+    { "type": "header", "content": "Buttons" },
+    { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show express checkout button", "default": true },
+    { "type": "checkbox", "id": "show_gift_card_recipient", "label": "Show gift card recipient form", "default": false },
+    { "type": "header", "content": "Condition" },
+    { "type": "checkbox", "id": "show_condition_bar", "label": "Show condition bar", "default": true },
+    { "type": "text", "id": "condition_heading", "label": "Heading", "default": "Condition" },
+    { "type": "text", "id": "scale_low", "label": "Scale left label", "default": "Worn" },
+    { "type": "text", "id": "scale_mid", "label": "Scale middle label", "default": "Very good" },
+    { "type": "text", "id": "scale_high", "label": "Scale right label", "default": "Like new" },
+    { "type": "page", "id": "condition_page", "label": "\"More about conditions\" page" },
+    { "type": "text", "id": "condition_link_label", "label": "Link label", "default": "More about our vintage conditions & care" },
+    { "type": "header", "content": "Style" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "color", "id": "accent_color", "label": "Accent (gold)", "info": "Leave empty for the veyroze gold." },
+    { "type": "color", "id": "good_color", "label": "Condition bar color", "info": "Leave empty for the veyroze green." },
+    { "type": "range", "id": "gap", "label": "Gap between gallery and info", "min": 16, "max": 120, "step": 4, "unit": "px", "default": 52 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 100 }
+  ],
+  "blocks": [
+    {
+      "type": "size_chart",
+      "name": "Size chart",
+      "settings": [
+        { "type": "paragraph", "content": "Add one size chart per kind of product. The first chart whose rule matches the product is shown." },
+        {
+          "type": "select", "id": "match_by", "label": "Use this chart for products with…", "default": "tag",
+          "options": [
+            { "value": "tag", "label": "This tag" },
+            { "value": "type", "label": "This product type" },
+            { "value": "title", "label": "This word in the title" },
+            { "value": "collection", "label": "This collection (handle)" },
+            { "value": "all", "label": "Any product (fallback)" }
+          ]
+        },
+        { "type": "text", "id": "match_value", "label": "Tag / type / word / collection handle", "info": "e.g. tag \"chart-jacket\", type \"Jacket\", or word \"jeans\"." },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Measurements 📏" },
+        { "type": "image_picker", "id": "image", "label": "Size chart picture", "info": "A sketch showing where each measurement is taken (I, II, III, IV)." },
+        { "type": "text", "id": "unit", "label": "Unit", "default": "cm" },
+        { "type": "text", "id": "m1_label", "label": "Measurement I label", "default": "Shoulder width" },
+        { "type": "text", "id": "m1_key", "label": "Measurement I metafield key", "default": "shoulder_cm" },
+        { "type": "text", "id": "m2_label", "label": "Measurement II label", "default": "Length" },
+        { "type": "text", "id": "m2_key", "label": "Measurement II metafield key", "default": "length_cm" },
+        { "type": "text", "id": "m3_label", "label": "Measurement III label", "default": "Hem width" },
+        { "type": "text", "id": "m3_key", "label": "Measurement III metafield key", "default": "hem_cm" },
+        { "type": "text", "id": "m4_label", "label": "Measurement IV label" },
+        { "type": "text", "id": "m4_key", "label": "Measurement IV metafield key" },
+        { "type": "text", "id": "note", "label": "Note", "default": "Measured flat — compare with a well-fitting piece" },
+        { "type": "page", "id": "page", "label": "Full size guide page" },
+        { "type": "text", "id": "page_label", "label": "Size guide link label", "default": "Full size guide" }
+      ]
+    },
+    {
+      "type": "trust_icons",
+      "name": "Trust icons",
+      "limit": 1,
+      "settings": [
+        { "type": "select", "id": "icon_1", "label": "Icon 1", "default": "returns", "options": [{ "value": "returns", "label": "Returns" }, { "value": "secure", "label": "Secure payment" }, { "value": "delivery", "label": "Delivery" }, { "value": "quality", "label": "Quality badge" }] },
+        { "type": "text", "id": "text_1", "label": "Text 1", "default": "14-Days Returns" },
+        { "type": "image_picker", "id": "image_1", "label": "Custom icon 1" },
+        { "type": "select", "id": "icon_2", "label": "Icon 2", "default": "secure", "options": [{ "value": "returns", "label": "Returns" }, { "value": "secure", "label": "Secure payment" }, { "value": "delivery", "label": "Delivery" }, { "value": "quality", "label": "Quality badge" }] },
+        { "type": "text", "id": "text_2", "label": "Text 2", "default": "Secure Payment" },
+        { "type": "image_picker", "id": "image_2", "label": "Custom icon 2" },
+        { "type": "select", "id": "icon_3", "label": "Icon 3", "default": "delivery", "options": [{ "value": "returns", "label": "Returns" }, { "value": "secure", "label": "Secure payment" }, { "value": "delivery", "label": "Delivery" }, { "value": "quality", "label": "Quality badge" }] },
+        { "type": "text", "id": "text_3", "label": "Text 3", "default": "Fast Delivery" },
+        { "type": "image_picker", "id": "image_3", "label": "Custom icon 3" },
+        { "type": "select", "id": "icon_4", "label": "Icon 4", "default": "quality", "options": [{ "value": "returns", "label": "Returns" }, { "value": "secure", "label": "Secure payment" }, { "value": "delivery", "label": "Delivery" }, { "value": "quality", "label": "Quality badge" }] },
+        { "type": "text", "id": "text_4", "label": "Text 4", "default": "True Vintage" },
+        { "type": "image_picker", "id": "image_4", "label": "Custom icon 4" },
+        { "type": "color", "id": "icon_color", "label": "Icon color" },
+        { "type": "color", "id": "text_color", "label": "Text color" },
+        { "type": "range", "id": "icon_size", "label": "Icon size", "min": 16, "max": 60, "step": 1, "unit": "px", "default": 30 },
+        { "type": "range", "id": "text_size", "label": "Text size", "min": 9, "max": 18, "step": 1, "unit": "px", "default": 12 }
+      ]
+    },
+    {
+      "type": "delivery",
+      "name": "Delivery timeline",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "business_days", "label": "Count business days only", "default": true },
+        { "type": "text", "id": "step1_label", "label": "Step 1 label", "default": "Order placed" },
+        { "type": "text", "id": "step2_label", "label": "Step 2 label", "default": "Dispatched" },
+        { "type": "range", "id": "ship_min", "label": "Ships after (min days)", "min": 0, "max": 10, "step": 1, "default": 1 },
+        { "type": "range", "id": "ship_max", "label": "Ships after (max days)", "min": 0, "max": 15, "step": 1, "default": 2 },
+        { "type": "text", "id": "step3_label", "label": "Step 3 label", "default": "Delivered" },
+        { "type": "range", "id": "deliver_min", "label": "Delivered after (min days)", "min": 1, "max": 30, "step": 1, "default": 4 },
+        { "type": "range", "id": "deliver_max", "label": "Delivered after (max days)", "min": 1, "max": 45, "step": 1, "default": 6 },
+        { "type": "color", "id": "dot_color", "label": "Icon background", "default": "#3a9024" },
+        { "type": "color", "id": "line_color", "label": "Line color" },
+        { "type": "color", "id": "text_color", "label": "Text color" },
+        { "type": "range", "id": "date_size", "label": "Date size", "min": 8, "max": 18, "step": 1, "unit": "px", "default": 11 },
+        { "type": "range", "id": "label_size", "label": "Label size", "min": 8, "max": 20, "step": 1, "unit": "px", "default": 12 },
+        { "type": "range", "id": "icon_size", "label": "Icon circle size", "min": 24, "max": 60, "step": 1, "unit": "px", "default": 38 }
+      ]
+    },
+    { "type": "@app" }
+  ]
+}
+{% endschema %}

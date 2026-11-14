@@ -45,6 +45,27 @@
 
     {%- for block in section.blocks -%}
       {%- assign menu = block.settings.menu -%}
+      {%- capture col_links -%}
+        {%- case block.settings.source -%}
+          {%- when 'policies' -%}
+            {%- if shop.privacy_policy -%}<li><a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title | escape }}</a></li>{%- endif -%}
+            {%- if shop.terms_of_service -%}<li><a href="{{ shop.terms_of_service.url }}">{{ shop.terms_of_service.title | escape }}</a></li>{%- endif -%}
+            {%- if shop.legal_notice -%}<li><a href="{{ shop.legal_notice.url }}">{{ shop.legal_notice.title | escape }}</a></li>{%- endif -%}
+            {%- if shop.terms_of_sale -%}<li><a href="{{ shop.terms_of_sale.url }}">{{ shop.terms_of_sale.title | escape }}</a></li>{%- endif -%}
+          {%- when 'service' -%}
+            {%- if shop.contact_information -%}<li><a href="{{ shop.contact_information.url }}">{{ shop.contact_information.title | escape }}</a></li>{%- endif -%}
+            {%- if shop.shipping_policy -%}<li><a href="{{ shop.shipping_policy.url }}">{{ shop.shipping_policy.title | escape }}</a></li>{%- endif -%}
+            {%- if shop.refund_policy -%}<li><a href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title | escape }}</a></li>{%- endif -%}
+            {%- if section.settings.whatsapp_url != blank -%}<li><a href="{{ section.settings.whatsapp_url }}" target="_blank" rel="noopener">WhatsApp</a></li>{%- endif -%}
+          {%- else -%}
+            {%- for link in menu.links -%}
+              <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            {%- endfor -%}
+        {%- endcase -%}
+        {%- for link in menu.links -%}
+          {%- if block.settings.source != 'menu' and block.settings.append_menu -%}<li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>{%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
       <div class="vft__col" {{ block.shopify_attributes }}>
         <h2 class="vft__col-title vft__col-title--desktop">{{ block.settings.heading | default: menu.title | escape }}</h2>
         <details class="vft__dropdown">
@@ -52,17 +73,9 @@
             <span>{{ block.settings.heading | default: menu.title | escape }}</span>
             {{ chevron }}
           </summary>
-          <ul class="vft__col-list">
-            {%- for link in menu.links -%}
-              <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
-            {%- endfor -%}
-          </ul>
+          <ul class="vft__col-list">{{ col_links }}</ul>
         </details>
-        <ul class="vft__col-list vft__col-list--desktop">
-          {%- for link in menu.links -%}
-            <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
-          {%- endfor -%}
-        </ul>
+        <ul class="vft__col-list vft__col-list--desktop">{{ col_links }}</ul>
       </div>
     {%- endfor -%}
 
@@ -334,7 +347,7 @@
     {
       "type": "menu",
       "name": "Menu column",
-      "limit": 2,
+      "limit": 4,
       "settings": [
         {
           "type": "text",
@@ -343,10 +356,36 @@
           "info": "Defaults to the menu title"
         },
         {
+          "type": "select",
+          "id": "source",
+          "label": "Links",
+          "default": "menu",
+          "options": [
+            {
+              "value": "menu",
+              "label": "A menu"
+            },
+            {
+              "value": "service",
+              "label": "Automatic: contact, shipping, returns, WhatsApp"
+            },
+            {
+              "value": "policies",
+              "label": "Automatic: privacy, terms, legal notice"
+            }
+          ]
+        },
+        {
           "type": "link_list",
           "id": "menu",
           "label": "Menu",
           "default": "footer"
+        },
+        {
+          "type": "checkbox",
+          "id": "append_menu",
+          "label": "Also add the menu's links (automatic modes)",
+          "default": false
         }
       ]
     }
@@ -358,13 +397,15 @@
         {
           "type": "menu",
           "settings": {
-            "heading": "Customer Service"
+            "heading": "Customer Service",
+            "source": "service"
           }
         },
         {
           "type": "menu",
           "settings": {
-            "heading": "Information"
+            "heading": "Information",
+            "source": "policies"
           }
         }
       ]

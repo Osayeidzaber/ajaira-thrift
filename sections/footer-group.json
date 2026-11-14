@@ -6,7 +6,10 @@
       "type": "inner-circle",
       "blocks": {
         "wa": {
-          "type": "whatsapp"
+          "type": "whatsapp",
+          "settings": {
+            "url": "https://wa.me/8801992420839"
+          }
         },
         "nl": {
           "type": "newsletter"
@@ -29,14 +32,16 @@
           "type": "menu",
           "settings": {
             "heading": "Customer Service",
-            "menu": "footer"
+            "menu": "footer",
+            "source": "service"
           }
         },
         "m2": {
           "type": "menu",
           "settings": {
             "heading": "Information",
-            "menu": "footer"
+            "menu": "footer",
+            "source": "policies"
           }
         }
       },
@@ -50,7 +55,8 @@
         "withdraw_label": "Withdraw from contract here",
         "show_country": true,
         "show_language": true,
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "whatsapp_url": "https://wa.me/8801992420839"
       }
     },
     "privacy": {

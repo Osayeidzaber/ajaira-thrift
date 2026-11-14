@@ -64,6 +64,16 @@ When you create a page or collection, choose a template on the right ("Theme tem
 
 Each template is a starting point. Open it in Customize and add, remove or reorder sections. Any section can go on any page: click **Add section**.
 
+## Size charts (different per product)
+
+Customize → Products → Default product → **Product page (veyroze)** → each **Size chart** block is one chart: upload its picture, name the measurements (I–IV) and choose which products use it:
+
+- **Tag** (recommended): add a tag such as `chart-jacket` or `chart-jeans` to the product in admin.
+- **Product type**, **a word in the title**, or **a collection handle** also work.
+- One chart set to **Any product** acts as the fallback. Charts are checked top to bottom; the first match wins.
+
+Measurement numbers come from each product's metafields (e.g. `thrift.shoulder_cm`, `thrift.length_cm`, `thrift.hem_cm`, `thrift.waist_cm`, `thrift.leg_opening_cm`, `thrift.chest_cm`). Rows without a value are hidden.
+
 ## Product details for second-hand pieces
 
 Size, measurements and condition come from product **metafields** (one-time setup, see `docs/thrift-metafields.md`). After that, you fill them in at the bottom of each product page in admin.

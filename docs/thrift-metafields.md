@@ -14,6 +14,10 @@ Namespace and key must match exactly; the theme guards every field, so products 
 | `thrift.waist_cm` | Decimal | Waist (cm) | Flat measurement, e.g. 46.5 |
 | `thrift.length_cm` | Decimal | Length (cm) | Flat measurement, e.g. 101.0 |
 | `thrift.leg_opening_cm` | Decimal | Leg opening (cm) | Flat measurement, e.g. 24.0 |
+| `thrift.material` | Single line text | Material | e.g. "100% real leather" |
+| `thrift.shoulder_cm` | Decimal | Shoulder width (cm) | Jackets/shirts |
+| `thrift.hem_cm` | Decimal | Hem width (cm) | Jackets |
+| `thrift.chest_cm` | Decimal | Chest (cm) | Tops |
 
 All definitions: namespace `thrift`, storefronts access enabled (default for product metafields).
 

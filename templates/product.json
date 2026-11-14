@@ -1,40 +1,53 @@
 {
   "sections": {
     "main": {
-      "type": "main-product",
+      "type": "vz-product",
       "blocks": {
-        "vendor": {
-          "type": "text",
+        "chart_jacket": {
+          "type": "size_chart",
           "settings": {
-            "text": "{{ product.vendor }}",
-            "text_style": "uppercase"
+            "match_by": "tag",
+            "match_value": "chart-jacket",
+            "heading": "Measurements 📏",
+            "unit": "cm",
+            "m1_label": "Shoulder width",
+            "m1_key": "shoulder_cm",
+            "m2_label": "Length",
+            "m2_key": "length_cm",
+            "m3_label": "Hem width",
+            "m3_key": "hem_cm",
+            "note": "Measured flat — compare with a well-fitting jacket"
           }
         },
-        "title": {
-          "type": "title",
-          "settings": {}
-        },
-        "inventory": {
-          "type": "inventory",
+        "chart_jeans": {
+          "type": "size_chart",
           "settings": {
-            "text_style": "body",
-            "inventory_threshold": 5,
-            "show_inventory_quantity": true
+            "match_by": "tag",
+            "match_value": "chart-jeans",
+            "heading": "Measurements 📏",
+            "unit": "cm",
+            "m1_label": "Waist",
+            "m1_key": "waist_cm",
+            "m2_label": "Length",
+            "m2_key": "length_cm",
+            "m3_label": "Leg opening",
+            "m3_key": "leg_opening_cm",
+            "note": "Measured flat — compare with a well-fitting pair"
           }
         },
-        "price": {
-          "type": "price",
-          "settings": {}
-        },
-        "quantity": {
-          "type": "quantity_selector",
-          "settings": {}
-        },
-        "buy": {
-          "type": "buy_buttons",
+        "chart_default": {
+          "type": "size_chart",
           "settings": {
-            "show_dynamic_checkout": true,
-            "show_gift_card_recipient": false
+            "match_by": "all",
+            "heading": "Measurements 📏",
+            "unit": "cm",
+            "m1_label": "Chest",
+            "m1_key": "chest_cm",
+            "m2_label": "Length",
+            "m2_key": "length_cm",
+            "m3_label": "Shoulder width",
+            "m3_key": "shoulder_cm",
+            "note": "Measured flat — compare with a well-fitting piece"
           }
         },
         "trust": {
@@ -42,83 +55,30 @@
           "settings": {}
         },
         "delivery": {
-          "type": "thrift_timeline",
-          "settings": {}
-        },
-        "conditions": {
-          "type": "popup",
+          "type": "delivery",
           "settings": {
-            "text": "Conditions",
-            "page": "condition"
-          }
-        },
-        "sizeguide": {
-          "type": "popup",
-          "settings": {
-            "text": "Size Guide",
-            "page": "size-chart"
-          }
-        },
-        "description": {
-          "type": "description",
-          "settings": {}
-        },
-        "share": {
-          "type": "share",
-          "settings": {
-            "share_label": "Share"
+            "step1_label": "Order placed",
+            "step2_label": "Dispatched",
+            "step3_label": "Delivered"
           }
         }
       },
       "block_order": [
-        "vendor",
-        "title",
-        "inventory",
-        "price",
-        "quantity",
-        "buy",
         "trust",
         "delivery",
-        "conditions",
-        "sizeguide",
-        "description",
-        "share"
+        "chart_jacket",
+        "chart_jeans",
+        "chart_default"
       ],
-      "settings": {
-        "enable_sticky_info": true,
-        "color_scheme": "scheme-1",
-        "media_size": "large",
-        "constrain_to_viewport": true,
-        "media_fit": "contain",
-        "gallery_layout": "stacked",
-        "media_position": "left",
-        "image_zoom": "lightbox",
-        "mobile_thumbnails": "hide",
-        "hide_variants": true,
-        "enable_video_looping": false,
-        "padding_top": 36,
-        "padding_bottom": 12
-      }
+      "settings": {}
     },
-    "related-products": {
-      "type": "related-products",
-      "settings": {
-        "heading": "You may also like",
-        "heading_size": "h2",
-        "columns_desktop": 4,
-        "color_scheme": "scheme-1",
-        "image_ratio": "square",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "columns_mobile": "2",
-        "padding_top": 36,
-        "padding_bottom": 28
-      }
+    "related": {
+      "type": "vz-related",
+      "settings": {}
     }
   },
   "order": [
     "main",
-    "related-products"
+    "related"
   ]
 }
