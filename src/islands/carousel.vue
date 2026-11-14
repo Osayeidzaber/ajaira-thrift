@@ -300,7 +300,7 @@ onBeforeUnmount(() => {
 .vc-label {
   margin-top: 14px;
   text-align: center;
-  font-size: 16px;
+  font-size: var(--vc-label-size, 16px);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 500;
@@ -314,7 +314,7 @@ onBeforeUnmount(() => {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  border: 1.5px solid #ffffff;
+  border: 1.5px solid var(--vc-dot, #ffffff);
   background: transparent;
   cursor: pointer;
   padding: 0;
@@ -322,14 +322,14 @@ onBeforeUnmount(() => {
   transition: opacity 0.3s, transform 0.3s, background 0.3s;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
-.vc-dot.is-active { background: #ffffff; opacity: 1; transform: scale(1.3); }
+.vc-dot.is-active { background: var(--vc-dot, #ffffff); opacity: 1; transform: scale(1.3); }
 @media (max-width: 768px) {
   .vc-card { flex: 0 0 60%; }
   .vc-card.is-prev { transform: scale(0.82) translateX(24%); }
   .vc-card.is-next { transform: scale(0.82) translateX(-24%); }
   .vc-card.is-prev2 { transform: scale(0.62) translateX(60%); opacity: 0.3; }
   .vc-card.is-next2 { transform: scale(0.62) translateX(-60%); opacity: 0.3; }
-  .vc-label { font-size: 15px; }
+  .vc-label { font-size: calc(var(--vc-label-size, 16px) - 1px); }
 }
 @media (max-width: 480px) {
   .vc-card { flex: 0 0 64%; }

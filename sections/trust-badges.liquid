@@ -3,6 +3,9 @@
     {%- for block in section.blocks -%}
       <div class="trust-badges__item" {{ block.shopify_attributes }}>
         <div class="trust-badges__icon" aria-hidden="true">
+          {%- if block.settings.custom_icon != blank -%}
+            {{ block.settings.custom_icon | image_url: width: 80 | image_tag: loading: 'lazy', alt: '', class: 'trust-badges__img' }}
+          {%- else -%}
           {%- case block.settings.icon -%}
             {%- when 'globe' -%}
               <svg viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
@@ -25,6 +28,7 @@
                 <circle cx="12" cy="16.5" r="1" fill="currentColor" stroke="none"/>
               </svg>
           {%- endcase -%}
+          {%- endif -%}
         </div>
         <span class="trust-badges__label">{{ block.settings.text }}</span>
       </div>
@@ -77,7 +81,7 @@
     flex-shrink: 0;
     color: var(--tb-text, var(--color-ink));
   }
-  .trust-badges__icon svg { width: var(--tb-icon, 19px); height: var(--tb-icon, 19px); }
+  .trust-badges__icon svg, .trust-badges__img { width: var(--tb-icon, 19px); height: var(--tb-icon, 19px); object-fit: contain; }
   .trust-badges__label {
     font-family: var(--font-heading-family);
     font-size: var(--tb-size, 11.5px);
@@ -214,6 +218,12 @@
           "id": "text",
           "label": "Text",
           "default": "Worldwide Shipping"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom icon",
+          "info": "Optional: replaces the built-in icon."
         }
       ]
     }

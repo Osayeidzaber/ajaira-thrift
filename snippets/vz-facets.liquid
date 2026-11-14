@@ -6,6 +6,7 @@
   @param {object} results - the collection (or search) being filtered
   @param {string} [size_filters] - comma-separated filter param names grouped under one "Size" trigger
   @param {boolean} [enable_sorting] - show the sort dropdown
+  @param {string} [font_style] - 'veyroze' (Cormorant/Jost) or 'theme' (theme fonts)
 
   @example
   {% render 'vz-facets', results: collection, size_filters: 'filter.p.m.custom.waist,filter.v.option.size', enable_sorting: true %}
@@ -94,9 +95,11 @@
   {%- endfor -%}
 {%- endcapture -%}
 
+{%- if font_style != 'theme' -%}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap">
-<div class="vz-fct" data-vz-facets>
+{%- endif -%}
+<div class="vz-fct" data-vz-facets{% if font_style == 'theme' %} style="--vz-font-serif: var(--font-heading-family); --vz-font-sans: var(--font-body-family);"{% endif %}>
   <form class="vz-bar" action="{{ results.url }}" method="get" data-vz-form>
     {%- if results.terms -%}<input type="hidden" name="q" value="{{ results.terms | escape }}">{%- endif -%}
     <span class="vz-lead">{{ 'vz_facets.lead' | t }}</span>

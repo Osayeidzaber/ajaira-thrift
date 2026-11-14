@@ -2,8 +2,8 @@
 .vz-fct {
   --bone: var(--vz-ink, #edeae3); --dim: var(--vz-dim, #b9b4ab); --mut: var(--vz-mut, #7d7770); --mut2: #56524c; --tan: var(--vz-accent, #c9a57a);
   --line: rgba(237, 234, 227, 0.13); --lstr: rgba(237, 234, 227, 0.3); --surf: var(--vz-panel, #161311); --surf2: #1d1916;
-  --vz-serif: 'Cormorant Garamond', serif;
-  --vz-sans: 'Jost', -apple-system, sans-serif;
+  --vz-serif: var(--vz-font-serif, 'Cormorant Garamond', serif);
+  --vz-sans: var(--vz-font-sans, 'Jost', -apple-system, sans-serif);
   font-family: var(--vz-sans); font-weight: 300; color: var(--bone);
 }
 .vz-fct * { box-sizing: border-box; }
@@ -19,7 +19,7 @@
 .vz-loading { opacity: 0.4; pointer-events: none; transition: opacity 0.3s; }
 
 .vz-flt { position: relative; }
-.vz-trg { font-family: var(--vz-sans); font-weight: 400; font-size: 11.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); background: none; border: 1px solid transparent; padding: 11px 15px; cursor: pointer; display: flex; align-items: center; gap: 9px; transition: 0.3s; border-radius: 1px; }
+.vz-trg { font-family: var(--vz-sans); font-weight: 400; font-size: var(--vz-trg-size, 11.5px); letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); background: none; border: 1px solid transparent; padding: 11px 15px; cursor: pointer; display: flex; align-items: center; gap: 9px; transition: 0.3s; border-radius: 1px; }
 .vz-trg:hover { color: var(--bone); }
 .vz-trg--sort { color: var(--bone); }
 .vz-trg__muted { color: var(--mut); }

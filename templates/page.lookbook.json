@@ -1,0 +1,114 @@
+{
+  "sections": {
+    "spotlight": {
+      "type": "spotlight-carousel",
+      "blocks": {
+        "s0": {
+          "type": "slide",
+          "settings": {}
+        },
+        "s1": {
+          "type": "slide",
+          "settings": {}
+        },
+        "s2": {
+          "type": "slide",
+          "settings": {}
+        },
+        "s3": {
+          "type": "slide",
+          "settings": {}
+        },
+        "s4": {
+          "type": "slide",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "s0",
+        "s1",
+        "s2",
+        "s3",
+        "s4"
+      ],
+      "settings": {}
+    },
+    "story": {
+      "type": "collection-story",
+      "settings": {
+        "heading": "The collection",
+        "button_label": "Explore the collection"
+      }
+    },
+    "rail": {
+      "type": "product-rail",
+      "settings": {
+        "heading": "On the rail",
+        "button_label": "See availability"
+      }
+    },
+    "film": {
+      "type": "film-banner",
+      "settings": {
+        "heading": "New season",
+        "button_label": "Shop the collection"
+      }
+    },
+    "picks": {
+      "type": "product-picks",
+      "settings": {
+        "source": "collection",
+        "heading": "New arrivals",
+        "show_count": true,
+        "show_more": true,
+        "button_label": ""
+      }
+    },
+    "reviews": {
+      "type": "testimonials",
+      "blocks": {
+        "r0": {
+          "type": "review",
+          "settings": {}
+        },
+        "r1": {
+          "type": "review",
+          "settings": {}
+        },
+        "r2": {
+          "type": "review",
+          "settings": {}
+        },
+        "r3": {
+          "type": "review",
+          "settings": {}
+        },
+        "r4": {
+          "type": "review",
+          "settings": {}
+        },
+        "r5": {
+          "type": "review",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "r0",
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "spotlight",
+    "story",
+    "rail",
+    "film",
+    "picks",
+    "reviews"
+  ]
+}

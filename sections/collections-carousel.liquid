@@ -1,4 +1,4 @@
-<section class="vc-section color-{{ section.settings.color_scheme }}" style="--vc-heading: {{ section.settings.heading_size }}px; --vc-align: {{ section.settings.text_align }};">
+<section class="vc-section color-{{ section.settings.color_scheme }}" style="--vc-heading: {{ section.settings.heading_size }}px; --vc-align: {{ section.settings.text_align }}; --vc-label-size: {{ section.settings.label_size }}px;{% if section.settings.dot_color != blank %} --vc-dot: {{ section.settings.dot_color }};{% endif %}">
   <h2 class="vc-heading">{{ section.settings.heading }}</h2>
 
   {% capture slides_json %}[
@@ -116,6 +116,22 @@
           "label": "Right"
         }
       ]
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Collection name size",
+      "min": 10,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Dot color",
+      "info": "Leave empty to keep the veyroze default."
     }
   ],
   "presets": [

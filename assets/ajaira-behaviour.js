@@ -10,7 +10,7 @@
     '[data-lenis-prevent]',
     'cart-drawer', '.drawer', '.menu-drawer', '.vz-sheet', '.vz-pan',
     '.product-popup-modal', 'modal-dialog', '.predictive-search', 'details[open] > .header__submenu',
-    '[role="dialog"]', '[aria-modal="true"]',
+    '[role="dialog"]', '[aria-modal="true"]', '.aj-rail__track', '.aj-reviews__scroller', '.slider',
   ].join(',');
 
   /* ---------- Smooth scroll ---------- */

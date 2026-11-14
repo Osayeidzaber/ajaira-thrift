@@ -1,0 +1,179 @@
+{%- liquid
+  assign uid = 'aj-spot-' | append: section.id
+-%}
+<section
+  id="{{ uid }}"
+  class="aj-spot color-{{ section.settings.color_scheme }} gradient"
+  style="--spot-h: {{ section.settings.height }}px; --spot-hm: {{ section.settings.height_mobile }}px; --spot-pt: {{ section.settings.padding_top }}px; --spot-pb: {{ section.settings.padding_bottom }}px; --spot-name: {{ section.settings.name_size }}px;{% if section.settings.bg_color != blank %} --spot-bg: {{ section.settings.bg_color }};{% endif %}"
+  data-aj-spot
+  data-autoplay="{{ section.settings.autoplay }}"
+  data-speed="{{ section.settings.autoplay_speed }}"
+>
+  {%- if section.settings.heading != blank -%}
+    <h2 class="aj-spot__heading">{{ section.settings.heading | escape }}</h2>
+  {%- endif -%}
+  <div class="aj-spot__stage">
+    <ul class="aj-spot__track" role="list">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign p = block.settings.product
+          assign img = block.settings.image | default: p.featured_media.preview_image
+          assign name = block.settings.title | default: p.title
+          assign link = block.settings.link | default: p.url
+        -%}
+        <li class="aj-spot__item" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+          <a href="{{ link | default: '#' }}" class="aj-spot__media" tabindex="-1" aria-label="{{ name | escape }}">
+            {%- if img != blank -%}
+              {{ img | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 30vw, 70vw', widths: '360, 540, 720, 900', alt: name }}
+            {%- else -%}
+              {{ 'product-apparel-1' | placeholder_svg_tag: 'aj-spot__placeholder' }}
+            {%- endif -%}
+          </a>
+          <div class="aj-spot__info">
+            <a href="{{ link | default: '#' }}" class="aj-spot__name">{{ name | default: 'onboarding.product_title' | t | escape }}</a>
+            {%- if section.settings.show_price and p != blank -%}
+              <span class="aj-spot__price">{{ p.price | money }}</span>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+    {%- if section.blocks.size > 1 -%}
+      <button type="button" class="aj-spot__arrow aj-spot__arrow--prev" data-dir="-1" aria-label="{{ 'general.slider.previous_slide' | t }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <button type="button" class="aj-spot__arrow aj-spot__arrow--next" data-dir="1" aria-label="{{ 'general.slider.next_slide' | t }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    {%- endif -%}
+  </div>
+  <p class="aj-spot__caption" aria-live="polite" data-caption></p>
+</section>
+
+{% stylesheet %}
+  .aj-spot { padding: var(--spot-pt, 24px) 0 var(--spot-pb, 24px); overflow: hidden; background: var(--spot-bg, transparent); }
+  .aj-spot__heading { text-align: center; margin: 0 0 16px; font-size: 13px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 500; }
+  .aj-spot__stage { position: relative; height: var(--spot-h, 560px); }
+  .aj-spot__track { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; }
+  .aj-spot__item { position: absolute; left: 50%; bottom: 0; width: 26%; height: 100%; transform: translateX(-50%); transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.6s ease, filter 0.6s ease; display: flex; flex-direction: column; justify-content: flex-end; }
+  .aj-spot__media { display: block; height: 100%; }
+  .aj-spot__media img, .aj-spot__placeholder { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; display: block; }
+  .aj-spot__info { display: none; }
+  .aj-spot__caption { text-align: center; margin: 14px 0 0; min-height: 1.4em; font-size: var(--spot-name, 12px); letter-spacing: 0.08em; }
+  .aj-spot__caption a { color: inherit; text-decoration: none; }
+  .aj-spot__caption .aj-spot__price { opacity: 0.6; margin-left: 10px; }
+  .aj-spot__arrow { position: absolute; bottom: 8px; z-index: 5; width: 40px; height: 40px; border: 0; background: none; color: rgb(var(--color-foreground)); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.7; transition: opacity 0.2s; }
+  .aj-spot__arrow:hover { opacity: 1; }
+  .aj-spot__arrow svg { width: 20px; height: 20px; }
+  .aj-spot__arrow--prev { left: 16px; }
+  .aj-spot__arrow--next { right: 16px; }
+  @media (max-width: 749px) {
+    .aj-spot__stage { height: var(--spot-hm, 420px); }
+    .aj-spot__item { width: 52%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .aj-spot__item { transition: none; } }
+{% endstylesheet %}
+
+{% javascript %}
+  (() => {
+    const init = (root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = '1';
+      const items = [...root.querySelectorAll('.aj-spot__item')];
+      const caption = root.querySelector('[data-caption]');
+      if (!items.length) return;
+      let active = Math.floor(items.length / 2);
+      let timer = null;
+      const render = () => {
+        const n = items.length;
+        items.forEach((item, i) => {
+          let off = i - active;
+          if (off > n / 2) off -= n;
+          if (off < -n / 2) off += n;
+          const abs = Math.abs(off);
+          const mobile = window.innerWidth < 750;
+          const step = mobile ? 62 : 68;
+          const scale = abs === 0 ? 1 : Math.max(0.62, 0.86 - (abs - 1) * 0.1);
+          item.style.transform = `translateX(calc(-50% + ${off * step}%)) scale(${scale})`;
+          item.style.zIndex = String(100 - abs);
+          item.style.opacity = abs > 3 ? '0' : abs === 0 ? '1' : String(0.85 - abs * 0.12);
+          item.style.filter = abs === 0 ? 'none' : 'saturate(0.85)';
+          item.setAttribute('aria-hidden', abs === 0 ? 'false' : 'true');
+          const link = item.querySelector('.aj-spot__media');
+          if (link) link.tabIndex = abs === 0 ? 0 : -1;
+        });
+        const info = items[active].querySelector('.aj-spot__info');
+        caption.innerHTML = info ? info.innerHTML : '';
+      };
+      const go = (dir) => {
+        active = (active + dir + items.length) % items.length;
+        render();
+      };
+      root.querySelectorAll('.aj-spot__arrow').forEach((b) => b.addEventListener('click', () => { go(Number(b.dataset.dir)); restart(); }));
+      items.forEach((item, i) => item.addEventListener('click', (e) => {
+        if (i !== active) { e.preventDefault(); active = i; render(); restart(); }
+      }));
+      let x0 = null;
+      root.addEventListener('pointerdown', (e) => { x0 = e.clientX; }, { passive: true });
+      root.addEventListener('pointerup', (e) => {
+        if (x0 === null) return;
+        const dx = e.clientX - x0; x0 = null;
+        if (Math.abs(dx) > 40) { go(dx < 0 ? 1 : -1); restart(); }
+      });
+      const restart = () => {
+        clearInterval(timer);
+        if (root.dataset.autoplay === 'true' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          timer = setInterval(() => go(1), Number(root.dataset.speed || 5) * 1000);
+        }
+      };
+      root.addEventListener('mouseenter', () => clearInterval(timer));
+      root.addEventListener('mouseleave', restart);
+      window.addEventListener('resize', render);
+      render();
+      restart();
+    };
+    const all = () => document.querySelectorAll('[data-aj-spot]').forEach(init);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', all); else all();
+    document.addEventListener('shopify:section:load', all);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Spotlight carousel",
+  "tag": "div",
+  "class": "section",
+  "settings": [
+    { "type": "paragraph", "content": "Cut-out photos (transparent background) look best. Add one block per product." },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "checkbox", "id": "show_price", "label": "Show price", "default": true },
+    { "type": "checkbox", "id": "autoplay", "label": "Auto-rotate", "default": false },
+    { "type": "range", "id": "autoplay_speed", "label": "Seconds between slides", "min": 3, "max": 10, "step": 1, "default": 5 },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "height", "label": "Height on desktop", "min": 300, "max": 900, "step": 20, "unit": "px", "default": 560 },
+    { "type": "range", "id": "height_mobile", "label": "Height on mobile", "min": 240, "max": 700, "step": 20, "unit": "px", "default": 420 },
+    { "type": "range", "id": "name_size", "label": "Name size", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 12 },
+    { "type": "header", "content": "Style" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "color", "id": "bg_color", "label": "Background", "info": "Leave empty to use the color scheme." },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Optional: replaces the product photo (use a cut-out)." },
+        { "type": "text", "id": "title", "label": "Name", "info": "Optional: replaces the product title." },
+        { "type": "url", "id": "link", "label": "Link", "info": "Optional: replaces the product link." }
+      ]
+    }
+  ],
+  "max_blocks": 15,
+  "presets": [
+    { "name": "Spotlight carousel", "blocks": [{ "type": "slide" }, { "type": "slide" }, { "type": "slide" }, { "type": "slide" }, { "type": "slide" }] }
+  ]
+}
+{% endschema %}

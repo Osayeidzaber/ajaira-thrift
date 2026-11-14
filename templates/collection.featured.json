@@ -1,11 +1,11 @@
 {
   "sections": {
     "banner": {
-      "type": "main-collection-banner",
+      "type": "collection-hero",
       "settings": {
-        "show_collection_description": true,
-        "show_collection_image": true,
-        "color_scheme": "scheme-1"
+        "show_count": true,
+        "show_description": true,
+        "show_image": true
       }
     },
     "product-grid": {

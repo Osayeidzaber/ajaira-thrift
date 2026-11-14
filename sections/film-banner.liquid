@@ -1,0 +1,74 @@
+{%- liquid
+  assign btn_url = section.settings.button_link
+  if btn_url == blank and section.settings.collection != blank
+    assign btn_url = section.settings.collection.url
+  endif
+-%}
+<section
+  class="aj-film aj-film--{{ section.settings.position }}"
+  style="--film-h: {{ section.settings.height }}px; --film-hm: {{ section.settings.height_mobile }}px; --film-title: {{ section.settings.heading_size }}px; --film-overlay: {{ section.settings.overlay | divided_by: 100.0 }}; --film-text: {{ section.settings.text_color }};"
+>
+  <div class="aj-film__media">
+    {%- if section.settings.video != blank -%}
+      {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, preload: 'metadata', image_size: '1920x' }}
+    {%- elsif section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 2400 | image_tag: loading: 'lazy', sizes: '100vw', widths: '750, 1100, 1500, 1920, 2400' }}
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'aj-film__placeholder' }}
+    {%- endif -%}
+  </div>
+  <span class="aj-film__overlay" aria-hidden="true"></span>
+  <div class="aj-film__content">
+    {%- if section.settings.eyebrow != blank -%}<p class="aj-film__eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+    {%- if section.settings.heading != blank -%}<h2 class="aj-film__title">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+    {%- if section.settings.button_label != blank and btn_url != blank -%}
+      <a class="aj-film__btn" href="{{ btn_url }}">{{ section.settings.button_label | escape }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .aj-film { position: relative; height: var(--film-h, 600px); overflow: hidden; color: var(--film-text, #fff); }
+  .aj-film__media, .aj-film__overlay { position: absolute; inset: 0; }
+  .aj-film__media video, .aj-film__media img, .aj-film__placeholder { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .aj-film__placeholder { background: #1a1a1a; }
+  .aj-film__overlay { background: linear-gradient(to top, rgba(0, 0, 0, var(--film-overlay, 0.35)), rgba(0, 0, 0, calc(var(--film-overlay, 0.35) * 0.3)) 60%); }
+  .aj-film__content { position: absolute; z-index: 2; padding: clamp(24px, 4vw, 56px); display: flex; flex-direction: column; gap: 20px; max-width: 900px; }
+  .aj-film--bottom_left .aj-film__content { left: 0; bottom: 0; align-items: flex-start; text-align: left; }
+  .aj-film--bottom_center .aj-film__content { left: 50%; bottom: 0; transform: translateX(-50%); align-items: center; text-align: center; }
+  .aj-film--center .aj-film__content { left: 50%; top: 50%; transform: translate(-50%, -50%); align-items: center; text-align: center; }
+  .aj-film__eyebrow { margin: 0; font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; opacity: 0.85; }
+  .aj-film__title { margin: 0; font-size: var(--film-title, 72px); line-height: 0.95; letter-spacing: -0.01em; text-transform: uppercase; font-weight: 500; color: inherit; }
+  .aj-film__btn { display: inline-block; padding: 14px 22px; background: #fff; color: #0b0b0b; text-decoration: none; font-size: 12px; letter-spacing: 0.06em; transition: opacity 0.2s, transform 0.2s; }
+  .aj-film__btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  @media (max-width: 749px) {
+    .aj-film { height: var(--film-hm, 460px); }
+    .aj-film__title { font-size: calc(var(--film-title, 72px) * 0.55); }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Film banner",
+  "tag": "div",
+  "class": "section",
+  "settings": [
+    { "type": "video", "id": "video", "label": "Video", "info": "Plays muted on a loop. Upload in Content → Files or here." },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Shown when there is no video." },
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "Default button link." },
+    { "type": "text", "id": "eyebrow", "label": "Small text above heading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "New season" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the collection" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "header", "content": "Layout" },
+    { "type": "select", "id": "position", "label": "Text position", "default": "bottom_left", "options": [{ "value": "bottom_left", "label": "Bottom left" }, { "value": "bottom_center", "label": "Bottom center" }, { "value": "center", "label": "Center" }] },
+    { "type": "range", "id": "height", "label": "Height on desktop", "min": 300, "max": 1000, "step": 20, "unit": "px", "default": 600 },
+    { "type": "range", "id": "height_mobile", "label": "Height on mobile", "min": 240, "max": 800, "step": 20, "unit": "px", "default": 460 },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 24, "max": 140, "step": 4, "unit": "px", "default": 72 },
+    { "type": "header", "content": "Style" },
+    { "type": "range", "id": "overlay", "label": "Shade over media", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 35 },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" }
+  ],
+  "presets": [{ "name": "Film banner" }]
+}
+{% endschema %}

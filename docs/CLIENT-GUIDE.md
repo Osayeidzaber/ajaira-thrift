@@ -26,6 +26,23 @@ Everything on the storefront is changed in **Shopify admin**. You never need to 
 
 Every custom section also has **Style** and **Typography & layout** groups: colours, padding, heading size and alignment. Leave a colour empty to keep the original design.
 
+## Sections you can add anywhere
+
+In Customize, click **Add section** on any page. Besides Shopify's standard sections, the theme includes:
+
+| Section | What it is |
+| --- | --- |
+| **Spotlight carousel** | Big product cut-outs in a sliding row; the middle one is large with its name and price. Optional auto-rotate. |
+| **Collection story** | Large image beside a bold text panel with heading, text and button. Pick a collection to fill it automatically. |
+| **Product rail** | Products hanging from a clothes rail you can drag sideways, with a "See availability" button. |
+| **Film banner** | Full-width looping video (or image) with a big title and button. |
+| **Product picks** | Product grid, hand-picked or from a collection, with optional "Showing X of Y" and a "Show more" button. |
+| **Customer reviews** | Review cards you type in yourself (name, text, stars, product bought), in one or two scrolling rows. |
+| **Collection hero** | Collection pages only: title, product count, description, image and links to related collections. |
+| **veyroze banner**, **Product launch**, **FAQ**, **Trust badges**, **Collections carousel**, **Inner Circle** | The homepage sections; each can be reused on other pages. |
+
+Every section has size, alignment, colour and spacing controls. Icons in the trust badges and product trust row can be replaced with your own uploaded images.
+
 ## Ready-made templates
 
 When you create a page or collection, choose a template on the right ("Theme template"):
@@ -39,7 +56,8 @@ When you create a page or collection, choose a template on the right ("Theme tem
 | `page.shipping` | Shipping and returns, as expandable rows |
 | `page.legal` | Plain text pages: terms, imprint (you write the text) |
 | `page.contact` | Contact form |
-| `collection.featured` | Collection with its image and description on top, no filters |
+| `page.lookbook` | Editorial page: spotlight carousel, collection story, product rail, film banner, product grid, reviews |
+| `collection.featured` | Collection hero (title, count, description, image, related collections) above the products, no filters |
 | `product.original` | Large showcase layout for special or own-label pieces |
 
 Each template is a starting point. Open it in Customize and add, remove or reorder sections. Any section can go on any page: click **Add section**.

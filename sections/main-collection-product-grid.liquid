@@ -101,11 +101,12 @@
       {%- if section.settings.veyroze_facets -%}
         {{ 'vz-facets.css' | asset_url | stylesheet_tag }}
         <script src="{{ 'vz-facets.js' | asset_url }}" defer="defer"></script>
-        <div class="page-width" id="main-collection-filters" style="{% if section.settings.facet_accent != blank %}--vz-accent: {{ section.settings.facet_accent }};{% endif %}{% if section.settings.facet_text != blank %}--vz-ink: {{ section.settings.facet_text }};{% endif %}{% if section.settings.facet_muted != blank %}--vz-dim: {{ section.settings.facet_muted }}; --vz-mut: {{ section.settings.facet_muted }};{% endif %}{% if section.settings.facet_panel != blank %}--vz-panel: {{ section.settings.facet_panel }};{% endif %}">
+        <div class="page-width" id="main-collection-filters" style="{% if section.settings.facet_accent != blank %}--vz-accent: {{ section.settings.facet_accent }};{% endif %}{% if section.settings.facet_text != blank %}--vz-ink: {{ section.settings.facet_text }};{% endif %}{% if section.settings.facet_muted != blank %}--vz-dim: {{ section.settings.facet_muted }}; --vz-mut: {{ section.settings.facet_muted }};{% endif %}{% if section.settings.facet_panel != blank %}--vz-panel: {{ section.settings.facet_panel }};{% endif %}--vz-trg-size: {{ section.settings.facet_size }}px;">
           {% render 'vz-facets',
             results: collection,
             size_filters: section.settings.size_filters,
-            enable_sorting: section.settings.enable_sorting
+            enable_sorting: section.settings.enable_sorting,
+            font_style: section.settings.facet_font
           %}
         </div>
       {%- else -%}
@@ -380,6 +381,8 @@
     { "type": "color", "id": "facet_text", "label": "Filter bar active text", "info": "Leave empty to keep the veyroze default." },
     { "type": "color", "id": "facet_muted", "label": "Filter bar muted text", "info": "Leave empty to keep the veyroze default." },
     { "type": "color", "id": "facet_panel", "label": "Filter dropdown background", "info": "Leave empty to keep the veyroze default." },
+    { "type": "select", "id": "facet_font", "label": "Filter bar fonts", "default": "veyroze", "options": [{ "value": "veyroze", "label": "veyroze (Cormorant Garamond + Jost)" }, { "value": "theme", "label": "Theme fonts (Typography settings)" }] },
+    { "type": "range", "id": "facet_size", "label": "Filter label size", "min": 9, "max": 16, "step": 0.5, "unit": "px", "default": 11.5 },
     {
       "type": "checkbox",
       "id": "enable_filtering",

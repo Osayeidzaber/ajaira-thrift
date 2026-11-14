@@ -1,0 +1,73 @@
+{%- liquid
+  assign c = collection
+  assign img = section.settings.image | default: c.image
+-%}
+<section
+  class="aj-chero color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_image and img != blank %} aj-chero--image{% endif %}"
+  style="--chero-title: {{ section.settings.heading_size }}px; --chero-h: {{ section.settings.image_height }}px; --chero-align: {{ section.settings.text_align }};"
+>
+  {%- if section.settings.show_image and img != blank -%}
+    <div class="aj-chero__media">{{ img | image_url: width: 2000 | image_tag: loading: 'eager', sizes: '100vw', widths: '750, 1100, 1500, 2000' }}</div>
+  {%- endif -%}
+  <div class="aj-chero__body page-width">
+    <h1 class="aj-chero__title">
+      {{- c.title | default: section.settings.fallback_title | escape -}}
+      {%- if section.settings.show_count -%}<sup class="aj-chero__count">{{ c.products_count }}</sup>{%- endif -%}
+    </h1>
+    {%- if section.settings.show_description and c.description != blank -%}
+      <div class="aj-chero__desc rte">{{ c.description }}</div>
+    {%- endif -%}
+    {%- if section.settings.related.size > 0 -%}
+      <nav class="aj-chero__links" aria-label="{{ section.settings.related_label | escape }}">
+        {%- for rc in section.settings.related -%}
+          <a href="{{ rc.url }}" class="aj-chero__link{% if rc.handle == c.handle %} is-active{% endif %}"{% if rc.handle == c.handle %} aria-current="page"{% endif %}>
+            {{- rc.title | escape -}}
+            {%- if section.settings.show_count %} <span>({{ rc.products_count }})</span>{% endif -%}
+          </a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .aj-chero__media { height: var(--chero-h, 360px); overflow: hidden; }
+  .aj-chero__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .aj-chero__body { padding-top: 40px; padding-bottom: 24px; text-align: var(--chero-align, left); }
+  .aj-chero__title { font-size: var(--chero-title, 40px); line-height: 1.05; margin: 0; font-weight: 400; }
+  .aj-chero__count { font-size: 0.35em; margin-left: 6px; opacity: 0.6; vertical-align: super; }
+  .aj-chero__desc { max-width: 640px; margin: 14px 0 0; opacity: 0.75; font-size: 14px; }
+  .aj-chero--image .aj-chero__desc, [style*="--chero-align: center"] .aj-chero__desc { margin-left: auto; margin-right: auto; }
+  .aj-chero__links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 22px; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .aj-chero__links { justify-content: var(--chero-align, left); }
+  .aj-chero__link { color: inherit; text-decoration: none; opacity: 0.55; padding-bottom: 3px; border-bottom: 1px solid transparent; transition: opacity 0.2s, border-color 0.2s; }
+  .aj-chero__link:hover { opacity: 1; }
+  .aj-chero__link.is-active { opacity: 1; border-color: currentColor; }
+  .aj-chero__link span { opacity: 0.7; }
+  @media (max-width: 749px) { .aj-chero__title { font-size: calc(var(--chero-title, 40px) * 0.7); } .aj-chero__media { height: calc(var(--chero-h, 360px) * 0.6); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection hero",
+  "tag": "div",
+  "class": "section",
+  "enabled_on": { "templates": ["collection"] },
+  "settings": [
+    { "type": "paragraph", "content": "Shows the current collection's title, product count, description and links to related collections." },
+    { "type": "checkbox", "id": "show_count", "label": "Show product count", "default": true },
+    { "type": "checkbox", "id": "show_description", "label": "Show collection description", "default": true },
+    { "type": "checkbox", "id": "show_image", "label": "Show collection image", "default": false },
+    { "type": "image_picker", "id": "image", "label": "Image override" },
+    { "type": "collection_list", "id": "related", "label": "Related collections", "limit": 12 },
+    { "type": "text", "id": "related_label", "label": "Related collections label (screen readers)", "default": "Related collections" },
+    { "type": "text", "id": "fallback_title", "label": "Fallback title", "default": "Collection" },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "heading_size", "label": "Title size", "min": 20, "max": 96, "step": 2, "unit": "px", "default": 40 },
+    { "type": "range", "id": "image_height", "label": "Image height", "min": 160, "max": 800, "step": 20, "unit": "px", "default": 360 },
+    { "type": "select", "id": "text_align", "label": "Alignment", "default": "left", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }] },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "Collection hero" }]
+}
+{% endschema %}

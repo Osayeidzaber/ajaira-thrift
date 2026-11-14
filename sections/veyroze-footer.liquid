@@ -6,7 +6,7 @@
     <a href="{{ section.settings.withdraw_url }}" class="vft__withdraw">{{ section.settings.withdraw_label | escape }}</a>
   {%- endif -%}
 {%- endcapture -%}
-<footer class="vft color-{{ section.settings.color_scheme }}" id="vft-{{ section.id }}" style="{% if section.settings.border_color != blank %}--vft-border: {{ section.settings.border_color }};{% endif %} {% if section.settings.padding_top != blank %}--vft-pt: {{ section.settings.padding_top }}px;{% endif %} {% if section.settings.padding_bottom != blank %}--vft-pb: {{ section.settings.padding_bottom }}px;{% endif %}">
+<footer class="vft color-{{ section.settings.color_scheme }}" id="vft-{{ section.id }}" style="--vft-title: {{ section.settings.title_size }}px; --vft-link: {{ section.settings.link_size }}px; --vft-copy: {{ section.settings.copy_size }}px; {% if section.settings.border_color != blank %}--vft-border: {{ section.settings.border_color }};{% endif %} {% if section.settings.padding_top != blank %}--vft-pt: {{ section.settings.padding_top }}px;{% endif %} {% if section.settings.padding_bottom != blank %}--vft-pb: {{ section.settings.padding_bottom }}px;{% endif %}">
   <div class="vft__top">
     <div class="vft__brand">
       <a href="{{ routes.root_url }}" class="vft__logo-link">
@@ -140,15 +140,15 @@
   .vft__withdraw:hover { opacity: 1; }
   .vft__withdraw-wrap--mobile { display: none; }
   .vft__withdraw-wrap--desktop .vft__withdraw { margin-top: 16px; }
-  .vft__col-title { font-family: var(--font-body-family, inherit); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; margin: 0 0 16px; color: rgb(var(--color-foreground)); }
+  .vft__col-title { font-family: var(--font-body-family, inherit); font-size: var(--vft-title, 10px); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; margin: 0 0 16px; color: rgb(var(--color-foreground)); }
   .vft__col-list { list-style: none; padding: 0; margin: 0; }
   .vft__col-list li { margin-bottom: 9px; }
-  .vft__col-list a { font-family: var(--font-body-family, inherit); font-size: 12px; opacity: 0.4; text-decoration: none; color: inherit; letter-spacing: 0.03em; font-weight: 300; transition: opacity 0.2s; }
+  .vft__col-list a { font-family: var(--font-body-family, inherit); font-size: var(--vft-link, 12px); opacity: 0.4; text-decoration: none; color: inherit; letter-spacing: 0.03em; font-weight: 300; transition: opacity 0.2s; }
   .vft__col-list a:hover { opacity: 0.85; }
   .vft__payment-icons { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .vft__pay-icon { height: 20px; width: auto; border-radius: 3px; opacity: 0.6; }
   .vft__bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .vft__copy { font-family: var(--font-body-family, inherit); font-size: 11px; opacity: 0.28; letter-spacing: 0.04em; font-weight: 300; }
+  .vft__copy { font-family: var(--font-body-family, inherit); font-size: var(--vft-copy, 11px); opacity: 0.28; letter-spacing: 0.04em; font-weight: 300; }
   .vft__locales { display: flex; align-items: center; gap: 8px; }
   .vft__select-wrap { position: relative; display: flex; align-items: center; }
   .vft__select { appearance: none; -webkit-appearance: none; background: transparent; border: 1px solid rgba(255, 255, 255, 0.13); border-radius: 4px; color: inherit; font-family: var(--font-body-family, inherit); font-size: 11px; letter-spacing: 0.04em; padding: 6px 26px 6px 10px; cursor: pointer; opacity: 0.5; transition: opacity 0.2s, border-color 0.2s; font-weight: 300; }
@@ -294,6 +294,40 @@
       "step": 2,
       "unit": "px",
       "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Column heading size",
+      "min": 8,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "link_size",
+      "label": "Link size",
+      "min": 9,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "copy_size",
+      "label": "Copyright size",
+      "min": 8,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 11
     }
   ],
   "blocks": [
