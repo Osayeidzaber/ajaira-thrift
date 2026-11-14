@@ -1,0 +1,10 @@
+{% doc %}
+  Emits JSON props for a Vue island.
+
+  @param {string} id - island instance id
+  @param {object} props - serializable props
+
+  @example
+  {% render 'island-props', id: section.id, props: slides_obj %}
+{% enddoc %}
+<script type="application/json" data-island-props="{{ id }}">{{ props | json }}</script>
