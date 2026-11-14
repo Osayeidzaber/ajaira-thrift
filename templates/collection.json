@@ -1,15 +1,30 @@
 {
   "sections": {
-    "banner": {
-      "type": "main-collection-banner",
-      "settings": {
-        "show_collection_description": true,
-        "show_collection_image": false,
-        "color_scheme": "scheme-1"
-      }
-    },
     "tabs": {
       "type": "collection-tabs",
+      "blocks": {
+        "cat-1": {
+          "type": "category",
+          "settings": { "title": "Vintage Jackets", "subtitle": "Retro · Classic" }
+        },
+        "cat-2": {
+          "type": "category",
+          "settings": { "title": "Vintage Leather Jackets", "subtitle": "Leather · Biker" }
+        },
+        "cat-3": {
+          "type": "category",
+          "settings": { "title": "Track Jackets", "subtitle": "Sport · Retro" }
+        },
+        "cat-4": {
+          "type": "category",
+          "settings": { "title": "Shirts", "subtitle": "Dress · Casual" }
+        },
+        "cat-5": {
+          "type": "category",
+          "settings": { "title": "Formal Pants", "subtitle": "Tailored · Smart" }
+        }
+      },
+      "block_order": ["cat-1", "cat-2", "cat-3", "cat-4", "cat-5"],
       "settings": { "color_scheme": "scheme-1" }
     },
     "product-grid": {
@@ -17,8 +32,8 @@
       "settings": {
         "products_per_page": 9,
         "columns_desktop": 3,
-        "image_ratio": "adapt",
-        "show_secondary_image": false,
+        "image_ratio": "portrait",
+        "show_secondary_image": true,
         "show_vendor": false,
         "show_rating": false,
         "enable_filtering": true,
@@ -29,9 +44,5 @@
       }
     }
   },
-  "order": [
-    "banner",
-    "tabs",
-    "product-grid"
-  ]
+  "order": ["tabs", "product-grid"]
 }

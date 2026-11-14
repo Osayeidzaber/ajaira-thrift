@@ -1,56 +1,130 @@
-<div class="collection-tabs color-{{ section.settings.color_scheme }}">
-  {% if section.settings.collections.size > 0 %}
-    {% for c in section.settings.collections %}
-      <a
-        class="collection-tabs__tab{% if c.id == collection.id %} is-active{% endif %}"
-        href="{{ c.url }}"
-      >
-        <strong>{{ c.title }}</strong>
-        <span>{{ c.products_count }}</span>
-      </a>
-    {% endfor %}
-  {% else %}
-    {% for i in (1..4) %}
-      <a class="collection-tabs__tab" href="{{ routes.all_products_collection_url }}">
-        <strong>{{ 'onboarding.collection_title' | t }}</strong>
-        <span>0</span>
-      </a>
-    {% endfor %}
-  {% endif %}
+{%- liquid
+  assign name_family = section.settings.name_font | default: 'Bebas Neue'
+  assign sub_family = section.settings.sub_font | default: 'Cormorant Garamond'
+  assign name_query = name_family | replace: ' ', '+'
+  assign sub_query = sub_family | replace: ' ', '+'
+  assign count = section.blocks.size
+  if count == 0
+    assign count = 4
+  endif
+-%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family={{ name_query }}&family={{ sub_query }}:ital,wght@1,300&display=swap" rel="stylesheet">
+<style>
+  #shopify-section-{{ section.id }} .vcn-name { font-family: '{{ name_family }}', sans-serif; }
+  #shopify-section-{{ section.id }} .vcn-sub { font-family: '{{ sub_family }}', serif; }
+</style>
+
+<div class="vcn-wrap color-{{ section.settings.color_scheme }} gradient">
+  <div class="vcn-track" style="grid-template-columns: repeat({{ count }}, 1fr);">
+    {%- if section.blocks.size > 0 -%}
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign coll = block.settings.collection
+          assign href = coll.url | default: routes.all_products_collection_url
+          assign label = block.settings.title
+          if label == blank and coll != blank
+            assign label = coll.title
+          endif
+          if label == blank
+            assign label = 'onboarding.collection_title' | t
+          endif
+          assign is_active = false
+          if coll != blank and coll.id == collection.id
+            assign is_active = true
+          endif
+        -%}
+        <a
+          href="{{ href }}"
+          class="vcn-item{% if is_active %} vcn-active{% endif %}"
+          aria-current="{% if is_active %}page{% else %}false{% endif %}"
+          {{ block.shopify_attributes }}
+        >
+          <span class="vcn-corner" aria-hidden="true"></span>
+          <span class="vcn-name">{{ label | escape }}</span>
+          {%- if block.settings.subtitle != blank -%}
+            <span class="vcn-sub">{{ block.settings.subtitle | escape }}</span>
+          {%- endif -%}
+          <span class="vcn-line" aria-hidden="true"></span>
+        </a>
+      {%- endfor -%}
+    {%- else -%}
+      {%- for i in (1..4) -%}
+        <a href="{{ routes.all_products_collection_url }}" class="vcn-item" aria-current="false">
+          <span class="vcn-corner" aria-hidden="true"></span>
+          <span class="vcn-name">{{ 'onboarding.collection_title' | t }}</span>
+          <span class="vcn-line" aria-hidden="true"></span>
+        </a>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
 </div>
 
 {% stylesheet %}
-  .collection-tabs {
-    display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--color-line-soft);
+  .vcn-wrap { margin-top: 60px; margin-bottom: 2.5rem; }
+  .vcn-track { display: grid; grid-template-columns: repeat(4, 1fr); border-left: 0.5px solid rgba(var(--color-foreground), 0.2); }
+  .vcn-item { position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 1rem 1rem; height: 100px; border-right: 0.5px solid rgba(var(--color-foreground), 0.2); border-top: 0.5px solid rgba(var(--color-foreground), 0.2); border-bottom: 0.5px solid rgba(var(--color-foreground), 0.2); background: transparent; text-decoration: none; overflow: hidden; transition: background 0.18s; box-sizing: border-box; }
+  .vcn-item:hover { background: rgba(var(--color-foreground), 0.06); }
+  .vcn-item.vcn-active { background: rgb(var(--color-foreground)); }
+  .vcn-name { display: block; font-size: 20px; letter-spacing: 0.06em; line-height: 1; color: rgb(var(--color-foreground)); margin-bottom: 5px; }
+  .vcn-item.vcn-active .vcn-name { color: rgb(var(--color-background)); }
+  .vcn-sub { display: block; font-size: 10px; font-style: italic; font-weight: 300; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(var(--color-foreground), 0.4); line-height: 1; }
+  .vcn-item.vcn-active .vcn-sub { color: rgba(var(--color-background), 0.4); }
+  .vcn-line { position: absolute; bottom: 0; left: 0; width: 0%; height: 2px; background: rgb(var(--color-foreground)); transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1); }
+  .vcn-item:hover .vcn-line { width: 100%; }
+  .vcn-item.vcn-active .vcn-line { width: 100%; background: rgb(var(--color-background)); }
+  .vcn-corner { position: absolute; top: 11px; right: 11px; width: 7px; height: 7px; border-top: 0.5px solid rgba(var(--color-foreground), 0.3); border-right: 0.5px solid rgba(var(--color-foreground), 0.3); opacity: 0; transition: opacity 0.18s; }
+  .vcn-item:hover .vcn-corner { opacity: 1; }
+  .vcn-item.vcn-active .vcn-corner { opacity: 1; border-color: rgba(var(--color-background), 0.2); }
+  @media (max-width: 768px) {
+    .vcn-track { display: flex; overflow-x: auto; border-left: none; scrollbar-width: thin; scrollbar-color: rgba(var(--color-foreground), 0.3) transparent; }
+    .vcn-track::-webkit-scrollbar { height: 3px; }
+    .vcn-track::-webkit-scrollbar-track { background: transparent; }
+    .vcn-track::-webkit-scrollbar-thumb { background: rgba(var(--color-foreground), 0.3); border-radius: 0; }
+    .vcn-track::-webkit-scrollbar-thumb:hover { background: rgba(var(--color-foreground), 0.55); }
+    .vcn-item { flex: 0 0 auto; width: 115px; height: 88px; border-left: 0.5px solid rgba(var(--color-foreground), 0.2); padding: 0; }
+    .vcn-name { position: absolute; bottom: 22px; left: 0.85rem; right: 0.85rem; font-size: 17px; margin-bottom: 0; white-space: nowrap; overflow: hidden; }
+    .vcn-sub { position: absolute; bottom: 0.7rem; left: 0.85rem; right: 0.85rem; font-size: 9px; letter-spacing: 0.1em; white-space: normal; line-height: 1.3; }
   }
-  .collection-tabs__tab {
-    flex: 1;
-    min-width: 6rem;
-    text-align: center;
-    padding: 0.7rem 1rem;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius);
-    text-decoration: none;
-    color: var(--color-ink);
-    background: var(--color-panel);
+  @media (max-width: 480px) {
+    .vcn-item { width: 100px; height: 80px; }
+    .vcn-name { bottom: 20px; font-size: 15px; }
+    .vcn-sub { bottom: 0.6rem; font-size: 8px; white-space: normal; line-height: 1.3; }
   }
-  .collection-tabs__tab strong { display: block; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; }
-  .collection-tabs__tab span { color: var(--color-mute); font-size: 0.7rem; }
-  .collection-tabs__tab.is-active { background: var(--color-ink); color: var(--color-bg); }
-  .collection-tabs__tab.is-active span { color: var(--color-bg); }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Collection tabs",
+  "name": "Collection navigation",
   "settings": [
-    { "type": "collection_list", "id": "collections", "label": "Collections", "limit": 8 },
+    { "type": "text", "id": "name_font", "label": "Category name font", "info": "Google Fonts family name.", "default": "Bebas Neue" },
+    { "type": "text", "id": "sub_font", "label": "Subtitle font", "info": "Google Fonts family name, shown italic.", "default": "Cormorant Garamond" },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
   ],
-  "presets": [{ "name": "Collection tabs" }]
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "title", "label": "Display name", "info": "Overrides the collection title." },
+        { "type": "text", "id": "subtitle", "label": "Subtitle" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Collection navigation",
+      "blocks": [
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" }
+      ]
+    }
+  ]
 }
 {% endschema %}
