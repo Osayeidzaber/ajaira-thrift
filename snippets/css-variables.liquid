@@ -21,8 +21,8 @@
     --spacing: {{ settings.section_spacing }}px;
     --radius: {{ settings.radius }}px;
   }
-  body { background: var(--color-bg); color: var(--color-ink); font-family: var(--font-body); }
-  h1, h2, h3, h4 { font-family: var(--font-heading); }
+  body { background: var(--color-bg); color: color-mix(in srgb, var(--color-ink) 75%, transparent); font-family: var(--font-body); }
+  h1, h2, h3, h4 { color: var(--color-ink); font-family: var(--font-heading); }
   {{ settings.font_heading | font_face }}
   {{ settings.font_body | font_face }}
 </style>
