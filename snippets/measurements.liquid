@@ -1,0 +1,101 @@
+{% doc %}
+  Renders flat-lay measurement rows (waist / length / leg opening) beside a garment diagram.
+
+  @param {product} product - product whose thrift measurement metafields are shown
+  @param {string} [note] - optional footnote rendered under the rows
+
+  @example
+  {% render 'measurements', product: product, note: section.settings.note %}
+{% enddoc %}
+{%- assign thrift = product.metafields.thrift -%}
+<div class="measurements">
+  <svg class="measurements__diagram" viewBox="0 0 120 160" fill="none" aria-hidden="true">
+    <path
+      d="M32 12h56v18l-7 118H63l-3-84-3 84H39L32 30V12z"
+      stroke="var(--color-mute)"
+      stroke-width="1.5"
+    />
+    <path d="M32 20h56" stroke="var(--color-mute)" stroke-width="1"/>
+    <path d="M34 16h52" stroke="var(--color-wine-bright)" stroke-width="1.5"/>
+    <path d="M34 13v6M86 13v6" stroke="var(--color-wine-bright)" stroke-width="1.5"/>
+    <path d="M94 20v128" stroke="var(--color-wine-bright)" stroke-width="1.5"/>
+    <path d="M91 20h6M91 148h6" stroke="var(--color-wine-bright)" stroke-width="1.5"/>
+    <path d="M64 146h16" stroke="var(--color-wine-bright)" stroke-width="1.5"/>
+    <path d="M64 143v6M80 143v6" stroke="var(--color-wine-bright)" stroke-width="1.5"/>
+  </svg>
+  <ul class="measurements__rows">
+    {%- if thrift.waist_cm != blank -%}
+      <li class="measurements__row">
+        <span class="measurements__mark" aria-hidden="true">W</span>
+        <span class="measurements__label">{{ 'products.thrift.waist' | t }}</span>
+        <span class="measurements__value">{{ thrift.waist_cm.value }} {{ 'products.thrift.cm' | t }}</span>
+      </li>
+    {%- endif -%}
+    {%- if thrift.length_cm != blank -%}
+      <li class="measurements__row">
+        <span class="measurements__mark" aria-hidden="true">L</span>
+        <span class="measurements__label">{{ 'products.thrift.length' | t }}</span>
+        <span class="measurements__value">{{ thrift.length_cm.value }} {{ 'products.thrift.cm' | t }}</span>
+      </li>
+    {%- endif -%}
+    {%- if thrift.leg_opening_cm != blank -%}
+      <li class="measurements__row">
+        <span class="measurements__mark" aria-hidden="true">LO</span>
+        <span class="measurements__label">{{ 'products.thrift.leg_opening' | t }}</span>
+        <span class="measurements__value">{{ thrift.leg_opening_cm.value }} {{ 'products.thrift.cm' | t }}</span>
+      </li>
+    {%- endif -%}
+  </ul>
+</div>
+{%- if note != blank -%}
+  <p class="measurements__note">{{ note }}</p>
+{%- endif -%}
+
+{% stylesheet %}
+  .measurements {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .measurements__diagram {
+    width: 7rem;
+    height: auto;
+  }
+  .measurements__rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .measurements__row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--color-line-soft);
+  }
+  .measurements__mark {
+    display: grid;
+    place-items: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    border: 1px solid var(--color-wine-bright);
+    border-radius: 50%;
+    font-size: 0.55rem;
+    color: var(--color-wine-bright);
+  }
+  .measurements__label {
+    font-size: 0.8rem;
+    color: var(--color-mute);
+  }
+  .measurements__value {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--color-ink);
+  }
+  .measurements__note {
+    margin: 0.8rem 0 0;
+    font-size: 0.7rem;
+    color: var(--color-faint);
+  }
+{% endstylesheet %}

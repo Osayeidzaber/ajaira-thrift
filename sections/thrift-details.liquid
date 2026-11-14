@@ -1,0 +1,120 @@
+<div class="thrift-details color-{{ section.settings.color_scheme }}">
+  {%- assign thrift = product.metafields.thrift -%}
+
+  {%- if thrift.waist_cm != blank or thrift.length_cm != blank or thrift.leg_opening_cm != blank -%}
+    <h2 class="thrift-details__heading">{{ section.settings.measurements_heading }}</h2>
+    {% render 'measurements', product: product, note: section.settings.note %}
+  {%- endif -%}
+
+  {%- if thrift.condition != blank -%}
+    <h2 class="thrift-details__heading">{{ section.settings.condition_heading }}</h2>
+    {%- assign condition_index = 0 -%}
+    {%- case thrift.condition.value -%}
+      {%- when 'good' -%}
+        {%- assign condition_index = 1 -%}
+      {%- when 'very_good' -%}
+        {%- assign condition_index = 2 -%}
+      {%- when 'like_new' -%}
+        {%- assign condition_index = 3 -%}
+    {%- endcase -%}
+    {%- assign label_worn = 'products.thrift.condition_worn' | t -%}
+    {%- assign label_good = 'products.thrift.condition_good' | t -%}
+    {%- assign label_very_good = 'products.thrift.condition_very_good' | t -%}
+    {%- assign label_like_new = 'products.thrift.condition_like_new' | t -%}
+
+    <div class="condition-scale-fallback" data-island="condition-scale" data-island-id="{{ section.id }}">
+      <div class="condition-scale-fallback__segs">
+        {%- for i in (0..3) -%}
+          <span class="condition-scale-fallback__seg{% if i <= condition_index %} on{% endif %}"></span>
+        {%- endfor -%}
+      </div>
+      <div class="condition-scale-fallback__labels">
+        <span>{{ label_worn }}</span>
+        <span>{{ label_good }}</span>
+        <span>{{ label_very_good }}</span>
+        <span>{{ label_like_new }}</span>
+      </div>
+    </div>
+    <script type="application/json" data-island-props="{{ section.id }}">
+      { "condition": {{ thrift.condition.value | json }}, "labels": [{{ label_worn | json }}, {{ label_good | json }}, {{ label_very_good | json }}, {{ label_like_new | json }}] }
+    </script>
+  {%- endif -%}
+
+  {%- if section.settings.care_url != blank -%}
+    <a class="thrift-details__care" href="{{ section.settings.care_url }}">
+      {{- section.settings.care_label -}}
+    </a>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .thrift-details {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+  .thrift-details__heading {
+    margin: 2rem 0 1rem;
+    font-size: 1.3rem;
+    font-weight: 400;
+  }
+  .thrift-details__heading:first-child {
+    margin-top: 0;
+  }
+  .condition-scale-fallback__segs {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .condition-scale-fallback__seg {
+    flex: 1;
+    height: 0.35rem;
+    border-radius: 2px;
+    background: var(--color-line);
+  }
+  .condition-scale-fallback__seg.on {
+    background: var(--color-ok);
+  }
+  .condition-scale-fallback__labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--color-faint);
+  }
+  .thrift-details__care {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.6rem;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: var(--color-mute);
+    text-decoration: none;
+  }
+  .thrift-details__care:hover {
+    border-color: var(--color-mute);
+    color: var(--color-ink);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Thrift details",
+  "settings": [
+    { "type": "text", "id": "measurements_heading", "label": "Measurements heading", "default": "Measurements" },
+    { "type": "text", "id": "condition_heading", "label": "Condition heading", "default": "Condition" },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Measurements note",
+      "default": "Measured flat — compare with a well-fitting pair of jeans."
+    },
+    { "type": "text", "id": "care_label", "label": "Care link label", "default": "More about our vintage conditions & care" },
+    { "type": "url", "id": "care_url", "label": "Care link" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "Thrift details" }]
+}
+{% endschema %}

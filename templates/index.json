@@ -12,9 +12,9 @@
     "trust": {
       "type": "trust-badges",
       "blocks": {
-        "b1": { "type": "badge", "settings": { "icon": "🌍", "text": "Worldwide shipping" } },
-        "b2": { "type": "badge", "settings": { "icon": "↩", "text": "14 days return policy" } },
-        "b3": { "type": "badge", "settings": { "icon": "🔒", "text": "Secure checkout" } }
+        "b1": { "type": "badge", "settings": { "icon": "plane", "text": "Worldwide shipping" } },
+        "b2": { "type": "badge", "settings": { "icon": "return", "text": "14 days return policy" } },
+        "b3": { "type": "badge", "settings": { "icon": "lock", "text": "Secure checkout" } }
       },
       "block_order": ["b1", "b2", "b3"],
       "settings": { "color_scheme": "scheme-1" }

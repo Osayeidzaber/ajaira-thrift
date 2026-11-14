@@ -1,0 +1,98 @@
+{% doc %}
+  Renders the thrift spec panel (model / fits like / tag size) and condition/details chips.
+
+  @param {product} product - product whose thrift metafields are shown
+
+  @example
+  {% render 'thrift-specs', product: product %}
+{% enddoc %}
+{%- assign thrift = product.metafields.thrift -%}
+{%- if thrift.model != blank or thrift.fits_like != blank or thrift.tag_size != blank or thrift.condition != blank or thrift.details != blank -%}
+  <div class="thrift-specs">
+    {%- if thrift.model != blank or thrift.fits_like != blank or thrift.tag_size != blank -%}
+      <dl class="thrift-specs__panel">
+        {%- if thrift.model != blank -%}
+          <div class="thrift-specs__cell thrift-specs__cell--full">
+            <dt>{{ 'products.thrift.model' | t }}</dt>
+            <dd>{{ thrift.model.value }}</dd>
+          </div>
+        {%- endif -%}
+        {%- if thrift.fits_like != blank -%}
+          <div class="thrift-specs__cell">
+            <dt>{{ 'products.thrift.fits_like' | t }}</dt>
+            <dd>{{ thrift.fits_like.value }}</dd>
+          </div>
+        {%- endif -%}
+        {%- if thrift.tag_size != blank -%}
+          <div class="thrift-specs__cell">
+            <dt>{{ 'products.thrift.tag_size' | t }}</dt>
+            <dd>{{ thrift.tag_size.value }}</dd>
+          </div>
+        {%- endif -%}
+      </dl>
+    {%- endif -%}
+    {%- if thrift.condition != blank or thrift.details != blank -%}
+      <div class="thrift-specs__chips">
+        {%- if thrift.condition != blank -%}
+          <span class="thrift-specs__chip thrift-specs__chip--ok">
+            {{- 'products.thrift.condition' | t }}: {{ thrift.condition.value | replace: '_', ' ' | capitalize -}}
+          </span>
+        {%- endif -%}
+        {%- if thrift.details != blank -%}
+          <span class="thrift-specs__chip">{{ 'products.thrift.details' | t }}: {{ thrift.details.value }}</span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .thrift-specs__panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    background: var(--color-panel);
+  }
+  .thrift-specs__cell {
+    padding: 0.9rem 1rem;
+    border-top: 1px solid var(--color-line-soft);
+  }
+  .thrift-specs__cell--full {
+    grid-column: 1 / -1;
+    border-top: 0;
+  }
+  .thrift-specs__cell + .thrift-specs__cell:not(.thrift-specs__cell--full) {
+    border-left: 1px solid var(--color-line-soft);
+  }
+  .thrift-specs__cell dt {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+  .thrift-specs__cell dd {
+    margin: 0.3rem 0 0;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--color-ink);
+  }
+  .thrift-specs__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+  }
+  .thrift-specs__chip {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    color: var(--color-mute);
+  }
+  .thrift-specs__chip--ok {
+    border-color: var(--color-ok);
+    color: var(--color-ok);
+  }
+{% endstylesheet %}

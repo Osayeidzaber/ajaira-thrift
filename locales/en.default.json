@@ -105,6 +105,21 @@
     "collection_title": "Your collection's name"
   },
   "products": {
+    "thrift": {
+      "model": "Model",
+      "fits_like": "Fits like",
+      "tag_size": "Tag size",
+      "condition": "Condition",
+      "details": "Details",
+      "waist": "Waist",
+      "length": "Length",
+      "leg_opening": "Leg opening",
+      "cm": "cm",
+      "condition_worn": "Worn",
+      "condition_good": "Good",
+      "condition_very_good": "Very good",
+      "condition_like_new": "Like new"
+    },
     "product": {
       "add_to_cart": "Add to cart",
       "choose_options": "Choose options",

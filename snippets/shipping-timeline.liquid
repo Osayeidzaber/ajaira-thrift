@@ -1,0 +1,100 @@
+{% doc %}
+  Renders a three-step shipping timeline with icons, labels and date ranges.
+
+  @param {block} block - section block carrying step1_label/step1_dates through step3 settings
+
+  @example
+  {% render 'shipping-timeline', block: block %}
+{% enddoc %}
+<div class="shipping-timeline">
+  <ol class="shipping-timeline__steps">
+    <li class="shipping-timeline__step">
+      <span class="shipping-timeline__dot" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M6 8h12l-1.2 12H7.2L6 8z"/>
+          <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+        </svg>
+      </span>
+      <span class="shipping-timeline__label">{{ block.settings.step1_label }}</span>
+      <span class="shipping-timeline__dates">{{ block.settings.step1_dates }}</span>
+    </li>
+    <li class="shipping-timeline__step">
+      <span class="shipping-timeline__dot" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M2 7h11v8H2z"/>
+          <path d="M13 10h4l3 3v2h-7z"/>
+          <circle cx="6" cy="17" r="1.6"/>
+          <circle cx="16.5" cy="17" r="1.6"/>
+        </svg>
+      </span>
+      <span class="shipping-timeline__label">{{ block.settings.step2_label }}</span>
+      <span class="shipping-timeline__dates">{{ block.settings.step2_dates }}</span>
+    </li>
+    <li class="shipping-timeline__step">
+      <span class="shipping-timeline__dot" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 21s-6-5.2-6-10a6 6 0 1 1 12 0c0 4.8-6 10-6 10z"/>
+          <circle cx="12" cy="11" r="2.2"/>
+        </svg>
+      </span>
+      <span class="shipping-timeline__label">{{ block.settings.step3_label }}</span>
+      <span class="shipping-timeline__dates">{{ block.settings.step3_dates }}</span>
+    </li>
+  </ol>
+</div>
+
+{% stylesheet %}
+  .shipping-timeline__steps {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    list-style: none;
+    margin: 1.6rem 0 0;
+    padding: 0;
+  }
+  .shipping-timeline__steps::before {
+    content: '';
+    position: absolute;
+    top: 0.8rem;
+    left: 0.8rem;
+    right: 0.8rem;
+    height: 1px;
+    background: var(--color-line);
+  }
+  .shipping-timeline__step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .shipping-timeline__step:nth-child(2) {
+    align-items: center;
+    text-align: center;
+  }
+  .shipping-timeline__step:nth-child(3) {
+    align-items: flex-end;
+    text-align: right;
+  }
+  .shipping-timeline__dot {
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--color-ok);
+    color: var(--color-bg);
+  }
+  .shipping-timeline__dot svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+  .shipping-timeline__label {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--color-ink);
+  }
+  .shipping-timeline__dates {
+    font-size: 0.7rem;
+    color: var(--color-faint);
+  }
+{% endstylesheet %}
