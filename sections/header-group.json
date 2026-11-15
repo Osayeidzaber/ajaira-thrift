@@ -37,7 +37,13 @@
         "extra_dropdown_enable": true,
         "extra_dropdown_label": "Collections",
         "extra_dropdown_position": 3,
-        "dropdown_hover": false
+        "dropdown_hover": false,
+        "extra_dropdown_collections": [
+          "jeans",
+          "jackets",
+          "boots",
+          "shirts"
+        ]
       }
     }
   },
