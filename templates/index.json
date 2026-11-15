@@ -24,14 +24,14 @@
           "type": "badge",
           "settings": {
             "icon": "globe",
-            "text": "Worldwide Shipping"
+            "text": "Delivery All Over Bangladesh"
           }
         },
         "b2": {
           "type": "badge",
           "settings": {
             "icon": "return",
-            "text": "14 Days Return Policy"
+            "text": "Check Before You Pay"
           }
         },
         "b3": {
@@ -97,34 +97,56 @@
           "type": "item",
           "settings": {
             "question": "When will my order arrive?",
-            "answer": "<p>All orders will be shipped within the next 2 business days.</p><p><strong>Shipping times</strong><br/><em>Bangladesh: 2-4 business days<br/>Worldwide: 7-21 business days</em></p>"
+            "answer": "<p><strong>Inside Dhaka:</strong> 1-2 days<br/><strong>Outside Dhaka:</strong> 2-3 days</p><p>We deliver all over Bangladesh.</p>"
           }
         },
         "q2": {
           "type": "item",
           "settings": {
-            "question": "How can I return my order?",
-            "answer": "<p>You have a 14-day right of return after receiving your order.</p>"
+            "question": "What are the delivery charges?",
+            "answer": "<p><strong>Inside Dhaka:</strong> 80 Tk<br/><strong>Sub Dhaka:</strong> 100 Tk<br/><strong>Outside Dhaka:</strong> 120 Tk</p><p>An additional 50 Tk is added if the parcel weighs over 1 kg.</p>"
           }
         },
         "q3": {
           "type": "item",
           "settings": {
-            "question": "How do I find the right size?",
-            "answer": "<p>For jeans and jackets you'll always find a \"<strong>Measurements</strong>\" section in the product description with exact sizing details.</p><p>For the best fit, compare these measurements with a similar item from your own wardrobe.</p><p>For shoes or accessories you can simply choose your usual size.</p>"
+            "question": "What condition are the clothes in?",
+            "answer": "<p>Every piece is inspected, cleaned, and steamed before being listed. We grade our items transparently and mention any minor signs of wear, fading, or vintage distressing directly in the product description.</p>"
           }
         },
         "q4": {
           "type": "item",
           "settings": {
-            "question": "Do you ship worldwide?",
-            "answer": "<p>Yes — we ship <strong>worldwide</strong> and offer <strong>tracked shipping on all orders</strong>.<br/>All available shipping destinations can be viewed directly at checkout.</p>"
+            "question": "How do I know if an item will fit me?",
+            "answer": "<p>Because vintage and international sizing varies widely, do not rely solely on the tag size. Check the exact flat-lay measurements (<strong>Chest/Pit-to-Pit</strong> and <strong>Length</strong> in inches) listed in every product description and compare them against a jacket you already own.</p>"
           }
         },
         "q5": {
-          "type": "page",
+          "type": "item",
           "settings": {
-            "question": "Shipping rates to your country"
+            "question": "Can I return or exchange my order?",
+            "answer": "<p>You can check the product in front of the delivery man and return it by paying only the delivery charge.</p><p>If a major issue is found later, you can exchange it for a different product within 7 days.</p>"
+          }
+        },
+        "q6": {
+          "type": "item",
+          "settings": {
+            "question": "What if I receive a damaged or wrong item?",
+            "answer": "<p>If you receive the wrong item or a major flaw that was not mentioned in the product description:</p><ol><li>Record a clear unboxing video from the moment you open the sealed parcel.</li><li>Contact us within 24 hours of delivery via WhatsApp or Instagram DM (@ajairathrift) with your order number and unboxing video.</li><li>Once verified, we will arrange a full refund or free return pickup.</li></ol>"
+          }
+        },
+        "q7": {
+          "type": "item",
+          "settings": {
+            "question": "Can you restock a sold-out item?",
+            "answer": "<p>Since our pieces are thrifted and individually sourced, we cannot restock the exact same item once it sells out.</p>"
+          }
+        },
+        "q8": {
+          "type": "item",
+          "settings": {
+            "question": "How do I remove wrinkles?",
+            "answer": "<p>Wipe it with a damp cloth and let it hang somewhere to reduce the wrinkles. Overall they will go away as you wear it.</p>"
           }
         }
       },
@@ -133,7 +155,10 @@
         "q2",
         "q3",
         "q4",
-        "q5"
+        "q5",
+        "q6",
+        "q7",
+        "q8"
       ],
       "settings": {
         "heading": "FAQ",
@@ -144,7 +169,8 @@
       "type": "apps",
       "settings": {
         "include_margins": true
-      }
+      },
+      "disabled": true
     },
     "picks": {
       "type": "product-picks",
@@ -225,7 +251,8 @@
         "padding_top": 48,
         "padding_bottom": 48,
         "eyebrow": ""
-      }
+      },
+      "disabled": true
     }
   },
   "order": [
@@ -236,7 +263,6 @@
     "launch1",
     "launch2",
     "faq",
-    "testimonials",
     "reviews"
   ]
 }
