@@ -9,8 +9,8 @@
 -%}
 <div
   id="{{ uid }}"
-  class="aj-soon{% if slides.size > 0 %} aj-soon--has-photo{% endif %}"
-  style="{% if section.settings.bg_color != blank %}--soon-bg: {{ section.settings.bg_color }}; {% endif %}{% if section.settings.ink_color != blank %}--soon-ink: {{ section.settings.ink_color }}; {% endif %}{% if section.settings.accent != blank %}--soon-btn: {{ section.settings.accent }}; {% endif %}--soon-overlay: {{ section.settings.overlay | divided_by: 100.0 }}; --soon-word: {{ section.settings.wordmark_size }}vw; --soon-speed: {{ section.settings.slide_speed }}s;"
+  class="aj-soon"
+  style="--soon-overlay: {{ section.settings.overlay | divided_by: 100.0 }}; --soon-word: {{ section.settings.wordmark_size }}vw; --soon-speed: {{ section.settings.slide_speed }}s;"
   data-aj-soon
   data-launch="{{ section.settings.launch_date | escape }}"
   data-speed="{{ section.settings.slide_speed }}"
@@ -49,7 +49,7 @@
   </header>
 
   {%- comment -%} Hero {%- endcomment -%}
-  <main class="aj-soon__hero"><div class="aj-soon__box">
+  <main class="aj-soon__hero">
     {%- if section.settings.eyebrow != blank -%}
       <p class="aj-soon__eyebrow"><span class="aj-soon__dot"></span>{{ section.settings.eyebrow | escape }}</p>
     {%- endif -%}
@@ -127,7 +127,7 @@
       </div>
     {%- endif -%}
     </div>
-  </div></main>
+  </main>
 
   {%- comment -%} Ticker {%- endcomment -%}
   {%- if ticker_blocks.size > 0 -%}
@@ -285,83 +285,55 @@
   .aj-soon__pw-admin a { color: inherit; }
 
 
-  /* ---------- Warm paper (taste-skill palette: flour and terracotta) ---------- */
-  .aj-soon {
-    --paper: var(--soon-bg, #f6f1e7); --paper-2: #ebe3d4; --ink: var(--soon-ink, #2b241e); --muted: #6a5f54;
-    --terra: var(--soon-btn, #a3472b); --line: rgba(43, 36, 30, 0.14);
-    background: var(--paper); color: var(--ink);
+  /* ---------- Night glass ---------- */
+  .aj-soon { background: #000; --chrome: linear-gradient(180deg, #ffffff 0%, #e9e9ee 38%, #9a9aa4 52%, #f2f2f6 66%, #c9c9d1 100%); }
+  .aj-soon__slide--empty { background: #000; }
+  .aj-soon__shade { background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, var(--soon-overlay, 0.6)) 50%, rgba(0, 0, 0, 0.94) 100%); }
+  .aj-soon__grain { opacity: 0.05; }
+  .aj-soon__stars { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+
+  /* frosted glass */
+  .aj-soon__enter, .aj-soon__glass, .aj-soon__pill, .aj-soon__pw-panel {
+    background: rgba(255, 255, 255, 0.045);
+    -webkit-backdrop-filter: blur(26px) saturate(120%); backdrop-filter: blur(26px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 30px 60px -30px rgba(0, 0, 0, 0.9);
   }
-  .aj-soon__slide--empty { background: var(--paper); }
-  .aj-soon__shade, .aj-soon__grain, .aj-soon__stars { display: none; }
-  .aj-soon__bg { z-index: -1; }
-  .aj-soon--has-photo .aj-soon__bg { display: block; }
-  .aj-soon__slide img { animation: none !important; transform: none !important; }
+  .aj-soon__glass { position: relative; margin-top: 40px; padding: clamp(24px, 3vw, 36px) clamp(18px, 3vw, 40px); border-radius: 24px; width: min(600px, 100%); display: flex; flex-direction: column; align-items: center; opacity: 0; animation: ajSoonFade 1s ease 1.1s forwards; overflow: hidden; }
+  .aj-soon__glass::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(160deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 38%); pointer-events: none; }
+  .aj-soon__glass .aj-soon__count, .aj-soon__glass .aj-soon__signup, .aj-soon__glass .aj-soon__social { opacity: 1; animation: none; position: relative; }
+  .aj-soon__glass .aj-soon__count { margin: 0 0 26px; }
+  .aj-soon__glass .aj-soon__signup { margin-top: 0; }
+  .aj-soon__glass .aj-soon__social { margin-top: 20px; }
 
-  /* top bar: solid, hairline */
-  .aj-soon__top { background: var(--paper); border-bottom: 1px solid var(--line); opacity: 1; animation: none; }
-  .aj-soon__brand { color: var(--ink); }
-  .aj-soon__logo { filter: none; }
-  .aj-soon__enter { background: transparent; color: var(--ink); border: 1px solid var(--ink); border-radius: 999px; backdrop-filter: none; box-shadow: none; transition: background 0.2s, color 0.2s; }
-  .aj-soon__enter:hover { background: var(--ink); color: var(--paper); }
+  /* wordmark: quiet silver */
+  .aj-soon__word--chrome .aj-soon__char { background: var(--chrome); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .aj-soon__eyebrow { color: rgba(255, 255, 255, 0.7); }
+  .aj-soon__dot { background: #fff; box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+  .aj-soon__num { color: #fff; }
 
-  /* hero: words in a solid paper box on the calm side of the photograph */
-  .aj-soon__hero { align-items: flex-start; text-align: left; justify-content: center; padding: 48px clamp(20px, 5.5vw, 80px); }
-  .aj-soon--has-photo .aj-soon__hero > * { position: relative; }
-  .aj-soon__box { background: var(--paper); border-radius: 20px; padding: clamp(28px, 3.4vw, 48px); width: min(628px, 100%); }
-  .aj-soon:not(.aj-soon--has-photo) .aj-soon__box { padding-left: 0; }
-  .aj-soon__eyebrow { color: var(--muted); letter-spacing: 0.02em; text-transform: none; font-size: 14px; margin-bottom: 16px; }
-  .aj-soon__dot { background: var(--terra); box-shadow: none; animation: none; }
-  .aj-soon__word { justify-content: flex-start; font-size: clamp(48px, 7vw, 96px); line-height: 1; letter-spacing: -0.035em; text-transform: none; color: var(--ink); }
-  .aj-soon__word--chrome .aj-soon__char { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: var(--ink); filter: none; }
-  .aj-soon__tagline { color: var(--ink); text-align: left; font-size: 18px; margin-top: 20px; max-width: 46ch; }
+  /* inputs + buttons */
+  .aj-soon__form { background: rgba(0, 0, 0, 0.35); border-color: rgba(255, 255, 255, 0.16); }
+  .aj-soon__form:focus-within { border-color: rgba(255, 255, 255, 0.45); }
+  .aj-soon__submit { background: #fff; color: #000; font-weight: 600; }
+  .aj-soon__submit:hover { background: #e8e8ea; }
+  .aj-soon__pill { border-radius: 999px; color: rgba(255, 255, 255, 0.85); }
+  .aj-soon__pill:hover { border-color: rgba(255, 255, 255, 0.4); color: #fff; }
+  .aj-soon__star { color: rgba(255, 255, 255, 0.35); font-size: 10px; }
+  .aj-soon__ticker { background: rgba(255, 255, 255, 0.03); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-color: rgba(255, 255, 255, 0.08); }
 
-  /* countdown + sign-up: flat card */
-  .aj-soon__glass { margin-top: 32px; width: 100%; padding: 0; background: none; border: 0; box-shadow: none; backdrop-filter: none; align-items: stretch; overflow: visible; }
-  .aj-soon__glass::before { display: none; }
-  .aj-soon__count { justify-content: flex-start; gap: 20px; margin: 0 0 28px; }
-  .aj-soon__unit { align-items: flex-start; min-width: 0; }
-  .aj-soon__num { color: var(--ink); background: none; -webkit-background-clip: border-box; background-clip: border-box; font-size: clamp(32px, 4vw, 48px); }
-  .aj-soon__lbl, .aj-soon__sep { color: var(--muted); }
-  .aj-soon__live { color: var(--terra); letter-spacing: 0; text-transform: none; font-size: 15px; }
-  .aj-soon__signup { margin: 0; max-width: none; }
-  .aj-soon__form { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 6px; backdrop-filter: none; box-shadow: none; }
-  .aj-soon__form:focus-within { border-color: var(--ink); }
-  .aj-soon__input { color: var(--ink); }
-  .aj-soon__input::placeholder { color: var(--muted); }
-  .aj-soon__submit { background: var(--terra); color: #fff; border-radius: 8px; font-weight: 500; letter-spacing: 0.01em; text-transform: none; font-size: 15px; box-shadow: none; transition: background 0.2s, transform 0.15s; }
-  .aj-soon__submit::after { display: none; }
-  .aj-soon__submit:hover { background: #8c3b23; gap: 14px; }
-  .aj-soon__submit:active { transform: translateY(1px); }
-  .aj-soon__ok { color: var(--ink); justify-content: flex-start; }
-  .aj-soon__note { color: var(--muted); text-align: left; letter-spacing: 0; }
-  .aj-soon__social { justify-content: flex-start; margin-top: 20px; }
-  .aj-soon__pill { background: transparent; color: var(--ink); border: 1px solid var(--line); box-shadow: none; backdrop-filter: none; }
-  .aj-soon__pill:hover { border-color: var(--ink); color: var(--ink); transform: translateY(-2px); box-shadow: none; }
-
-  /* ticker + footer */
-  .aj-soon__ticker { background: var(--ink); border: 0; backdrop-filter: none; }
-  .aj-soon__tick { color: var(--paper); font-family: var(--font-heading-family); letter-spacing: 0.02em; text-transform: none; font-size: 16px; }
-  .aj-soon__star { color: var(--terra); background: none; -webkit-background-clip: border-box; background-clip: border-box; }
-  .aj-soon__foot { color: var(--muted); border-top: 1px solid var(--line); }
-
-  /* password panel: solid card */
+  /* password panel */
   .aj-soon__pw { align-items: center; justify-content: center; padding: 20px; }
-  .aj-soon__pw-scrim { background: rgba(43, 36, 30, 0.45); backdrop-filter: none; }
-  .aj-soon__pw-panel { background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 20px; width: min(420px, 100%); height: auto; padding: 56px 32px 32px; backdrop-filter: none; box-shadow: 0 30px 60px -30px rgba(43, 36, 30, 0.5); }
-  .aj-soon__pw-panel::before, .aj-soon__pw-panel::after { display: none; }
-  .aj-soon__pw-eyebrow { color: var(--muted); letter-spacing: 0; text-transform: none; font-size: 14px; }
-  .aj-soon__pw-title { color: var(--ink); background: none; -webkit-background-clip: border-box; background-clip: border-box; animation: none; }
-  .aj-soon__input--pw { background: #fff; border: 1px solid var(--line); border-radius: 10px; box-shadow: none; }
-  .aj-soon__pw-form .aj-soon__submit { border-radius: 10px; }
-  .aj-soon__pw-close { background: transparent; border-color: var(--line); color: var(--ink); }
-  .aj-soon__pw-admin { color: var(--muted); }
-
-  @media (max-width: 749px) {
-    .aj-soon__hero { padding: 32px 20px; }
-    .aj-soon__box { border-radius: 16px; }
-    .aj-soon__word { font-size: clamp(40px, 12vw, 56px); }
-    .aj-soon__submit { border-radius: 8px; }
-  }
+  .aj-soon__pw-scrim { background: rgba(0, 0, 0, 0.45); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  .aj-soon__pw-panel { width: min(420px, 100%); height: auto; border-radius: 24px; padding: 56px 30px 30px; animation: ajSoonPop 0.5s cubic-bezier(0.22, 0.61, 0.36, 1); overflow: hidden; }
+  .aj-soon__pw-panel::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(160deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 40%); pointer-events: none; }
+  @keyframes ajSoonPop { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
+  .aj-soon__pw-eyebrow { color: rgba(255, 255, 255, 0.55); }
+  .aj-soon__pw-title { color: #fff; }
+  .aj-soon__input--pw { background: rgba(0, 0, 0, 0.35); border-color: rgba(255, 255, 255, 0.16); }
+  .aj-soon__pw-close { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.14); }
+  @media (max-width: 749px) { .aj-soon__glass { border-radius: 20px; } }
+  @media (prefers-reduced-motion: reduce) { .aj-soon__stars { opacity: 0.8; } }
 
   @keyframes ajSoonFade { to { opacity: 1; } }
   @media (max-width: 600px) {
@@ -669,22 +641,35 @@
       "content": "Style"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Background",
-      "info": "Leave empty for warm paper (#f6f1e7)."
+      "type": "checkbox",
+      "id": "show_stars",
+      "label": "Star field",
+      "default": true
     },
     {
-      "type": "color",
-      "id": "ink_color",
-      "label": "Text",
-      "info": "Leave empty for dark brown (#2b241e)."
+      "type": "range",
+      "id": "star_density",
+      "label": "Number of stars",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 5
     },
     {
-      "type": "color",
-      "id": "accent",
-      "label": "Button colour",
-      "info": "Leave empty for terracotta (#a3472b)."
+      "type": "checkbox",
+      "id": "shooting_stars",
+      "label": "Occasional shooting star",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "overlay",
+      "label": "Darken photos",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 55
     },
     {
       "type": "range",
