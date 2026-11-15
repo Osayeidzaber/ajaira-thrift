@@ -53,7 +53,7 @@
             {%- if shop.legal_notice -%}<li><a href="{{ shop.legal_notice.url }}">{{ shop.legal_notice.title | escape }}</a></li>{%- endif -%}
             {%- if shop.terms_of_sale -%}<li><a href="{{ shop.terms_of_sale.url }}">{{ shop.terms_of_sale.title | escape }}</a></li>{%- endif -%}
           {%- when 'service' -%}
-            {%- if shop.contact_information -%}<li><a href="{{ shop.contact_information.url }}">{{ shop.contact_information.title | escape }}</a></li>{%- endif -%}
+            <li><a href="{{ routes.root_url | append: 'policies/contact-information' | replace: '//', '/' }}">{{ 'sections.veyroze_footer.contact' | t }}</a></li>
             {%- if shop.shipping_policy -%}<li><a href="{{ shop.shipping_policy.url }}">{{ shop.shipping_policy.title | escape }}</a></li>{%- endif -%}
             {%- if shop.refund_policy -%}<li><a href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title | escape }}</a></li>{%- endif -%}
             {%- if section.settings.whatsapp_url != blank -%}<li><a href="{{ section.settings.whatsapp_url }}" target="_blank" rel="noopener">WhatsApp</a></li>{%- endif -%}

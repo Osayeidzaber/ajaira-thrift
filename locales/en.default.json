@@ -403,6 +403,9 @@
     },
     "product_picks": {
       "showing": "Showing {{ shown }} of {{ total }} products"
+    },
+    "veyroze_footer": {
+      "contact": "Contact information"
     }
   },
   "localization": {
