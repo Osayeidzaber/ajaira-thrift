@@ -51,7 +51,7 @@
   {%- comment -%} Hero {%- endcomment -%}
   <main class="aj-soon__hero">
     {%- if section.settings.eyebrow != blank -%}
-      <p class="aj-soon__eyebrow"><span class="aj-soon__dot"></span>{{ section.settings.eyebrow | escape }}</p>
+      <p class="aj-soon__eyebrow">{{ section.settings.eyebrow | escape }}</p>
     {%- endif -%}
     <h1 class="aj-soon__word aj-soon__word--chrome" aria-label="{{ word | escape }}" data-soon-word>
       {%- for ch in word_chars -%}
