@@ -11,31 +11,31 @@ interface Slide {
 
 const props = defineProps<{ slides: Slide[] }>()
 
-const K = 3
+// Many copies of the slides so the track never runs out; after each move it
+// silently re-centres on the middle copy, so the loop is endless both ways.
+const COPIES = 9
 const N = computed(() => props.slides.length)
-const REAL_START = K
-const REAL_END = computed(() => K + N.value - 1)
+const MID = computed(() => Math.floor(COPIES / 2) * N.value)
 
 const items = computed<Slide[]>(() => {
-  const raw = props.slides
-  const n = raw.length
-  if (!n) return []
   const out: Slide[] = []
-  for (let i = n - K; i < n; i++) out.push(raw[((i % n) + n) % n])
-  out.push(...raw)
-  for (let i = 0; i < K; i++) out.push(raw[i % n])
+  for (let c = 0; c < COPIES; c++) out.push(...props.slides)
   return out
 })
 
 const track = ref<HTMLElement | null>(null)
 const viewport = ref<HTMLElement | null>(null)
-const current = ref(K)
+const current = ref(0)
 
 let isJumping = false
 let dragging = false
 let startX = 0
 let startY = 0
 let dragDelta = 0
+let lastX = 0
+let lastT = 0
+let velocity = 0
+let offset0 = 0
 let lockedAxis: 'x' | 'y' | null = null
 let resizeRaf = 0
 
@@ -51,7 +51,18 @@ function tier(i: number) {
 }
 function origIndex(idx: number) {
   const n = N.value
-  return (((idx - REAL_START) % n) + n) % n
+  return ((idx % n) + n) % n
+}
+function recentre() {
+  const target = MID.value + origIndex(current.value)
+  if (target !== current.value) performJump(target)
+}
+function goToDot(i: number) {
+  const n = N.value
+  let d = i - origIndex(current.value)
+  if (d > n / 2) d -= n
+  if (d < -n / 2) d += n
+  goTo(current.value + d, true)
 }
 function cardW() {
   const el = track.value?.children[0] as HTMLElement | undefined
@@ -77,6 +88,14 @@ function update(animate: boolean) {
 }
 function goTo(idx: number, animate: boolean) {
   if (isJumping) return
+  const max = items.value.length - 3
+  if (idx < 2 || idx > max) {
+    // far from the middle copy (fast swipes / key repeat): re-centre first
+    const delta = idx - current.value
+    performJump(MID.value + origIndex(current.value))
+    isJumping = false
+    idx = current.value + delta
+  }
   current.value = idx
   update(animate)
 }
@@ -95,22 +114,30 @@ function performJump(newCurrent: number) {
 }
 function onTransitionEnd(e: TransitionEvent) {
   if (e.target !== track.value || e.propertyName !== 'transform') return
-  if (isJumping) return
-  if (current.value < REAL_START) performJump(current.value + N.value)
-  else if (current.value > REAL_END.value) performJump(current.value - N.value)
+  if (isJumping || dragging) return
+  recentre()
 }
 
 function onStart(x: number, y: number) {
-  if (isJumping) return
   dragging = true
   startX = x
   startY = y
   dragDelta = 0
   lockedAxis = null
+  lastX = x
+  lastT = performance.now()
+  velocity = 0
   const t = track.value
+  offset0 = 0
   if (t) {
+    // grab mid-animation from where the track really is, not where it was heading
+    const x = new DOMMatrixReadOnly(getComputedStyle(t).transform).m41
+    const w = cardW() + gapPx() || 1
+    current.value = Math.round((viewW() / 2 - cardW() / 2 - x) / w)
+    offset0 = x - calcX(current.value)
     t.style.transition = 'none'
     t.classList.add('is-dragging')
+    setX(x, false)
   }
 }
 function onMove(x: number, y: number, ev?: Event) {
@@ -122,7 +149,11 @@ function onMove(x: number, y: number, ev?: Event) {
   }
   if (lockedAxis === 'y') return
   if (ev && ev.cancelable) ev.preventDefault()
-  dragDelta = dx
+  const now = performance.now()
+  if (now > lastT) velocity = 0.8 * ((x - lastX) / (now - lastT)) + 0.2 * velocity
+  lastX = x
+  lastT = now
+  dragDelta = offset0 + dx
   setX(calcX(current.value) + dragDelta, false)
 }
 function onEnd() {
@@ -133,9 +164,13 @@ function onEnd() {
     update(true)
     return
   }
-  const threshold = Math.max(40, cardW() * 0.18)
-  if (dragDelta < -threshold) goTo(current.value + 1, true)
-  else if (dragDelta > threshold) goTo(current.value - 1, true)
+  // distance + flick velocity decide how many cards to move (max 3)
+  const w = cardW() + gapPx() || 1
+  const projected = dragDelta + velocity * 220
+  let steps = Math.round(-projected / w)
+  if (steps === 0 && Math.abs(dragDelta) > Math.max(30, w * 0.12)) steps = dragDelta < 0 ? 1 : -1
+  steps = Math.max(-3, Math.min(3, steps))
+  if (steps) goTo(current.value + steps, true)
   else update(true)
 }
 function onCardClick(i: number, e: MouseEvent) {
@@ -167,7 +202,7 @@ const onTouchMove = (e: TouchEvent) => {
 
 onMounted(() => {
   if (!N.value) return
-  current.value = REAL_START + Math.floor(N.value / 2)
+  current.value = MID.value + Math.floor(N.value / 2)
   track.value?.addEventListener('touchmove', onTouchMove, { passive: false })
   window.addEventListener('mousemove', onMouseMove)
   window.addEventListener('mouseup', onEnd)
@@ -231,7 +266,7 @@ onBeforeUnmount(() => {
       class="vc-dot"
       :class="{ 'is-active': i === origIndex(current) }"
       :aria-label="`Collection ${i + 1}`"
-      @click="goTo(REAL_START + i, true)"
+      @click="goToDot(i)"
     ></button>
   </div>
 </template>
@@ -248,9 +283,10 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 0;
   will-change: transform;
+  backface-visibility: hidden;
   cursor: grab;
   touch-action: pan-y;
-  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .vc-track.is-dragging { cursor: grabbing; }
 .vc-track.vc-no-transition,
@@ -266,8 +302,8 @@ onBeforeUnmount(() => {
   z-index: 0;
   pointer-events: none;
   transition:
-    transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.45s ease;
+    transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.5s ease;
   outline: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -299,6 +335,11 @@ onBeforeUnmount(() => {
 }
 .vc-label {
   margin-top: 14px;
+  padding: 0 6px;
+  line-height: 1.35;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  hyphens: auto;
   text-align: center;
   font-size: var(--vc-label-size, 16px);
   letter-spacing: 0.12em;

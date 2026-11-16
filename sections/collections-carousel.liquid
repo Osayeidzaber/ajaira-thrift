@@ -69,13 +69,16 @@
     text-transform: uppercase;
     font-weight: 500;
     line-height: 1.2;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+    padding: 0 16px;
   }
   @media (max-width: 768px) { .vc-heading { font-size: calc(var(--vc-heading, 34px) * 0.765); margin-bottom: 28px; } }
   @media (max-width: 480px) { .vc-heading { font-size: 22px; margin-bottom: 24px; } }
   .vc-fallback { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); max-width: var(--container); margin: 0 auto; padding: 0 1.5rem; }
   .vc-fallback__card { position: relative; border: 1px solid var(--color-line); overflow: hidden; background: var(--color-panel); }
   .vc-fallback__card img, .vc-fallback__card svg { width: 100%; height: auto; display: block; object-fit: cover; background: var(--color-panel); }
-  .vc-fallback__card span { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; padding: 0.6rem; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; background: linear-gradient(transparent, rgba(0,0,0,0.6)); }
+  .vc-fallback__card span { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; padding: 0.6rem; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; background: linear-gradient(transparent, rgba(0,0,0,0.6)); line-height: 1.35; text-wrap: balance; overflow-wrap: break-word; }
   @media (min-width: 750px) { .vc-fallback { grid-template-columns: repeat(4, 1fr); } }
 {% endstylesheet %}
 
