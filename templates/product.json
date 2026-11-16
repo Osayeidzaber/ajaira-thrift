@@ -19,22 +19,6 @@
             "note": "Measured flat — compare with a well-fitting jacket"
           }
         },
-        "chart_jeans": {
-          "type": "size_chart",
-          "settings": {
-            "match_by": "tag",
-            "match_value": "chart-jeans",
-            "heading": "Measurements 📏",
-            "unit": "cm",
-            "m1_label": "Waist",
-            "m1_key": "waist_cm",
-            "m2_label": "Length",
-            "m2_key": "length_cm",
-            "m3_label": "Leg opening",
-            "m3_key": "leg_opening_cm",
-            "note": "Measured flat — compare with a well-fitting pair"
-          }
-        },
         "chart_default": {
           "type": "size_chart",
           "settings": {
@@ -67,7 +51,6 @@
         "trust",
         "delivery",
         "chart_jacket",
-        "chart_jeans",
         "chart_default"
       ],
       "settings": {}

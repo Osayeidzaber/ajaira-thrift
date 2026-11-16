@@ -18,7 +18,7 @@
             alt: desktop_image.alt
         }}
       {%- else -%}
-        {{ 'lifestyle-1' | placeholder_svg_tag: 'veyroze-banner__placeholder' }}
+        {{ 'hero-jackets.jpg' | asset_url | image_tag: class: 'veyroze-banner__img', alt: shop.name, loading: 'eager' }}
       {%- endif -%}
     </div>
     <div class="veyroze-banner__media veyroze-banner__media--mobile">
@@ -34,7 +34,7 @@
             alt: mobile_image.alt
         }}
       {%- else -%}
-        {{ 'lifestyle-1' | placeholder_svg_tag: 'veyroze-banner__placeholder' }}
+        {{ 'hero-jackets.jpg' | asset_url | image_tag: class: 'veyroze-banner__img', alt: shop.name, loading: 'eager' }}
       {%- endif -%}
     </div>
     <span class="veyroze-banner__overlay" aria-hidden="true"></span>
