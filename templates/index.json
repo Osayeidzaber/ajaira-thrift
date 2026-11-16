@@ -47,7 +47,7 @@
           "type": "badge",
           "settings": {
             "icon": "lock",
-            "text": "Secure Checkout"
+            "text": "Cash On Delivery"
           }
         }
       },
@@ -64,7 +64,13 @@
       "type": "collections-carousel",
       "settings": {
         "heading": "Collections",
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "collections": [
+          "jackets",
+          "leather-jackets",
+          "vests",
+          "track-pants"
+        ]
       }
     },
     "launch1": {

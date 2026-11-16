@@ -3,9 +3,27 @@
 
   {% capture slides_json %}[
     {%- if section.settings.collections.size > 0 -%}
+      {%- assign theme_photos = section.settings.theme_photo_handles | split: ',' -%}
       {%- for c in section.settings.collections -%}
-        {%- if c.featured_image -%}
-          { "url": {{ c.url | json }}, "title": {{ c.title | json }}, "src400": {{ c.featured_image | image_url: width: 400 | json }}, "src700": {{ c.featured_image | image_url: width: 700 | json }}, "src1000": {{ c.featured_image | image_url: width: 1000 | json }} }{% unless forloop.last %},{% endunless %}
+        {%- liquid
+          assign s400 = blank
+          assign asset_name = 'collection-' | append: c.handle | append: '.jpg'
+          if c.image
+            assign s400 = c.image | image_url: width: 400
+            assign s700 = c.image | image_url: width: 700
+            assign s1000 = c.image | image_url: width: 1000
+          elsif theme_photos contains c.handle
+            assign s400 = asset_name | asset_url
+            assign s700 = s400
+            assign s1000 = s400
+          elsif c.featured_image
+            assign s400 = c.featured_image | image_url: width: 400
+            assign s700 = c.featured_image | image_url: width: 700
+            assign s1000 = c.featured_image | image_url: width: 1000
+          endif
+        -%}
+        {%- if s400 != blank -%}
+          { "url": {{ c.url | json }}, "title": {{ c.title | json }}, "src400": {{ s400 | json }}, "src700": {{ s700 | json }}, "src1000": {{ s1000 | json }} }{% unless forloop.last %},{% endunless %}
         {%- endif -%}
       {%- endfor -%}
     {%- else -%}
@@ -23,7 +41,7 @@
       {%- if section.settings.collections.size > 0 -%}
         {%- for c in section.settings.collections -%}
           <a class="vc-fallback__card" href="{{ c.url }}">
-            {%- if c.featured_image -%}{{ c.featured_image | image_url: width: 600 | image_tag: loading: 'lazy' }}{%- endif -%}
+            {%- assign asset_name = 'collection-' | append: c.handle | append: '.jpg' -%}{%- if c.image -%}{{ c.image | image_url: width: 600 | image_tag: loading: 'lazy' }}{%- elsif theme_photos contains c.handle -%}<img src="{{ asset_name | asset_url }}" alt="{{ c.title | escape }}" loading="lazy" width="600" height="800">{%- elsif c.featured_image -%}{{ c.featured_image | image_url: width: 600 | image_tag: loading: 'lazy' }}{%- endif -%}
             <span>{{ c.title }}</span>
           </a>
         {%- endfor -%}
@@ -76,6 +94,13 @@
       "id": "collections",
       "label": "Collections",
       "limit": 8
+    },
+    {
+      "type": "text",
+      "id": "theme_photo_handles",
+      "label": "Collections using the built-in photo",
+      "default": "jackets,leather-jackets,track-pants,vests",
+      "info": "Comma-separated collection handles. A collection image set in Shopify admin always wins; remove a handle here to use its first product photo instead."
     },
     {
       "type": "color_scheme",

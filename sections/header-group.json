@@ -38,7 +38,10 @@
         "extra_dropdown_enable": true,
         "extra_dropdown_label": "Collections",
         "extra_dropdown_collections": [
-          "jackets"
+          "jackets",
+          "leather-jackets",
+          "vests",
+          "track-pants"
         ],
         "extra_dropdown_position": 3,
         "sticky_header_type": "on-scroll-up",

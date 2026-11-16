@@ -122,7 +122,7 @@
           "type": "badge",
           "settings": {
             "icon": "lock",
-            "text": "Secure Payments"
+            "text": "Cash on Delivery"
           }
         },
         "b3": {
@@ -136,7 +136,7 @@
           "type": "badge",
           "settings": {
             "icon": "checkmark",
-            "text": "True Vintage"
+            "text": "Genuine Products"
           }
         }
       },

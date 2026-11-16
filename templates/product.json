@@ -45,7 +45,12 @@
         },
         "trust": {
           "type": "trust_icons",
-          "settings": {}
+          "settings": {
+            "text_1": "7-Day Exchange",
+            "text_2": "Cash on Delivery",
+            "text_3": "Fast Delivery",
+            "text_4": "Genuine Products"
+          }
         },
         "delivery": {
           "type": "delivery",
