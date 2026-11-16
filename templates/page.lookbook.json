@@ -100,7 +100,8 @@
         "r4",
         "r5"
       ],
-      "settings": {}
+      "settings": {},
+      "disabled": true
     }
   },
   "order": [
