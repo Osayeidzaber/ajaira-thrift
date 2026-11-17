@@ -24,7 +24,18 @@
       "block_order": [
         "button"
       ],
-      "settings": {}
+      "settings": {
+        "desktop_position_x": 50,
+        "desktop_position_y": 21,
+        "mobile_position": "center top",
+        "height_desktop": 725,
+        "height_mobile": 525,
+        "content_x": 50,
+        "content_y": 75,
+        "overlay_color": "#000000",
+        "overlay_opacity": 30,
+        "text_color": "#ffffff"
+      }
     },
     "trust": {
       "type": "trust-badges",
@@ -57,48 +68,119 @@
         "b3"
       ],
       "settings": {
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "text_color": "",
+        "border_color": "",
+        "divider_color": "",
+        "padding_top": 16,
+        "padding_bottom": 16,
+        "label_size": 11.5,
+        "icon_size": 19
       }
     },
     "collections": {
       "type": "collections-carousel",
       "settings": {
         "heading": "Collections",
-        "color_scheme": "scheme-1",
         "collections": [
           "jackets",
           "leather-jackets",
           "vests",
           "track-pants"
-        ]
+        ],
+        "theme_photo_handles": "jackets,leather-jackets,track-pants,vests",
+        "color_scheme": "scheme-1",
+        "heading_size": 34,
+        "text_align": "center",
+        "label_size": 16,
+        "dot_color": ""
+      }
+    },
+    "picks": {
+      "type": "product-picks",
+      "disabled": true,
+      "settings": {
+        "source": "manual",
+        "products": [],
+        "collection": "",
+        "limit": 8,
+        "eyebrow": "",
+        "heading": "New arrivals",
+        "text": "",
+        "show_count": false,
+        "show_more": false,
+        "initial_rows": 2,
+        "show_more_label": "Show more",
+        "button_label": "View all",
+        "button_link": "",
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "text_align": "center",
+        "heading_size": 34,
+        "image_ratio": "portrait",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "color_scheme": "",
+        "padding_top": 48,
+        "padding_bottom": 48
       }
     },
     "launch1": {
       "type": "product-launch",
       "settings": {
+        "product": "",
         "max_images": 5,
         "badge": "New",
         "media_position": "right",
         "eyebrow": "New — Vintage Reworks",
+        "heading": "",
+        "description": "",
         "cta_label": "Discover the piece",
         "show_price": true,
+        "description_words": 40,
+        "autoplay": 0,
+        "row_gap": 64,
         "padding_top": 36,
         "padding_bottom": 20,
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "accent_color": "",
+        "button_hover_color": "",
+        "button_text_color": "",
+        "text_color": "",
+        "muted_color": "",
+        "line_color": "",
+        "media_bg": "",
+        "title_size": 44,
+        "text_align": "left"
       }
     },
     "launch2": {
       "type": "product-launch",
       "settings": {
+        "product": "",
         "max_images": 5,
         "badge": "New",
         "media_position": "left",
         "eyebrow": "New — Vintage Original",
+        "heading": "",
+        "description": "",
         "cta_label": "Discover the piece",
         "show_price": true,
+        "description_words": 40,
+        "autoplay": 0,
+        "row_gap": 64,
         "padding_top": 48,
         "padding_bottom": 64,
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "accent_color": "",
+        "button_hover_color": "",
+        "button_text_color": "",
+        "text_color": "",
+        "muted_color": "",
+        "line_color": "",
+        "media_bg": "",
+        "title_size": 44,
+        "text_align": "left"
       }
     },
     "faq": {
@@ -173,24 +255,17 @@
       ],
       "settings": {
         "heading": "FAQ",
-        "color_scheme": "scheme-1"
-      }
-    },
-    "reviews": {
-      "type": "apps",
-      "disabled": true,
-      "settings": {
-        "include_margins": true
-      }
-    },
-    "picks": {
-      "type": "product-picks",
-      "disabled": true,
-      "settings": {
-        "source": "manual",
-        "limit": 8,
-        "heading": "New arrivals",
-        "button_label": "View all"
+        "color_scheme": "scheme-1",
+        "card_color": "",
+        "border_color": "",
+        "border_hover_color": "",
+        "question_color": "",
+        "answer_color": "",
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "heading_size": 28,
+        "question_size": 12.5,
+        "text_align": "center"
       }
     },
     "testimonials": {
@@ -201,7 +276,10 @@
           "settings": {
             "author": "Customer name",
             "text": "<p>Placeholder review: the jacket arrived exactly as described, and the measurements were spot on.</p>",
-            "rating": 5
+            "rating": 5,
+            "location": "",
+            "date": "",
+            "product": ""
           }
         },
         "r1": {
@@ -209,7 +287,10 @@
           "settings": {
             "author": "Customer name",
             "text": "<p>Placeholder review: great condition for vintage, fast shipping and lovely packaging.</p>",
-            "rating": 5
+            "rating": 5,
+            "location": "",
+            "date": "",
+            "product": ""
           }
         },
         "r2": {
@@ -217,7 +298,10 @@
           "settings": {
             "author": "Customer name",
             "text": "<p>Placeholder review: fits perfectly. The size guide made it easy to choose.</p>",
-            "rating": 5
+            "rating": 5,
+            "location": "",
+            "date": "",
+            "product": ""
           }
         },
         "r3": {
@@ -225,7 +309,10 @@
           "settings": {
             "author": "Customer name",
             "text": "<p>Placeholder review: one of a kind and better in person than in the photos.</p>",
-            "rating": 5
+            "rating": 5,
+            "location": "",
+            "date": "",
+            "product": ""
           }
         },
         "r4": {
@@ -233,7 +320,10 @@
           "settings": {
             "author": "Customer name",
             "text": "<p>Placeholder review: quick replies to my questions and smooth delivery.</p>",
-            "rating": 5
+            "rating": 5,
+            "location": "",
+            "date": "",
+            "product": ""
           }
         },
         "r5": {
@@ -241,7 +331,10 @@
           "settings": {
             "author": "Customer name",
             "text": "<p>Placeholder review: honest condition notes, no surprises. Will order again.</p>",
-            "rating": 5
+            "rating": 5,
+            "location": "",
+            "date": "",
+            "product": ""
           }
         }
       },
@@ -257,12 +350,28 @@
       "settings": {
         "eyebrow": "",
         "heading": "Worn & loved",
+        "show_summary": true,
+        "summary_label": "From [count] reviews",
+        "button_label": "",
+        "button_link": "",
+        "layout": "marquee",
         "rows": "2",
+        "speed": 70,
         "card_width": 260,
         "heading_size": 44,
         "color_scheme": "scheme-1",
+        "accent_color": "",
+        "card_color": "",
+        "border_color": "",
         "padding_top": 48,
         "padding_bottom": 48
+      }
+    },
+    "reviews": {
+      "type": "apps",
+      "disabled": true,
+      "settings": {
+        "include_margins": true
       }
     }
   },
