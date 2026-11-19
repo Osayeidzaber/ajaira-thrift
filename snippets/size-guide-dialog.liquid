@@ -18,8 +18,6 @@
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
       <h2 class="vz-sg__title" id="SizeGuideTitle-{{ section.id }}">{{ section.settings.sg_heading | escape }}</h2>
-      {%- if section.settings.sg_subheading != blank -%}<p class="vz-sg__eyebrow">{{ section.settings.sg_subheading | escape }}</p>{%- endif -%}
-      {%- if section.settings.sg_intro != blank -%}<div class="vz-sg__intro rte">{{ section.settings.sg_intro }}</div>{%- endif -%}
       {%- if sg_rows != blank -%}
         <div data-sg-diagram></div>
         {%- if sg_title != blank -%}<p class="vz-sg__ttl">{{ sg_title | escape }}</p>{%- endif -%}
@@ -27,6 +25,8 @@
           {%- render 'size-chart-table', product: product, custom_rows: sg_custom, default_rows: sg_rows, col_size: section.settings.sg_col_size, col_measure: section.settings.sg_col_measure, unit_a: section.settings.sg_unit_a, unit_b: section.settings.sg_unit_b -%}
         </div>
       {%- endif -%}
+      {%- if section.settings.sg_subheading != blank -%}<p class="vz-sg__eyebrow">{{ section.settings.sg_subheading | escape }}</p>{%- endif -%}
+      {%- if section.settings.sg_intro != blank -%}<div class="vz-sg__intro rte">{{ section.settings.sg_intro }}</div>{%- endif -%}
       {%- if sg_image != blank -%}
         {{ sg_image | image_url: width: 900 | image_tag: class: 'vz-sg__img', loading: 'lazy', widths: '450, 900', alt: sg_image.alt }}
       {%- endif -%}
