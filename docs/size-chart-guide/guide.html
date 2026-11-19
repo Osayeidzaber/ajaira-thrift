@@ -2,97 +2,92 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Size charts: how to add them</title>
+<title>How to add a size chart</title>
 <style>
-  @page { size: A4; margin: 18mm 16mm; }
-  body { font-family: "Segoe UI", Arial, sans-serif; color: #1b1b1b; font-size: 11pt; line-height: 1.55; margin: 0; }
-  h1 { font-size: 22pt; margin: 0 0 4pt; }
-  .sub { color: #666; margin: 0 0 18pt; }
-  h2 { font-size: 14pt; margin: 22pt 0 6pt; padding-top: 6pt; border-top: 1px solid #ddd; }
-  ol, ul { padding-left: 18pt; margin: 6pt 0; }
-  li { margin: 3pt 0; }
-  code, pre { font-family: Consolas, monospace; font-size: 10pt; }
-  pre { background: #f4f4f4; border: 1px solid #e2e2e2; border-radius: 6px; padding: 10pt 12pt; white-space: pre-wrap; }
-  .note { background: #fff8e6; border-left: 3px solid #e0a800; padding: 8pt 12pt; margin: 10pt 0; }
-  figure { margin: 10pt 0 4pt; page-break-inside: avoid; }
-  figure img { max-width: 100%; max-height: 120mm; border: 1px solid #ddd; border-radius: 6px; display: block; }
-  figcaption { font-size: 9.5pt; color: #666; margin-top: 4pt; }
+  @page { size: A4; margin: 16mm 16mm; }
+  :root { color-scheme: light; }
+  html, body { background: #fff; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #1b1b1b; font-size: 12pt; line-height: 1.55; margin: 0; }
+  h1 { font-size: 24pt; margin: 0 0 4pt; }
+  .sub { color: #555; margin: 0 0 14pt; font-size: 12pt; }
+  h2 { font-size: 15pt; margin: 20pt 0 8pt; }
+  .step { display: flex; gap: 10pt; align-items: flex-start; margin: 8pt 0; }
+  .num { flex: none; width: 22pt; height: 22pt; border-radius: 50%; background: #121212; color: #fff; font-weight: 700; display: grid; place-items: center; font-size: 11pt; }
+  .path { display: inline-block; background: #121212; color: #fff; padding: 2pt 8pt; border-radius: 4pt; font-weight: 600; font-size: 11pt; }
+  code, pre { font-family: Consolas, monospace; font-size: 11pt; }
+  pre { background: #f4f4f4; border: 1px solid #e2e2e2; border-radius: 6px; padding: 10pt 12pt; white-space: pre-wrap; margin: 6pt 0; }
+  .box { border: 2px solid #121212; border-radius: 10px; padding: 12pt 14pt; margin: 12pt 0; }
+  .tip { background: #eef7ee; border-left: 4px solid #3a9a4a; padding: 8pt 12pt; margin: 10pt 0; }
+  figure { margin: 8pt 0 2pt; page-break-inside: avoid; }
+  figure img { max-width: 100%; max-height: 105mm; border: 1px solid #ccc; border-radius: 6px; display: block; }
+  figcaption { font-size: 10pt; color: #666; margin-top: 3pt; }
   .page { page-break-before: always; }
+  table.t { border-collapse: collapse; margin: 6pt 0; font-size: 11pt; }
+  table.t td, table.t th { border: 1px solid #ccc; padding: 5pt 9pt; text-align: left; }
 </style>
 </head>
 <body>
 
-<h1>Size charts: how to add them</h1>
-<p class="sub">Ajaira Thrift store. Every product page has a "Find your size" link that opens this chart for customers.</p>
+<h1>How to add a size chart</h1>
+<p class="sub">On every product page there is a <b>"Find your size"</b> link. It opens a drawing of the item with the measurements on it, plus a table. You only type the measurements once. The website does the rest.</p>
 
 <figure>
-  <img src="4-customer-popup.jpg" alt="Find your size pop-up">
-  <figcaption>What customers see when they tap "Find your size".</figcaption>
+  <img src="a-customer-sees.jpg" alt="What customers see">
+  <figcaption>What your customer sees. They tap S, M, L or XL and the numbers on the drawing change. Jackets, pants and vests each get their own drawing automatically.</figcaption>
 </figure>
 
-<h2>The chart format (same everywhere)</h2>
-<ul>
-  <li><b>First line</b> = the column names.</li>
-  <li>Then <b>one size per line</b>.</li>
-  <li>Separate the cells with a <b>comma</b> <code>,</code> or a bar <code>|</code>.</li>
-  <li>You can add as many columns as you want (chest, length, shoulder, sleeve, waist, ...).</li>
-  <li>Tip: you can make it in Excel / Google Sheets, save as CSV, and paste it in.</li>
-</ul>
+<div class="page"></div>
+<h2>Where to go</h2>
+<div class="box">
+  <p style="margin:0 0 6pt">In Shopify admin, open:</p>
+  <p style="margin:0"><span class="path">Content</span> → <span class="path">Metaobjects</span> → <span class="path">Size chart</span></p>
+</div>
+<figure>
+  <img src="b-where-size-charts.jpg" alt="Content, Metaobjects, Size chart">
+  <figcaption>Left menu: <b>Content → Metaobjects</b>. Then click <b>Size chart</b>.</figcaption>
+</figure>
+
+<h2>Add a chart (3 boxes to fill)</h2>
+<div class="step"><div class="num">1</div><div>Click <b>Add entry</b> (top right).</div></div>
+<div class="step"><div class="num">2</div><div><b>Title</b>: the name customers see above the table, for example <code>Leather jacket sizes</code>.</div></div>
+<div class="step"><div class="num">3</div><div><b>Match words</b>: which products use this chart. Type a word from the product name, or a product tag. Several words? Separate with commas, for example <code>leather, bomber</code>.</div></div>
+<div class="step"><div class="num">4</div><div><b>Rows</b>: the measurements. First line is the column names, then one line per size, with commas in between:</div></div>
 <pre>Size, Chest (in), Length (in), Shoulder (in), Sleeve (in)
 S, 21, 26, 17.5, 24
 M, 22.5, 27, 18.5, 24.5
 L, 24, 28, 19.5, 25
 XL, 25.5, 29, 20.5, 25.5</pre>
-
-<h2>Way 1: one chart for many products (by tag or product name)</h2>
-<p>Use this when many products share the same sizes, e.g. all leather jackets.</p>
-<ol>
-  <li>Shopify admin → <b>Online Store → Themes → Customize</b>.</li>
-  <li>At the top, switch the page to <b>Products → Default product</b>.</li>
-  <li>On the left, open <b>Product page</b> and click a <b>Size chart</b> block (or <b>Add block → Size chart</b> for a new one).</li>
-  <li>In <b>"Use this chart for products with…"</b> choose:
-    <ul>
-      <li><b>This tag</b>, then type the tag, e.g. <code>chart-jacket</code>, or</li>
-      <li><b>This word in the title</b>, then type a word, e.g. <code>leather</code>.</li>
-    </ul>
-  </li>
-  <li>Fill in <b>Chart title</b> (e.g. "Jacket sizes") and paste the <b>Chart rows</b>.</li>
-  <li>Click <b>Save</b>.</li>
-</ol>
-<p>Every product with that tag (or with that word in its name) now shows this chart. Change the block later and all of them update at once.</p>
+<div class="step"><div class="num">5</div><div>Click <b>Save</b>. Done. Every product whose name or tag has that word now shows this chart.</div></div>
 
 <figure>
-  <img src="1-theme-editor-size-chart.jpg" alt="Size chart block in the theme editor">
-  <figcaption>Theme editor: the Size chart block with the tag, chart title and chart rows.</figcaption>
+  <img src="c-size-chart-entry.jpg" alt="A size chart entry">
+  <figcaption>Example: "Jacket sizes" is used by every product with "jacket" in its name or the tag "chart-jacket".</figcaption>
 </figure>
 
 <div class="page"></div>
-<p><b>To give a product the tag:</b> open the product in admin → <b>Tags</b> (right side) → type <code>chart-jacket</code> → Save.</p>
+<h2>Column names the drawing understands</h2>
+<p>Use these words in the first line and they appear on the drawing. Any other column still shows in the table.</p>
+<table class="t">
+  <tr><th>Jackets &amp; vests</th><td>Chest, Length, Shoulder, Sleeve, Waist, Hem</td></tr>
+  <tr><th>Pants</th><td>Waist, Hip, Thigh, Rise, Inseam, Length, Leg opening</td></tr>
+</table>
+<p>The drawing is picked from the product name, type or tags: <b>pant, trouser, jean, jogger, short, cargo</b> → pants; <b>vest, gilet</b> → vest; anything else → jacket.</p>
+
+<div class="tip"><b>Tip:</b> you can make the chart in Excel or Google Sheets, then copy and paste it into <b>Rows</b>.</div>
+
+<h2>Only for one product? (optional)</h2>
+<p>Open the product → scroll to <b>Product metafields</b> → fill <b>Size chart title</b> and <b>Size chart rows</b> (same format). This product then uses its own chart instead.</p>
 <figure>
-  <img src="2-product-tags.jpg" alt="Tags box on a product">
-  <figcaption>Product page in admin: the Tags box.</figcaption>
+  <img src="d-one-product.jpg" alt="One product's own chart">
+  <figcaption>A product's own chart, at the bottom of the product page in admin.</figcaption>
 </figure>
 
-<h2>Way 2: a chart for one product only</h2>
-<p>Use this when a single piece has its own measurements.</p>
-<ol>
-  <li>Open the product in Shopify admin.</li>
-  <li>Scroll down to <b>Product metafields</b>.</li>
-  <li>Fill in <b>Size chart title</b> and <b>Size chart rows</b> (same format as above).</li>
-  <li>Click <b>Save</b>.</li>
-</ol>
+<h2>Using a tag instead of a word</h2>
+<p>Open the product → <b>Tags</b> box → type the tag (for example <code>chart-jacket</code>) → Save.</p>
 <figure>
-  <img src="3-product-own-chart.jpg" alt="Size chart title and rows on a product">
-  <figcaption>Product page in admin: Size chart title and Size chart rows.</figcaption>
+  <img src="e-product-tags.jpg" alt="Tags box">
+  <figcaption>The Tags box on a product.</figcaption>
 </figure>
-
-<h2>Which chart shows?</h2>
-<ol>
-  <li>The product's own chart (Way 2), if it has one.</li>
-  <li>Otherwise, the first Size chart block whose tag or word matches (Way 1).</li>
-  <li>Otherwise, the default chart (Theme editor → Product page → Size guide).</li>
-</ol>
-<div class="note">Leave the chart rows empty to stop using a chart. Products always fall back to the next option above.</div>
 
 </body>
 </html>
