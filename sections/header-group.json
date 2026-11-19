@@ -49,6 +49,7 @@
         "extra_dropdown_collections": [
           "jackets",
           "leather-jackets",
+          "track-jackets",
           "vests",
           "track-pants"
         ],
