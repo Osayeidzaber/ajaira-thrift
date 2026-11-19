@@ -337,28 +337,10 @@
       {%- if section.settings.sg_subheading != blank -%}<p class="vz-sg__eyebrow">{{ section.settings.sg_subheading | escape }}</p>{%- endif -%}
       {%- if section.settings.sg_intro != blank -%}<div class="vz-sg__intro rte">{{ section.settings.sg_intro }}</div>{%- endif -%}
       {%- if sg_rows != blank -%}
-        {%- if section.settings.sg_table_title != blank -%}<p class="vz-sg__ttl">{{ section.settings.sg_table_title | escape }}</p>{%- endif -%}
+        {%- assign sg_title = product.metafields.thrift.size_chart_title.value | default: section.settings.sg_table_title -%}
+        {%- if sg_title != blank -%}<p class="vz-sg__ttl">{{ sg_title | escape }}</p>{%- endif -%}
         <div class="vz-sg__scroll">
-          <table class="vz-sg__table">
-            <thead>
-              <tr><th rowspan="2" scope="col">{{ section.settings.sg_col_size | escape }}</th><th colspan="2" scope="colgroup">{{ section.settings.sg_col_measure | escape }}</th></tr>
-              <tr><th scope="col">{{ section.settings.sg_unit_a | escape }}</th><th scope="col">{{ section.settings.sg_unit_b | escape }}</th></tr>
-            </thead>
-            <tbody>
-              {%- assign rows = sg_rows | newline_to_br | split: '<br />' -%}
-              {%- for row in rows -%}
-                {%- assign r = row | strip -%}
-                {%- if r != blank -%}
-                  {%- assign cells = r | split: '|' -%}
-                  <tr>
-                    <th scope="row">{{ cells[0] | strip | escape }}</th>
-                    <td>{{ cells[1] | strip | escape }}</td>
-                    <td>{{ cells[2] | strip | escape }}</td>
-                  </tr>
-                {%- endif -%}
-              {%- endfor -%}
-            </tbody>
-          </table>
+          {%- render 'size-chart-table', product: product, custom_rows: mf_rows, default_rows: sg_rows, col_size: section.settings.sg_col_size, col_measure: section.settings.sg_col_measure, unit_a: section.settings.sg_unit_a, unit_b: section.settings.sg_unit_b -%}
         </div>
       {%- endif -%}
       {%- if sg_image != blank -%}
@@ -488,6 +470,9 @@
   .vz-sg__table thead th { font-size: 1.1rem; letter-spacing: 0.08em; text-transform: uppercase; }
   .vz-sg__table tbody th { font-weight: 500; }
   .vz-sg__table tbody tr:nth-child(even) { background: #fafafa; }
+  .vz-sg__table tbody tr.is-mine { background: #121212; color: #fff; }
+  .vz-sg__table tbody tr.is-mine th, .vz-sg__table tbody tr.is-mine td { border-color: #121212; }
+  .vz-sg__table tbody tr.is-mine th::after { content: " \2190"; font-weight: 400; opacity: 0.7; }
   .vz-sg__img { width: 100%; height: auto; display: block; margin-top: 18px; border-radius: 8px; }
   .vz-sg__note { font-size: 1.2rem; color: #555; margin-top: 16px; }
   @media (max-width: 749px) { .vz-sg__panel { padding: 30px 20px 24px; } .vz-sg__table th, .vz-sg__table td { padding: 12px 10px; } }

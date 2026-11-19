@@ -33,9 +33,23 @@ For many products, use the admin CSV import or the GraphQL `metafieldsSet` mutat
 `namespace: "thrift"` and the keys above; `condition` values must stay within the four allowed strings.
 ## Per-product size chart (Find your size pop-up)
 
+The pop-up is a real table drawn with CSS (like thrifted.com), built from the
+product's own metafields. The row that matches the product's size is highlighted.
+
 | Metafield | Type | What it does |
 | --- | --- | --- |
-| `thrift.size_chart_image` | File (image) | Picture shown in this product's Find your size pop-up. If it is set and the rows below are empty, only this picture is shown. |
-| `thrift.size_chart_rows` | Multi-line text | This product's own chart, one row per line: `size | inches | cm` (e.g. `M | 38-40 | 96-101`). |
+| `thrift.size_chart_rows` | Multi-line text | This product's chart. **First line = column headings**, then one row per line, cells separated by `|`. Any number of columns. |
+| `thrift.size_chart_title` | Single line text | Optional title above the table (e.g. "Leather jacket chart"). |
+| `thrift.size_chart_image` | File (image) | Optional picture. If set with no rows, only the picture is shown. |
+| `thrift.size` | Single line text | Optional. The piece's size (e.g. `M`) so its row is highlighted when the product has no Size option. |
 
-Products with neither use the default chart from Theme editor → Product page → Size guide.
+Example `thrift.size_chart_rows`:
+
+```
+Size | Chest (in) | Chest (cm) | Length (in)
+S | 36-38 | 91-96 | 26
+M | 38-40 | 96-101 | 27
+L | 40-42 | 101-106 | 28
+```
+
+Products without `size_chart_rows` use the default chart from Theme editor → Product page → Size guide.
