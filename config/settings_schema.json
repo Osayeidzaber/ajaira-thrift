@@ -202,6 +202,22 @@
         "id": "image_fade",
         "label": "Fade images in as they load",
         "default": true
+      },
+      {
+        "type": "header",
+        "content": "Product cards"
+      },
+      {
+        "type": "checkbox",
+        "id": "card_buy_now",
+        "label": "Show Buy it now on product cards",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "card_buy_now_label",
+        "label": "Card button label",
+        "info": "Leave empty for \"Buy it now\"."
       }
     ]
   },

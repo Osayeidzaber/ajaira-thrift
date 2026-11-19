@@ -28,3 +28,27 @@ html.lenis, html.lenis body { height: auto; }
 /* Image fade-in */
 img.aj-fade { opacity: 0; transition: opacity 0.6s ease; }
 img.aj-fade.aj-fade--in { opacity: 1; }
+
+/* ---------- Buy it now on product cards (snippets/buy-now-mini.liquid) ---------- */
+.aj-buynow { position: relative; z-index: 3; display: block; margin: 12px 0 0; }
+.aj-buynow__btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; min-height: 44px; padding: 10px 14px; margin: 0;
+  font: inherit; font-size: 1.3rem; letter-spacing: 0.04em; line-height: 1.2; text-align: center; text-decoration: none;
+  color: #0b0b0b; background: #f4efe6; border: 1px solid #f4efe6; border-radius: 0; cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.15s ease;
+}
+a.aj-buynow__btn { margin-top: 12px; }
+.aj-buynow__arrow { flex: none; transition: transform 0.25s ease; }
+.aj-buynow__btn:hover { background: transparent; color: #f4efe6; }
+.aj-buynow__btn:hover .aj-buynow__arrow { transform: translateX(3px); }
+.aj-buynow__btn:active { transform: scale(0.98); }
+.aj-buynow__btn:focus-visible { outline: 1px solid #f4efe6; outline-offset: 3px; }
+.aj-buynow__btn.is-soldout { opacity: 0.4; cursor: not-allowed; background: transparent; color: inherit; border-color: currentColor; }
+.aj-buynow.is-loading .aj-buynow__btn { color: transparent; pointer-events: none; position: relative; }
+.aj-buynow.is-loading .aj-buynow__btn::after {
+  content: ""; position: absolute; inset: 0; margin: auto; width: 18px; height: 18px;
+  border: 2px solid #0b0b0b; border-right-color: transparent; border-radius: 50%; animation: ajBuySpin 0.7s linear infinite;
+}
+@keyframes ajBuySpin { to { transform: rotate(360deg); } }
+@media (max-width: 749px) { .aj-buynow__btn { font-size: 1.2rem; min-height: 40px; padding: 8px 10px; } }

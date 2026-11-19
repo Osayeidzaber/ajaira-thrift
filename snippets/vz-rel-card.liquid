@@ -1,0 +1,16 @@
+{%- comment -%} One "You may also like" card. Params: p (product), sizes (string), badge (string) {%- endcomment -%}
+<div class="vz-rel__card" data-sizes="{{ sizes | downcase | escape }}|">
+  <a href="{{ p.url }}" class="vz-rel__link">
+    <div class="vz-rel__imgwrap">
+      {%- if p.featured_media -%}
+        {{ p.featured_media | image_url: width: 600 | image_tag: class: 'vz-rel__img', loading: 'lazy', sizes: '(min-width: 960px) 25vw, 50vw', widths: '300, 450, 600', alt: p.title }}
+      {%- else -%}
+        {{ 'product-apparel-1' | placeholder_svg_tag: 'vz-rel__img' }}
+      {%- endif -%}
+      {%- if badge != blank -%}<span class="vz-rel__badge">{{ badge | escape }}</span>{%- endif -%}
+    </div>
+    <p class="vz-rel__title">{{ p.title | escape }}</p>
+    <span class="vz-rel__price">{{ p.price | money }}</span>
+  </a>
+  {%- render 'buy-now-mini', product: p -%}
+</div>

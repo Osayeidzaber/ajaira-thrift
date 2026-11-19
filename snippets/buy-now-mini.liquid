@@ -1,0 +1,30 @@
+{%- comment -%}
+  Compact "Buy it now" for product cards: adds the first available variant
+  and goes straight to checkout. Multi-variant products link to the product
+  page instead so the shopper picks a size first.
+  Usage: {% render 'buy-now-mini', product: card_product %}
+{%- endcomment -%}
+{%- if settings.card_buy_now and product != blank -%}
+  {%- assign label = 'products.product.buy_now' | t -%}
+  {%- if settings.card_buy_now_label != blank -%}{%- assign label = settings.card_buy_now_label -%}{%- endif -%}
+  {%- if product.available -%}
+    {%- if product.variants_count == 1 -%}
+      <form action="{{ routes.cart_add_url }}" method="post" class="aj-buynow" data-aj-buynow>
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <input type="hidden" name="return_to" value="{{ routes.root_url | append: 'checkout' | replace: '//', '/' }}">
+        <button type="submit" class="aj-buynow__btn">
+          <span class="aj-buynow__lbl">{{ label | escape }}</span>
+          <svg class="aj-buynow__arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </form>
+    {%- else -%}
+      <a href="{{ product.url }}" class="aj-buynow aj-buynow__btn">
+        <span class="aj-buynow__lbl">{{ label | escape }}</span>
+        <svg class="aj-buynow__arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    {%- endif -%}
+  {%- else -%}
+    <span class="aj-buynow aj-buynow__btn is-soldout" aria-disabled="true">{{ 'products.product.sold_out' | t }}</span>
+  {%- endif -%}
+{%- endif -%}

@@ -59,11 +59,43 @@
             "step2_label": "Dispatched",
             "step3_label": "Delivered"
           }
+        },
+        "checklist": {
+          "type": "checklist",
+          "settings": {
+            "items": "Genuine products\nDelivery all over Bangladesh\nPre-loved & sustainable fashion\nProfessionally cleaned & steamed"
+          }
+        },
+        "acc_ship": {
+          "type": "accordion",
+          "settings": {
+            "title": "Shipping information",
+            "content": "<p><strong>Inside Dhaka:</strong> 1-2 days, 80 Tk<br/><strong>Sub Dhaka:</strong> 100 Tk<br/><strong>Outside Dhaka:</strong> 2-3 days, 120 Tk</p><p>An extra 50 Tk is added if the parcel weighs over 1 kg. We deliver all over Bangladesh.</p>"
+          }
+        },
+        "acc_return": {
+          "type": "accordion",
+          "settings": {
+            "title": "Return information",
+            "content": "<p><strong>Check before you pay</strong> - check the product in front of the delivery man. You can return it by paying only the delivery charge.</p><p><strong>7-day exchange</strong> - if a major issue is found later, you can exchange it for a different product within 7 days.</p><p><strong>Wrong or damaged item</strong> - record an unboxing video and message us on WhatsApp or Instagram (@ajairathrift) within 24 hours of delivery.</p>"
+          }
+        },
+        "acc_size": {
+          "type": "accordion",
+          "settings": {
+            "title": "Sizing information",
+            "content": "<p>Vintage sizing varies, so do not rely only on the tag. Check the flat-lay measurements (chest pit-to-pit and length) in the description and compare them with a jacket you already own.</p>",
+            "size_link": true
+          }
         }
       },
       "block_order": [
         "trust",
         "delivery",
+        "checklist",
+        "acc_ship",
+        "acc_return",
+        "acc_size",
         "chart_jacket",
         "chart_default"
       ],

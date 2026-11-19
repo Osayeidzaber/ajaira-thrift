@@ -110,3 +110,12 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();
+
+/* Card "Buy it now": show a spinner while the browser goes to checkout. */
+document.addEventListener('submit', (e) => {
+  const form = e.target.closest && e.target.closest('[data-aj-buynow]');
+  if (form) form.classList.add('is-loading');
+});
+window.addEventListener('pageshow', () => {
+  document.querySelectorAll('[data-aj-buynow].is-loading').forEach((f) => f.classList.remove('is-loading'));
+});

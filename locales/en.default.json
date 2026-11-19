@@ -184,6 +184,7 @@
       },
       "share": "Share this product",
       "sold_out": "Sold out",
+      "buy_now": "Buy it now",
       "unavailable": "Unavailable",
       "vendor": "Vendor",
       "value_unavailable": "{{ option_value }} - Unavailable",
