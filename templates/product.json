@@ -25,7 +25,9 @@
             "m2_key": "length_cm",
             "m3_label": "Hem width",
             "m3_key": "hem_cm",
-            "note": "Measured flat — compare with a well-fitting jacket"
+            "note": "Measured flat — compare with a well-fitting jacket",
+            "chart_title": "Jacket sizes",
+            "rows": "Size, Chest (in), Length (in), Shoulder (in), Sleeve (in)\nS, 21, 26, 17.5, 24\nM, 22.5, 27, 18.5, 24.5\nL, 24, 28, 19.5, 25\nXL, 25.5, 29, 20.5, 25.5"
           }
         },
         "chart_default": {

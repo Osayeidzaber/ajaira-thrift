@@ -1,21 +1,3 @@
-{%- liquid
-  assign sg_rows = section.settings.sg_rows
-  assign sg_image = section.settings.sg_image
-  assign mf_rows = product.metafields.thrift.size_chart_rows.value
-  assign mf_img = product.metafields.thrift.size_chart_image.value
-  if mf_rows != blank
-    assign sg_rows = mf_rows
-  endif
-  if mf_img != blank
-    assign sg_image = mf_img
-    comment
-      A product with its own chart picture but no rows shows only that picture
-    endcomment
-    if mf_rows == blank
-      assign sg_rows = blank
-    endif
-  endif
--%}
 {%- comment -%}
   veyroze product page (thrift layout, ported 1:1 from veyroze.com "vz").
   Content comes from the product and its thrift.* metafields.
@@ -81,6 +63,29 @@
       break
     endif
   endfor
+
+  comment
+    Size chart source, simplest wins:
+    1. this product's own "Size chart rows" metafield
+    2. the first Size chart block (tag / title / type / collection) that has rows
+    3. the default chart in Size guide settings
+  endcomment
+  assign sg_custom = product.metafields.thrift.size_chart_rows.value
+  assign sg_title = product.metafields.thrift.size_chart_title.value
+  if sg_custom == blank and chart != nil and chart.settings.rows != blank
+    assign sg_custom = chart.settings.rows
+    if sg_title == blank
+      assign sg_title = chart.settings.chart_title
+    endif
+  endif
+  if sg_title == blank
+    assign sg_title = section.settings.sg_table_title
+  endif
+  assign sg_rows = section.settings.sg_rows
+  if sg_custom != blank
+    assign sg_rows = sg_custom
+  endif
+  assign sg_image = section.settings.sg_image
 
   assign one_of_one = false
   if section.settings.unique_mode == 'always'
@@ -337,10 +342,9 @@
       {%- if section.settings.sg_subheading != blank -%}<p class="vz-sg__eyebrow">{{ section.settings.sg_subheading | escape }}</p>{%- endif -%}
       {%- if section.settings.sg_intro != blank -%}<div class="vz-sg__intro rte">{{ section.settings.sg_intro }}</div>{%- endif -%}
       {%- if sg_rows != blank -%}
-        {%- assign sg_title = product.metafields.thrift.size_chart_title.value | default: section.settings.sg_table_title -%}
         {%- if sg_title != blank -%}<p class="vz-sg__ttl">{{ sg_title | escape }}</p>{%- endif -%}
         <div class="vz-sg__scroll">
-          {%- render 'size-chart-table', product: product, custom_rows: mf_rows, default_rows: sg_rows, col_size: section.settings.sg_col_size, col_measure: section.settings.sg_col_measure, unit_a: section.settings.sg_unit_a, unit_b: section.settings.sg_unit_b -%}
+          {%- render 'size-chart-table', product: product, custom_rows: sg_custom, default_rows: sg_rows, col_size: section.settings.sg_col_size, col_measure: section.settings.sg_col_measure, unit_a: section.settings.sg_unit_a, unit_b: section.settings.sg_unit_b -%}
         </div>
       {%- endif -%}
       {%- if sg_image != blank -%}
@@ -470,9 +474,6 @@
   .vz-sg__table thead th { font-size: 1.1rem; letter-spacing: 0.08em; text-transform: uppercase; }
   .vz-sg__table tbody th { font-weight: 500; }
   .vz-sg__table tbody tr:nth-child(even) { background: #fafafa; }
-  .vz-sg__table tbody tr.is-mine { background: #121212; color: #fff; }
-  .vz-sg__table tbody tr.is-mine th, .vz-sg__table tbody tr.is-mine td { border-color: #121212; }
-  .vz-sg__table tbody tr.is-mine th::after { content: " \2190"; font-weight: 400; opacity: 0.7; }
   .vz-sg__img { width: 100%; height: auto; display: block; margin-top: 18px; border-radius: 8px; }
   .vz-sg__note { font-size: 1.2rem; color: #555; margin-top: 16px; }
   @media (max-width: 749px) { .vz-sg__panel { padding: 30px 20px 24px; } .vz-sg__table th, .vz-sg__table td { padding: 12px 10px; } }
@@ -940,6 +941,22 @@
           "id": "match_value",
           "label": "Tag / type / word / collection handle",
           "info": "e.g. tag \"chart-jacket\", type \"Jacket\", or word \"jeans\"."
+        },
+        {
+          "type": "header",
+          "content": "Size chart table (Find your size)"
+        },
+        {
+          "type": "text",
+          "id": "chart_title",
+          "label": "Chart title",
+          "info": "e.g. Leather jacket sizes"
+        },
+        {
+          "type": "textarea",
+          "id": "rows",
+          "label": "Chart rows",
+          "info": "First line = column names. Then one size per line. Separate cells with , or | (you can paste from a spreadsheet saved as CSV). Example: Size, Chest (in), Length (in)"
         },
         {
           "type": "text",

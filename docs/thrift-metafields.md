@@ -31,25 +31,25 @@ All definitions: namespace `thrift`, storefronts access enabled (default for pro
 
 For many products, use the admin CSV import or the GraphQL `metafieldsSet` mutation with
 `namespace: "thrift"` and the keys above; `condition` values must stay within the four allowed strings.
-## Per-product size chart (Find your size pop-up)
+## Size charts (Find your size pop-up)
 
-The pop-up is a real table drawn with CSS (like thrifted.com), built from the
-product's own metafields. The row that matches the product's size is highlighted.
-
-| Metafield | Type | What it does |
-| --- | --- | --- |
-| `thrift.size_chart_rows` | Multi-line text | This product's chart. **First line = column headings**, then one row per line, cells separated by `|`. Any number of columns. |
-| `thrift.size_chart_title` | Single line text | Optional title above the table (e.g. "Leather jacket chart"). |
-| `thrift.size_chart_image` | File (image) | Optional picture. If set with no rows, only the picture is shown. |
-| `thrift.size` | Single line text | Optional. The piece's size (e.g. `M`) so its row is highlighted when the product has no Size option. |
-
-Example `thrift.size_chart_rows`:
+Two ways to add a chart. Both use the same simple format: first line = column
+names, then one size per line, cells separated by `,` or `|` (a spreadsheet
+saved as CSV can be pasted straight in).
 
 ```
-Size | Chest (in) | Chest (cm) | Length (in)
-S | 36-38 | 91-96 | 26
-M | 38-40 | 96-101 | 27
-L | 40-42 | 101-106 | 28
+Size, Chest (in), Length (in), Shoulder (in), Sleeve (in)
+S, 21, 26, 17.5, 24
+M, 22.5, 27, 18.5, 24.5
+L, 24, 28, 19.5, 25
 ```
 
-Products without `size_chart_rows` use the default chart from Theme editor → Product page → Size guide.
+1. **Many products at once (by tag or name):** Theme editor → Product page →
+   add a **Size chart** block → "Use this chart for products with…" = a tag
+   (e.g. `chart-jacket`) or a word in the title (e.g. `leather`) → fill
+   **Chart title** and **Chart rows**. Every matching product shows it, and
+   editing the block updates them all.
+2. **One product only:** product page in admin → Metafields → **Size chart
+   title** and **Size chart rows**. This wins over any block.
+
+Products with neither show the default chart from Product page → Size guide.

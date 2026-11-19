@@ -1,32 +1,23 @@
 {%- comment -%}
   Size chart table for the Find your size dialog.
-  - custom_rows (product metafield thrift.size_chart_rows): first line is the
-    header, then one row per line, cells separated by "|", any number of columns.
+  - custom_rows (product metafield or a matching Size chart block): first line
+    is the header, then one row per line, cells separated by "," or "|".
   - default_rows (section setting): "size | inches | cm" under a two-level header.
-  The row matching the product's own size gets the .is-mine highlight.
   Params: product, custom_rows, default_rows, col_size, col_measure, unit_a, unit_b
 {%- endcomment -%}
 {%- liquid
-  assign my_size = ''
-  for option in product.options_with_values
-    assign oname = option.name | downcase | strip
-    if oname == 'size' or oname == 'sizes'
-      assign my_size = option.selected_value | downcase | strip
-    endif
-  endfor
-  if my_size == blank and product.metafields.thrift.size.value != blank
-    assign my_size = product.metafields.thrift.size.value | downcase | strip
-  endif
-
   assign source = default_rows
   if custom_rows != blank
     assign source = custom_rows
   endif
-  assign raw_lines = source | newline_to_br | split: '<br />'
+  assign raw_lines = source | replace: '	', '|' | newline_to_br | split: '<br />'
   assign lines = ''
   for line in raw_lines
     assign t = line | strip
     if t != blank
+      if custom_rows != blank
+        assign t = t | replace: ',', '|'
+      endif
       assign lines = lines | append: t | append: '~~'
     endif
   endfor
@@ -41,8 +32,7 @@
     <tbody>
       {%- for line in lines offset: 1 -%}
         {%- assign cells = line | split: '|' -%}
-        {%- assign first = cells.first | strip | downcase -%}
-        <tr{% if my_size != blank and first == my_size %} class="is-mine"{% endif %}>
+        <tr>
           {%- for c in cells -%}
             {%- if forloop.first -%}<th scope="row">{{ c | strip | escape }}</th>{%- else -%}<td>{{ c | strip | escape }}</td>{%- endif -%}
           {%- endfor -%}
@@ -57,8 +47,7 @@
     <tbody>
       {%- for line in lines -%}
         {%- assign cells = line | split: '|' -%}
-        {%- assign first = cells.first | strip | downcase -%}
-        <tr{% if my_size != blank and first == my_size %} class="is-mine"{% endif %}>
+        <tr>
           <th scope="row">{{ cells[0] | strip | escape }}</th>
           <td>{{ cells[1] | strip | escape }}</td>
           <td>{{ cells[2] | strip | escape }}</td>
