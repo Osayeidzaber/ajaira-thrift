@@ -366,7 +366,7 @@
   @media (max-width: 960px) { .vz { grid-template-columns: 1fr; padding: 48px 20px 80px; gap: 28px 0; } }
   .vz-gal { position: sticky; top: 100px; max-width: 520px; margin: 0 auto; width: 100%; }
   .vz-gal__main { position: relative; width: 100%; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 12px; background: #0f0f11; touch-action: pan-y; }
-  .vz-gal__main img, .vz-gal__placeholder { width: 100%; height: 100%; object-fit: contain; display: block; transition: opacity 0.25s ease; }
+  .vz-gal__main img, .vz-gal__placeholder { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: opacity 0.25s ease; }
   .vz-gal__main img.is-swapping { opacity: 0.35; }
   .vz-gal__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 7px; }
   .vz-gal__th { aspect-ratio: 1; overflow: hidden; border-radius: 6px; cursor: pointer; background: #0f0f11; border: 1px solid transparent; padding: 0; transition: border-color 0.15s, opacity 0.15s; opacity: 0.5; }

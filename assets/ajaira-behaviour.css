@@ -52,3 +52,6 @@ a.aj-buynow__btn { margin-top: 12px; }
 }
 @keyframes ajBuySpin { to { transform: rotate(360deg); } }
 @media (max-width: 749px) { .aj-buynow__btn { font-size: 1.2rem; min-height: 40px; padding: 8px 10px; } }
+
+/* Product photos always fill their frame: no black bars, never stretched */
+.card__media .media img, .card .media > img, .product-card-wrapper .media img { object-fit: cover; object-position: center; }
