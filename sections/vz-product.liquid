@@ -521,6 +521,7 @@
     @keyframes vzSgUp { from { transform: translateY(100%); } }
     .vz-sg__panel { max-height: 86dvh; padding: 0 18px 24px; }
     .vz-sg__title { margin: 0 -18px 16px; padding: 20px 60px 14px 18px; font-size: 1.8rem; }
+    .vz-sg__title { touch-action: none; cursor: grab; }
     .vz-sg__title::before { content: ""; position: absolute; top: 7px; left: 50%; width: 38px; height: 4px; margin-left: -19px; border-radius: 4px; background: rgba(255, 255, 255, 0.18); }
     .vz-sgd__svg { max-width: 250px; }
   }
@@ -644,6 +645,45 @@
   document.addEventListener('close', (e) => {
     if (e.target.matches && e.target.matches('dialog.vz-sg')) document.documentElement.classList.remove('vz-sg-lock');
   }, true);
+  // Esc closes the size guide (also covers browsers that skip the native cancel)
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('dialog.vz-sg[open]').forEach((d) => d.close());
+  });
+  // Phone bottom sheet: drag the header down to close
+  (() => {
+    let dlg = null, y0 = 0, dy = 0, dragging = false;
+    const start = (e) => {
+      const head = e.target.closest('dialog.vz-sg .vz-sg__title');
+      if (!head || window.innerWidth > 749) return;
+      dlg = head.closest('dialog');
+      const panel = dlg.querySelector('.vz-sg__panel');
+      if (panel && panel.scrollTop > 0) return;
+      dragging = true; y0 = e.touches[0].clientY; dy = 0;
+      dlg.style.transition = 'none';
+    };
+    const move = (e) => {
+      if (!dragging) return;
+      dy = Math.max(0, e.touches[0].clientY - y0);
+      dlg.style.transform = `translateY(${dy}px)`;
+      if (e.cancelable) e.preventDefault();
+    };
+    const end = () => {
+      if (!dragging) return;
+      dragging = false;
+      dlg.style.transition = 'transform 0.25s ease';
+      if (dy > 90) {
+        dlg.style.transform = 'translateY(100%)';
+        setTimeout(() => { dlg.close(); dlg.style.transform = ''; dlg.style.transition = ''; }, 220);
+      } else {
+        dlg.style.transform = '';
+      }
+    };
+    document.addEventListener('touchstart', start, { passive: true });
+    document.addEventListener('touchmove', move, { passive: false });
+    document.addEventListener('touchend', end);
+    document.addEventListener('touchcancel', end);
+  })();
 {% endjavascript %}
 
 
