@@ -31,3 +31,11 @@ All definitions: namespace `thrift`, storefronts access enabled (default for pro
 
 For many products, use the admin CSV import or the GraphQL `metafieldsSet` mutation with
 `namespace: "thrift"` and the keys above; `condition` values must stay within the four allowed strings.
+## Per-product size chart (Find your size pop-up)
+
+| Metafield | Type | What it does |
+| --- | --- | --- |
+| `thrift.size_chart_image` | File (image) | Picture shown in this product's Find your size pop-up. If it is set and the rows below are empty, only this picture is shown. |
+| `thrift.size_chart_rows` | Multi-line text | This product's own chart, one row per line: `size | inches | cm` (e.g. `M | 38-40 | 96-101`). |
+
+Products with neither use the default chart from Theme editor → Product page → Size guide.

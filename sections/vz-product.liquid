@@ -1,3 +1,21 @@
+{%- liquid
+  assign sg_rows = section.settings.sg_rows
+  assign sg_image = section.settings.sg_image
+  assign mf_rows = product.metafields.thrift.size_chart_rows.value
+  assign mf_img = product.metafields.thrift.size_chart_image.value
+  if mf_rows != blank
+    assign sg_rows = mf_rows
+  endif
+  if mf_img != blank
+    assign sg_image = mf_img
+    comment
+      A product with its own chart picture but no rows shows only that picture
+    endcomment
+    if mf_rows == blank
+      assign sg_rows = blank
+    endif
+  endif
+-%}
 {%- comment -%}
   veyroze product page (thrift layout, ported 1:1 from veyroze.com "vz").
   Content comes from the product and its thrift.* metafields.
@@ -146,7 +164,7 @@
         {%- if section.settings.tax_note != blank -%}<span class="vz-price__tax">{{ section.settings.tax_note | escape }}</span>{%- endif -%}
       </div>
 
-      {%- if section.settings.sg_rows != blank or section.settings.sg_image != blank -%}
+      {%- if sg_rows != blank or sg_image != blank -%}
         <div class="vz-sg-row"><button type="button" class="vz-sg-open" data-sg-open="SizeGuide-{{ section.id }}">{{ section.settings.sg_link_label | escape }}</button></div>
       {%- endif -%}
 
@@ -234,7 +252,7 @@
                 </summary>
                 <div class="vz-acc__body rte">
                   {{ block.settings.content }}
-                  {%- if block.settings.size_link and section.settings.sg_rows != blank -%}
+                  {%- if block.settings.size_link and sg_rows != blank -%}
                     <p><button type="button" class="vz-sg-open" data-sg-open="SizeGuide-{{ section.id }}">{{ section.settings.sg_link_label | escape }}</button></p>
                   {%- endif -%}
                 </div>
@@ -309,7 +327,7 @@
   </div>
 </product-info>
 
-{%- if section.settings.sg_rows != blank or section.settings.sg_image != blank -%}
+{%- if sg_rows != blank or sg_image != blank -%}
   <dialog class="vz-sg" id="SizeGuide-{{ section.id }}" aria-labelledby="SizeGuideTitle-{{ section.id }}">
     <div class="vz-sg__panel">
       <button type="button" class="vz-sg__close" data-sg-close aria-label="{{ 'accessibility.close' | t }}">
@@ -318,7 +336,7 @@
       <h2 class="vz-sg__title" id="SizeGuideTitle-{{ section.id }}">{{ section.settings.sg_heading | escape }}</h2>
       {%- if section.settings.sg_subheading != blank -%}<p class="vz-sg__eyebrow">{{ section.settings.sg_subheading | escape }}</p>{%- endif -%}
       {%- if section.settings.sg_intro != blank -%}<div class="vz-sg__intro rte">{{ section.settings.sg_intro }}</div>{%- endif -%}
-      {%- if section.settings.sg_rows != blank -%}
+      {%- if sg_rows != blank -%}
         {%- if section.settings.sg_table_title != blank -%}<p class="vz-sg__ttl">{{ section.settings.sg_table_title | escape }}</p>{%- endif -%}
         <div class="vz-sg__scroll">
           <table class="vz-sg__table">
@@ -327,7 +345,7 @@
               <tr><th scope="col">{{ section.settings.sg_unit_a | escape }}</th><th scope="col">{{ section.settings.sg_unit_b | escape }}</th></tr>
             </thead>
             <tbody>
-              {%- assign rows = section.settings.sg_rows | newline_to_br | split: '<br />' -%}
+              {%- assign rows = sg_rows | newline_to_br | split: '<br />' -%}
               {%- for row in rows -%}
                 {%- assign r = row | strip -%}
                 {%- if r != blank -%}
@@ -343,8 +361,8 @@
           </table>
         </div>
       {%- endif -%}
-      {%- if section.settings.sg_image != blank -%}
-        {{ section.settings.sg_image | image_url: width: 900 | image_tag: class: 'vz-sg__img', loading: 'lazy', widths: '450, 900', alt: section.settings.sg_image.alt }}
+      {%- if sg_image != blank -%}
+        {{ sg_image | image_url: width: 900 | image_tag: class: 'vz-sg__img', loading: 'lazy', widths: '450, 900', alt: sg_image.alt }}
       {%- endif -%}
       {%- if section.settings.sg_note != blank -%}<div class="vz-sg__note rte">{{ section.settings.sg_note }}</div>{%- endif -%}
     </div>
