@@ -25,8 +25,6 @@
           {%- render 'size-chart-table', product: product, custom_rows: sg_custom, default_rows: sg_rows, col_size: section.settings.sg_col_size, col_measure: section.settings.sg_col_measure, unit_a: section.settings.sg_unit_a, unit_b: section.settings.sg_unit_b -%}
         </div>
       {%- endif -%}
-      {%- if section.settings.sg_subheading != blank -%}<p class="vz-sg__eyebrow">{{ section.settings.sg_subheading | escape }}</p>{%- endif -%}
-      {%- if section.settings.sg_intro != blank -%}<div class="vz-sg__intro rte">{{ section.settings.sg_intro }}</div>{%- endif -%}
       {%- if sg_image != blank -%}
         {{ sg_image | image_url: width: 900 | image_tag: class: 'vz-sg__img', loading: 'lazy', widths: '450, 900', alt: sg_image.alt }}
       {%- endif -%}
