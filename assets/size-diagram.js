@@ -100,10 +100,21 @@
     return n;
   };
 
+  // Source unit of a column: 'in', 'cm' or '' (not a length)
   const unitOf = (header) => {
-    const m = header.match(/\(([^)]+)\)/);
-    return m ? m[1].replace(/inches|inch/i, '"').replace(/^in$/i, '"') : '';
+    const h = header.toLowerCase();
+    if (/\(\s*(in|inch|inches|")\s*\)|\binch/.test(h)) return 'in';
+    if (/\(\s*cm\s*\)|\bcm\b/.test(h)) return 'cm';
+    return '';
   };
+  const round = (n) => String(Math.round(n * 2) / 2).replace(/\.0$/, '');
+  // Convert every number in a value like "36-38" or "22.5"
+  const convert = (value, from, to) => {
+    if (!from || from === to) return value;
+    const f = from === 'in' ? 2.54 : 1 / 2.54;
+    return value.replace(/\d+(?:\.\d+)?/g, (n) => round(parseFloat(n) * f));
+  };
+  const suffix = (unit) => (unit === 'in' ? '"' : unit === 'cm' ? ' cm' : '');
 
   const build = (dialog) => {
     if (dialog.dataset.sgDiagram) return;
@@ -152,16 +163,70 @@
     chips.setAttribute('role', 'group');
     chips.setAttribute('aria-label', data.headers[0] || 'Size');
 
+    const units = data.headers.map(unitOf);
+    const hasUnits = units.some(Boolean);
+    let unit = units.find(Boolean) || 'in';
+    let current = 0;
+
+    // Table: remember originals, rewrite in the chosen unit. Skip when the
+    // chart already has the same measurement in both units (default chart).
+    const bothUnits = units.includes('in') && units.includes('cm');
+    const bodyRows = [...table.querySelectorAll('tbody tr')];
+    const headCells = table.querySelectorAll('thead tr').length === 1 ? [...table.querySelectorAll('thead th')] : [];
+    const syncTable = () => {
+      if (bothUnits) return;
+      headCells.forEach((th, i) => {
+        if (!units[i]) return;
+        th.dataset.orig = th.dataset.orig || th.textContent;
+        th.textContent = th.dataset.orig.replace(/\(\s*(in|inch|inches|cm|")\s*\)/i, `(${unit})`);
+      });
+      bodyRows.forEach((tr, r) => {
+        [...tr.children].forEach((cell, i) => {
+          if (!units[i]) return;
+          cell.textContent = convert(data.rows[r][i], units[i], unit);
+        });
+      });
+    };
+
     const show = (r) => {
+      current = r;
       const row = data.rows[r];
       Object.entries(cols).forEach(([key, i]) => {
-        const v = row[i] || '–';
-        const u = unitOf(data.headers[i]);
-        labels[key].textContent = v + (u === '"' ? '"' : '');
-        legendVals[key].textContent = u && u !== '"' ? `${v} ${u}` : v + (u ? '"' : '');
+        const raw = row[i] || '–';
+        const v = units[i] ? convert(raw, units[i], unit) : raw;
+        const sx = units[i] ? suffix(unit) : '';
+        labels[key].textContent = unit === 'cm' && units[i] ? v : v + sx;
+        legendVals[key].textContent = v + sx;
       });
       chips.querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-pressed', String(j === r)));
     };
+
+    const toggle = document.createElement('div');
+    toggle.className = 'vz-sgd__units';
+    toggle.setAttribute('role', 'group');
+    toggle.setAttribute('aria-label', 'Units');
+    ['in', 'cm'].forEach((u) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'vz-sgd__unit';
+      b.textContent = u;
+      b.setAttribute('aria-pressed', String(u === unit));
+      b.addEventListener('click', () => {
+        unit = u;
+        try { localStorage.setItem('vzUnit', u); } catch (e) { /* private mode */ }
+        toggle.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        syncTable();
+        show(current);
+      });
+      toggle.append(b);
+    });
+    try {
+      const saved = localStorage.getItem('vzUnit');
+      if (saved === 'in' || saved === 'cm') {
+        unit = saved;
+        toggle.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x.textContent === unit)));
+      }
+    } catch (e) { /* private mode */ }
 
     data.rows.forEach((row, r) => {
       const b = document.createElement('button');
@@ -179,11 +244,13 @@
     fig.append(svg);
     const side = document.createElement('div');
     side.className = 'vz-sgd__side';
+    if (hasUnits) side.append(toggle);
     side.append(chips, legend);
     wrap.append(fig, side);
     mount.append(wrap);
 
     // start on the middle size so the drawing reads well
+    syncTable();
     show(Math.floor((data.rows.length - 1) / 2));
   };
 
