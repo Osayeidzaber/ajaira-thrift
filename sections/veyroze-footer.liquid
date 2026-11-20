@@ -55,6 +55,7 @@
           {%- when 'service' -%}
             <li><a href="{{ routes.root_url | append: 'policies/contact-information' | replace: '//', '/' }}">{{ 'sections.veyroze_footer.contact' | t }}</a></li>
             {%- if shop.shipping_policy -%}<li><a href="{{ shop.shipping_policy.url }}">{{ shop.shipping_policy.title | escape }}</a></li>{%- endif -%}
+            {%- if section.settings.exchange_page != blank -%}<li><a href="{{ section.settings.exchange_page.url }}">{{ section.settings.exchange_page.title | escape }}</a></li>{%- endif -%}
             {%- if shop.refund_policy -%}<li><a href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title | escape }}</a></li>{%- endif -%}
             {%- if section.settings.whatsapp_url != blank -%}<li><a href="{{ section.settings.whatsapp_url }}" target="_blank" rel="noopener">WhatsApp</a></li>{%- endif -%}
           {%- else -%}
@@ -230,6 +231,12 @@
       "id": "whatsapp_url",
       "label": "WhatsApp link",
       "info": "Instagram and TikTok come from Theme settings → Social media."
+    },
+    {
+      "type": "page",
+      "id": "exchange_page",
+      "label": "Exchange / return page",
+      "info": "Shown under Customer Service."
     },
     {
       "type": "checkbox",
