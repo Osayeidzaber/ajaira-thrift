@@ -83,13 +83,13 @@
       "settings": {
         "heading": "Collections",
         "collections": [
-          "jackets",
           "leather-jackets",
+          "jackets",
           "track-jackets",
           "vests",
           "track-pants"
         ],
-        "theme_photo_handles": "jackets,leather-jackets,track-jackets,vests,track-pants",
+        "theme_photo_handles": "leather-jackets,jackets,track-jackets,vests,track-pants",
         "color_scheme": "scheme-1",
         "heading_size": 34,
         "text_align": "center",

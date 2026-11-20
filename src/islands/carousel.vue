@@ -202,7 +202,7 @@ const onTouchMove = (e: TouchEvent) => {
 
 onMounted(() => {
   if (!N.value) return
-  current.value = MID.value + Math.floor(N.value / 2)
+  current.value = MID.value
   track.value?.addEventListener('touchmove', onTouchMove, { passive: false })
   window.addEventListener('mousemove', onMouseMove)
   window.addEventListener('mouseup', onEnd)

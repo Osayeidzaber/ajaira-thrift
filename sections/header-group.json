@@ -47,8 +47,8 @@
         "extra_dropdown_enable": true,
         "extra_dropdown_label": "Collections",
         "extra_dropdown_collections": [
-          "jackets",
           "leather-jackets",
+          "jackets",
           "track-jackets",
           "vests",
           "track-pants"
