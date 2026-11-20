@@ -1,0 +1,4 @@
+Handle,Title,Body (HTML),Vendor,Type,Tags,Published,Option1 Name,Option1 Value,Variant Price,Variant Compare At Price,Variant Inventory Tracker,Variant Inventory Qty,Variant Inventory Policy,Variant Fulfillment Service,Variant Requires Shipping,Image Src,Status
+black-puffer-vest,Black Puffer Vest,"<p>Warm black puffer vest. Available in 3 sizes.</p>",Ajaira Thrift,Vest,"vest, chart-vest",TRUE,Size,S,2500,,shopify,2,deny,manual,TRUE,,active
+black-puffer-vest,,,,,,,,M,2500,,shopify,3,deny,manual,TRUE,,
+black-puffer-vest,,,,,,,,L,2600,,shopify,1,deny,manual,TRUE,,
