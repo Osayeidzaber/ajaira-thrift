@@ -72,7 +72,7 @@
           "type": "accordion",
           "settings": {
             "title": "Shipping information",
-            "content": "<p><strong>Inside Dhaka:</strong> 1-2 days, 80 Tk<br/><strong>Sub Dhaka:</strong> 100 Tk<br/><strong>Outside Dhaka:</strong> 2-3 days, 120 Tk</p><p>An extra 50 Tk is added if the parcel weighs over 1 kg. We deliver all over Bangladesh.</p>"
+            "content": "<p><strong>Inside Dhaka:</strong> 1-2 days, 70 Tk<br/><strong>Sub Dhaka:</strong> 100 Tk<br/><strong>Outside Dhaka:</strong> 2-3 days, 120 Tk</p><p>An extra 50 Tk is added if the parcel weighs over 1 kg. We deliver all over Bangladesh.</p>"
           }
         },
         "acc_return": {

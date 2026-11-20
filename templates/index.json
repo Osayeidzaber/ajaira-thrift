@@ -198,7 +198,7 @@
           "type": "item",
           "settings": {
             "question": "What are the delivery charges?",
-            "answer": "<p><strong>Inside Dhaka:</strong> 80 Tk<br/><strong>Sub Dhaka:</strong> 100 Tk<br/><strong>Outside Dhaka:</strong> 120 Tk</p><p>An additional 50 Tk is added if the parcel weighs over 1 kg.</p>"
+            "answer": "<p><strong>Inside Dhaka:</strong> 70 Tk<br/><strong>Sub Dhaka:</strong> 100 Tk<br/><strong>Outside Dhaka:</strong> 120 Tk</p><p>An additional 50 Tk is added if the parcel weighs over 1 kg.</p>"
           }
         },
         "q3": {
