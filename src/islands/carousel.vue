@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 
 interface Slide {
   url: string
@@ -36,6 +36,7 @@ let lastX = 0
 let lastT = 0
 let velocity = 0
 let offset0 = 0
+let moveDx = 0
 let lockedAxis: 'x' | 'y' | null = null
 let resizeRaf = 0
 
@@ -55,7 +56,7 @@ function origIndex(idx: number) {
 }
 function recentre() {
   const target = MID.value + origIndex(current.value)
-  if (target !== current.value) performJump(target)
+  if (target !== current.value) void performJump(target)
 }
 function goToDot(i: number) {
   const n = N.value
@@ -86,32 +87,37 @@ function setX(x: number, animate: boolean) {
 function update(animate: boolean) {
   setX(calcX(current.value), animate)
 }
-function goTo(idx: number, animate: boolean) {
+// Move to a slide. If the target is near the ends of the copies, first jump
+// (invisibly) to the same slide in the middle copy, then animate from there.
+async function goTo(idx: number, animate: boolean) {
   if (isJumping) return
   const max = items.value.length - 3
   if (idx < 2 || idx > max) {
-    // far from the middle copy (fast swipes / key repeat): re-centre first
     const delta = idx - current.value
-    performJump(MID.value + origIndex(current.value))
-    isJumping = false
+    await performJump(MID.value + origIndex(current.value))
     idx = current.value + delta
   }
   current.value = idx
   update(animate)
 }
-function performJump(newCurrent: number) {
+
+// Invisible jump: switch to the same slide in another copy with every
+// transition off, wait for Vue to re-render the card classes, then turn the
+// transitions back on. Without the wait the cards visibly re-animate.
+async function performJump(newCurrent: number) {
   const t = track.value
-  if (!t) return
+  if (!t || newCurrent === current.value) return
   isJumping = true
   t.classList.add('vc-no-transition')
   current.value = newCurrent
-  setX(calcX(current.value), false)
+  setX(calcX(newCurrent), false)
+  await nextTick()
   void t.offsetHeight
-  requestAnimationFrame(() => {
-    t.classList.remove('vc-no-transition')
-    isJumping = false
-  })
+  t.classList.remove('vc-no-transition')
+  t.style.transition = ''
+  isJumping = false
 }
+
 function onTransitionEnd(e: TransitionEvent) {
   if (e.target !== track.value || e.propertyName !== 'transform') return
   if (isJumping || dragging) return
@@ -123,6 +129,7 @@ function onStart(x: number, y: number) {
   startX = x
   startY = y
   dragDelta = 0
+  moveDx = 0
   lockedAxis = null
   lastX = x
   lastT = performance.now()
@@ -153,6 +160,7 @@ function onMove(x: number, y: number, ev?: Event) {
   if (now > lastT) velocity = 0.8 * ((x - lastX) / (now - lastT)) + 0.2 * velocity
   lastX = x
   lastT = now
+  moveDx = dx
   dragDelta = offset0 + dx
   setX(calcX(current.value) + dragDelta, false)
 }
@@ -164,17 +172,20 @@ function onEnd() {
     update(true)
     return
   }
-  // distance + flick velocity decide how many cards to move (max 3)
+  // One card per swipe (two only for a drag longer than ~1.5 cards), so no
+  // collection is ever skipped. A quick flick counts as a swipe.
   const w = cardW() + gapPx() || 1
-  const projected = dragDelta + velocity * 220
-  let steps = Math.round(-projected / w)
-  if (steps === 0 && Math.abs(dragDelta) > Math.max(30, w * 0.12)) steps = dragDelta < 0 ? 1 : -1
-  steps = Math.max(-3, Math.min(3, steps))
+  const flick = Math.abs(velocity) > 0.35
+  let steps = 0
+  // direction comes from the finger's own movement, never from where a
+  // half-finished slide happened to be
+  if (Math.abs(moveDx) > Math.max(30, w * 0.15) || (flick && Math.abs(moveDx) > 8)) steps = moveDx < 0 ? 1 : -1
+  if (Math.abs(moveDx) > w * 1.5) steps *= 2
   if (steps) goTo(current.value + steps, true)
   else update(true)
 }
 function onCardClick(i: number, e: MouseEvent) {
-  if (Math.abs(dragDelta) > 6) {
+  if (Math.abs(moveDx) > 6) {
     e.preventDefault()
     return
   }
@@ -184,6 +195,10 @@ function onCardClick(i: number, e: MouseEvent) {
   }
 }
 function onKey(e: KeyboardEvent) {
+  const tag = (document.activeElement && document.activeElement.tagName) || ''
+  if (/INPUT|TEXTAREA|SELECT/.test(tag)) return
+  const r = viewport.value?.getBoundingClientRect()
+  if (!r || r.bottom < 0 || r.top > window.innerHeight) return
   if (e.key === 'ArrowRight') goTo(current.value + 1, true)
   if (e.key === 'ArrowLeft') goTo(current.value - 1, true)
 }
