@@ -13,10 +13,20 @@
         },
         "nl": {
           "type": "newsletter"
+        },
+        "ig": {
+          "type": "instagram",
+          "settings": {
+            "url_1": "https://www.instagram.com/ajairathrift/",
+            "label_1": "@ajairathrift",
+            "url_2": "https://www.instagram.com/ajairathriftbackup/",
+            "label_2": "@ajairathriftbackup"
+          }
         }
       },
       "block_order": [
         "wa",
+        "ig",
         "nl"
       ],
       "settings": {
