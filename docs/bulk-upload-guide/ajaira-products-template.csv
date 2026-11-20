@@ -1,0 +1,4 @@
+Handle,Title,Body (HTML),Vendor,Type,Tags,Published,Option1 Name,Option1 Value,Variant Price,Variant Compare At Price,Variant Inventory Tracker,Variant Inventory Qty,Variant Inventory Policy,Variant Fulfillment Service,Variant Requires Shipping,Image Src,Status
+vintage-leather-jacket-brown,Vintage Leather Jacket - Brown,"<p>Real leather bomber. Light wear on the cuffs.</p><p>Chest 22.5 in, Length 27 in</p>",Ajaira Thrift,Jacket,"leather, jacket, chart-jacket",TRUE,Size,M,5000,,shopify,1,deny,manual,TRUE,,active
+asics-track-jacket-navy,Asics Track Jacket - Navy,"<p>Navy track jacket with red stripes.</p><p>Chest 22 in, Length 26 in</p>",Ajaira Thrift,Track Jacket,"track jacket, jacket",TRUE,Size,L,2800,,shopify,1,deny,manual,TRUE,,active
+adidas-track-pants-navy,Adidas Track Pants - Navy,"<p>Classic track pants.</p><p>Waist 30 in, Length 41 in</p>",Ajaira Thrift,Track Pants,"track pant, pants",TRUE,Size,M,2200,,shopify,1,deny,manual,TRUE,,active
