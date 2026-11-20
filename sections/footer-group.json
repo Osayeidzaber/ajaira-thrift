@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "t:sections.footer.name",
   "type": "footer",
@@ -12,7 +21,8 @@
           }
         },
         "nl": {
-          "type": "newsletter"
+          "type": "newsletter",
+          "settings": {}
         },
         "ig": {
           "type": "instagram",
@@ -42,16 +52,16 @@
           "type": "menu",
           "settings": {
             "heading": "Customer Service",
-            "menu": "footer",
-            "source": "service"
+            "source": "service",
+            "menu": "footer"
           }
         },
         "m2": {
           "type": "menu",
           "settings": {
             "heading": "Information",
-            "menu": "footer",
-            "source": "policies"
+            "source": "policies",
+            "menu": "footer"
           }
         }
       },
@@ -60,14 +70,14 @@
         "m2"
       ],
       "settings": {
+        "whatsapp_url": "https://wa.me/8801992420839",
+        "exchange_page": "exchange-policy",
         "show_payment": true,
         "payment_heading": "Payment Methods",
         "withdraw_label": "Withdraw from contract here",
         "show_country": true,
         "show_language": true,
-        "color_scheme": "scheme-1",
-        "whatsapp_url": "https://wa.me/8801992420839",
-        "exchange_page": "exchange-policy"
+        "color_scheme": "scheme-1"
       }
     },
     "privacy": {
