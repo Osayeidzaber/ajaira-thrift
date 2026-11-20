@@ -119,7 +119,6 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
-<script src="{{ 'size-diagram.js' | asset_url }}" defer="defer"></script>
 
 <product-info
   id="MainProduct-{{ section.id }}"
@@ -512,7 +511,7 @@
   .vz-sg__table tbody th, .vz-sg__table thead th:first-child { position: sticky; left: 0; text-align: left; background: var(--sg-bg); font-weight: 500; }
   .vz-sg__table thead th:first-child { background: #151517; }
   .vz-sg__table tbody tr:hover td, .vz-sg__table tbody tr:hover th { background: rgba(255, 255, 255, 0.05); }
-  .vz-sg__img { width: 100%; height: auto; display: block; margin-top: 16px; border-radius: 10px; }
+  .vz-sg__img { width: 100%; height: auto; display: block; margin: 0 0 16px; border-radius: 10px; }
   .vz-sg__note { font-size: 1.15rem; color: var(--sg-mute); margin-top: 14px; }
 
   @media (max-width: 749px) {
@@ -919,13 +918,13 @@
       "type": "text",
       "id": "sg_link_label",
       "label": "Link label",
-      "default": "Find your size"
+      "default": "How we measure"
     },
     {
       "type": "text",
       "id": "sg_heading",
       "label": "Heading",
-      "default": "Sizing"
+      "default": "How we measure"
     },
     {
       "type": "text",
@@ -979,7 +978,8 @@
     {
       "type": "image_picker",
       "id": "sg_image",
-      "label": "Extra size chart image (optional)"
+      "label": "How we measure picture",
+      "info": "Shows where each measurement is taken. Leave empty to use the built-in jacket sketch (A = length, B = chest, C = sleeve)."
     },
     {
       "type": "richtext",

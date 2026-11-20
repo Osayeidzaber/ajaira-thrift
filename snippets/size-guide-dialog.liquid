@@ -1,32 +1,25 @@
 {%- comment -%}
-  "Find your size" dialog: garment drawing (assets/size-diagram.js) + size table.
-  Garment comes from the product title / type / tags: pants, vest, else jacket.
+  "How we measure" dialog: measuring picture + size table.
+  Picture = section setting "How we measure picture", else the built-in
+  assets/how-we-measure.jpg (A = length, B = chest, C = sleeve).
 {%- endcomment -%}
-{%- liquid
-  assign sg_hay = product.title | append: ' ' | append: product.type | append: ' ' | append: product_tags | downcase
-  assign sg_garment = 'jacket'
-  if sg_hay contains 'pant' or sg_hay contains 'trouser' or sg_hay contains 'jean' or sg_hay contains 'jogger' or sg_hay contains 'short' or sg_hay contains 'cargo'
-    assign sg_garment = 'pants'
-  elsif sg_hay contains 'vest' or sg_hay contains 'gilet' or sg_hay contains 'waistcoat'
-    assign sg_garment = 'vest'
-  endif
--%}
 {%- if sg_rows != blank or sg_image != blank -%}
-  <dialog class="vz-sg" id="SizeGuide-{{ section.id }}" data-garment="{{ sg_garment }}" aria-labelledby="SizeGuideTitle-{{ section.id }}">
+  <dialog class="vz-sg" id="SizeGuide-{{ section.id }}" aria-labelledby="SizeGuideTitle-{{ section.id }}">
     <div class="vz-sg__panel">
       <button type="button" class="vz-sg__close" data-sg-close aria-label="{{ 'accessibility.close' | t }}">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
       <h2 class="vz-sg__title" id="SizeGuideTitle-{{ section.id }}">{{ section.settings.sg_heading | escape }}</h2>
+      {%- if sg_image != blank -%}
+        {{ sg_image | image_url: width: 900 | image_tag: class: 'vz-sg__img', loading: 'lazy', widths: '450, 900', alt: sg_image.alt }}
+      {%- else -%}
+        <img class="vz-sg__img" src="{{ 'how-we-measure.jpg' | asset_url }}" alt="{{ section.settings.sg_heading | escape }}" width="1376" height="768" loading="lazy">
+      {%- endif -%}
       {%- if sg_rows != blank -%}
-        <div data-sg-diagram></div>
         {%- if sg_title != blank -%}<p class="vz-sg__ttl">{{ sg_title | escape }}</p>{%- endif -%}
         <div class="vz-sg__scroll">
           {%- render 'size-chart-table', product: product, custom_rows: sg_custom, default_rows: sg_rows, col_size: section.settings.sg_col_size, col_measure: section.settings.sg_col_measure, unit_a: section.settings.sg_unit_a, unit_b: section.settings.sg_unit_b -%}
         </div>
-      {%- endif -%}
-      {%- if sg_image != blank -%}
-        {{ sg_image | image_url: width: 900 | image_tag: class: 'vz-sg__img', loading: 'lazy', widths: '450, 900', alt: sg_image.alt }}
       {%- endif -%}
       {%- if section.settings.sg_note != blank -%}<div class="vz-sg__note rte">{{ section.settings.sg_note }}</div>{%- endif -%}
     </div>
