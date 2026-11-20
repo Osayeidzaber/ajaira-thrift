@@ -37,13 +37,31 @@
             "title": "Formal Pants",
             "subtitle": "Tailored · Smart"
           }
+        },
+        "cat-vest": {
+          "type": "category",
+          "settings": {
+            "collection": "vests",
+            "title": "Vests",
+            "subtitle": "Layered · Classic"
+          }
+        },
+        "cat-fshirt": {
+          "type": "category",
+          "settings": {
+            "collection": "formal-shirts",
+            "title": "Formal Shirts",
+            "subtitle": "Crisp · Office"
+          }
         }
       },
       "block_order": [
         "cat-1",
         "cat-2",
         "cat-3",
+        "cat-vest",
         "cat-4",
+        "cat-fshirt",
         "cat-5"
       ],
       "settings": {

@@ -51,7 +51,7 @@
           "type": "badge",
           "settings": {
             "icon": "return",
-            "text": "Check Before You Pay"
+            "text": "Authentic / Genuine Branded Products"
           }
         },
         "b3": {
@@ -87,7 +87,9 @@
           "jackets",
           "track-jackets",
           "vests",
-          "track-pants"
+          "track-pants",
+          "formal-shirts",
+          "formal-pants"
         ],
         "theme_photo_handles": "leather-jackets,jackets,track-jackets,vests,track-pants",
         "color_scheme": "scheme-1",
