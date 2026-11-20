@@ -101,7 +101,11 @@
         "chart_jacket",
         "chart_default"
       ],
-      "settings": {}
+      "settings": {
+        "sg_link_label": "Find your size",
+        "sg_heading": "Find Your Fit",
+        "sg_intro": "<p>Vintage and thrifted sizes vary across brands and eras, so don't rely on the tag alone. Grab a jacket from your closet that already fits you the way you like, lay it flat, and measure it in inches to compare:</p><p><strong>A — Length:</strong> Measured straight down from the highest point of the shoulder (right beside the collar seam) to the bottom hem.</p><p><strong>B — Chest (Pit-to-Pit):</strong> Measured straight across the front from armpit seam to armpit seam with the jacket laid flat. (Double this number for the full chest measurement.)</p><p><strong>C — Sleeve Length:</strong> Measured from the shoulder seam down to the end of the cuff.</p><p>Compare your numbers against the measurements listed on each product page before checking out—and if you're in between sizes, size up for an easier layered fit.</p>"
+      }
     },
     "related": {
       "type": "vz-related",

@@ -1,27 +1,23 @@
 {%- comment -%}
-  "How we measure" dialog: measuring picture + size table.
-  Picture = section setting "How we measure picture", else the built-in
+  "Find Your Fit" dialog: how-to-measure picture + the owner's guide text.
+  Picture = section setting "Size guide picture", else the built-in
   assets/how-we-measure.jpg (A = length, B = chest, C = sleeve).
+  Text = section setting "Guide text" (Theme editor > Product page > Size guide).
 {%- endcomment -%}
-{%- if sg_rows != blank or sg_image != blank -%}
-  <dialog class="vz-sg" id="SizeGuide-{{ section.id }}" aria-labelledby="SizeGuideTitle-{{ section.id }}">
-    <div class="vz-sg__panel">
-      <button type="button" class="vz-sg__close" data-sg-close aria-label="{{ 'accessibility.close' | t }}">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-      <h2 class="vz-sg__title" id="SizeGuideTitle-{{ section.id }}">{{ section.settings.sg_heading | escape }}</h2>
-      {%- if sg_image != blank -%}
-        {{ sg_image | image_url: width: 900 | image_tag: class: 'vz-sg__img', loading: 'lazy', widths: '450, 900', alt: sg_image.alt }}
-      {%- else -%}
-        <img class="vz-sg__img" src="{{ 'how-we-measure.jpg' | asset_url }}" alt="{{ section.settings.sg_heading | escape }}" width="1376" height="768" loading="lazy">
-      {%- endif -%}
-      {%- if sg_rows != blank -%}
-        {%- if sg_title != blank -%}<p class="vz-sg__ttl">{{ sg_title | escape }}</p>{%- endif -%}
-        <div class="vz-sg__scroll">
-          {%- render 'size-chart-table', product: product, custom_rows: sg_custom, default_rows: sg_rows, col_size: section.settings.sg_col_size, col_measure: section.settings.sg_col_measure, unit_a: section.settings.sg_unit_a, unit_b: section.settings.sg_unit_b -%}
-        </div>
-      {%- endif -%}
-      {%- if section.settings.sg_note != blank -%}<div class="vz-sg__note rte">{{ section.settings.sg_note }}</div>{%- endif -%}
-    </div>
-  </dialog>
-{%- endif -%}
+<dialog class="vz-sg" id="SizeGuide-{{ section.id }}" aria-labelledby="SizeGuideTitle-{{ section.id }}">
+  <div class="vz-sg__panel">
+    <button type="button" class="vz-sg__close" data-sg-close aria-label="{{ 'accessibility.close' | t }}">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <h2 class="vz-sg__title" id="SizeGuideTitle-{{ section.id }}">{{ section.settings.sg_heading | escape }}</h2>
+    {%- if sg_image != blank -%}
+      {{ sg_image | image_url: width: 900 | image_tag: class: 'vz-sg__img', loading: 'lazy', widths: '450, 900', alt: sg_image.alt }}
+    {%- else -%}
+      <img class="vz-sg__img" src="{{ 'how-we-measure.jpg' | asset_url }}" alt="{{ section.settings.sg_heading | escape }}" width="1376" height="768" loading="lazy">
+    {%- endif -%}
+    {%- if section.settings.sg_intro != blank -%}
+      <div class="vz-sg__guide rte">{{ section.settings.sg_intro }}</div>
+    {%- endif -%}
+    {%- if section.settings.sg_note != blank -%}<div class="vz-sg__note rte">{{ section.settings.sg_note }}</div>{%- endif -%}
+  </div>
+</dialog>

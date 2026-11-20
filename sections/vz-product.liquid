@@ -190,7 +190,7 @@
         {%- if section.settings.tax_note != blank -%}<span class="vz-price__tax">{{ section.settings.tax_note | escape }}</span>{%- endif -%}
       </div>
 
-      {%- if sg_rows != blank or sg_image != blank -%}
+      {%- if section.settings.sg_intro != blank or sg_image != blank -%}
         <div class="vz-sg-row"><button type="button" class="vz-sg-open" data-sg-open="SizeGuide-{{ section.id }}">{{ section.settings.sg_link_label | escape }}</button></div>
       {%- endif -%}
 
@@ -278,7 +278,7 @@
                 </summary>
                 <div class="vz-acc__body rte">
                   {{ block.settings.content }}
-                  {%- if block.settings.size_link and sg_rows != blank -%}
+                  {%- if block.settings.size_link -%}
                     <p><button type="button" class="vz-sg-open" data-sg-open="SizeGuide-{{ section.id }}">{{ section.settings.sg_link_label | escape }}</button></p>
                   {%- endif -%}
                 </div>
@@ -477,7 +477,6 @@
   .vz-sg__intro { font-size: 1.2rem; line-height: 1.7; color: var(--sg-mute); margin: 0; }
   .vz-sg__intro p { margin: 0 0 6px; }
 
-  /* Measurement drawing (assets/size-diagram.js) */
   .vz-sgd { margin: 0 0 22px; }
   .vz-sgd__fig { position: relative; padding: 14px 10px 6px; border: 1px solid var(--sg-line); border-radius: 14px; background: #121214; }
   .vz-sgd__svg { width: 100%; max-width: 300px; height: auto; display: block; margin: 0 auto; overflow: visible; }
@@ -512,6 +511,9 @@
   .vz-sg__table thead th:first-child { background: #151517; }
   .vz-sg__table tbody tr:hover td, .vz-sg__table tbody tr:hover th { background: rgba(255, 255, 255, 0.05); }
   .vz-sg__img { width: 100%; height: auto; display: block; margin: 0 0 16px; border-radius: 10px; }
+  .vz-sg__guide { margin-top: 18px; font-size: 1.3rem; line-height: 1.7; color: var(--sg-mute); }
+  .vz-sg__guide p { margin: 0 0 12px; }
+  .vz-sg__guide strong { color: var(--sg-ink); font-weight: 600; }
   .vz-sg__note { font-size: 1.15rem; color: var(--sg-mute); margin-top: 14px; }
 
   @media (max-width: 749px) {
@@ -918,13 +920,13 @@
       "type": "text",
       "id": "sg_link_label",
       "label": "Link label",
-      "default": "How we measure"
+      "default": "Find your size"
     },
     {
       "type": "text",
       "id": "sg_heading",
       "label": "Heading",
-      "default": "How we measure"
+      "default": "Find Your Fit"
     },
     {
       "type": "text",
@@ -935,8 +937,8 @@
     {
       "type": "richtext",
       "id": "sg_intro",
-      "label": "Intro",
-      "default": "<p>Many things affect the size of vintage clothing: age, style and country of origin. That is why we hand-measure every piece. Use the standard chart below as a guide, then check the exact measurements in the product description.</p>"
+      "label": "Guide text",
+      "default": "<p>Vintage and thrifted sizes vary across brands and eras, so don't rely on the tag alone. Grab a jacket from your closet that already fits you the way you like, lay it flat, and measure it in inches to compare:</p><p><strong>A — Length:</strong> Measured straight down from the highest point of the shoulder (right beside the collar seam) to the bottom hem.</p><p><strong>B — Chest (Pit-to-Pit):</strong> Measured straight across the front from armpit seam to armpit seam with the jacket laid flat. (Double this number for the full chest measurement.)</p><p><strong>C — Sleeve Length:</strong> Measured from the shoulder seam down to the end of the cuff.</p><p>Compare your numbers against the measurements listed on each product page before checking out—and if you're in between sizes, size up for an easier layered fit.</p>"
     },
     {
       "type": "text",
