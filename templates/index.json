@@ -131,11 +131,11 @@
     "launch1": {
       "type": "product-launch",
       "settings": {
-        "product": "",
+        "product": "vintage-leather-vest",
         "max_images": 5,
         "badge": "New",
         "media_position": "right",
-        "eyebrow": "New — Vintage Reworks",
+        "eyebrow": "",
         "heading": "",
         "description": "",
         "cta_label": "Discover the piece",
@@ -160,11 +160,11 @@
     "launch2": {
       "type": "product-launch",
       "settings": {
-        "product": "",
+        "product": "vintage-jacket",
         "max_images": 5,
         "badge": "New",
         "media_position": "left",
-        "eyebrow": "New — Vintage Original",
+        "eyebrow": "",
         "heading": "",
         "description": "",
         "cta_label": "Discover the piece",
