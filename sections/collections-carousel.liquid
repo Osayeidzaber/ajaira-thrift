@@ -1,5 +1,5 @@
 <section class="vc-section color-{{ section.settings.color_scheme }}" style="--vc-heading: {{ section.settings.heading_size }}px; --vc-align: {{ section.settings.text_align }}; --vc-label-size: {{ section.settings.label_size }}px;{% if section.settings.dot_color != blank %} --vc-dot: {{ section.settings.dot_color }};{% endif %}">
-  <h2 class="vc-heading">{{ section.settings.heading }}</h2>
+  <h2 class="vc-heading" style="font-size: clamp(20px, 6.2vw, {{ section.settings.heading_size }}px);">{{ section.settings.heading }}</h2>
 
   {% capture slides_json %}[
     {%- if section.settings.collections.size > 0 -%}
