@@ -194,6 +194,10 @@
         <div class="vz-sg-row"><button type="button" class="vz-sg-open" data-sg-open="SizeGuide-{{ section.id }}">{{ section.settings.sg_link_label | escape }}</button></div>
       {%- endif -%}
 
+      {%- if section.settings.show_description and product.description != blank -%}
+        <div class="vz-desc rte">{{ product.description }}</div>
+      {%- endif -%}
+
       {%- if material != blank or condition_label != blank or details != blank -%}
         <div class="vz-fit">
           {%- if material != blank -%}
@@ -346,9 +350,6 @@
         </a>
       {%- endif -%}
 
-      {%- if section.settings.show_description and product.description != blank -%}
-        <div class="vz-desc rte">{{ product.description }}</div>
-      {%- endif -%}
     </div>
   </div>
 </product-info>
@@ -568,7 +569,7 @@
   .vz-cond-link { display: inline-flex; align-items: center; gap: 9px; margin-top: 32px; padding: 14px 20px; border: 1px solid var(--line2); border-radius: var(--rad); color: var(--muted); font-size: 0.95rem; text-decoration: none; transition: border-color 0.15s, color 0.15s; }
   .vz-cond-link:hover { border-color: var(--gold); color: var(--gold); }
   .vz-cond-link svg { flex: none; opacity: 0.8; }
-  .vz-desc { margin-top: 32px; color: var(--muted); font-size: 1.2rem; line-height: 1.7; }
+  .vz-desc { margin: 0 0 24px; color: var(--muted); font-size: 1.2rem; line-height: 1.7; }
   @media (max-width: 960px) {
     .vz-mblock { gap: 16px; }
     .vz-msketch { width: 120px; }

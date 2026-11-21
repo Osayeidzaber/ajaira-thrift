@@ -16,35 +16,40 @@
           "type": "category",
           "settings": {
             "title": "Vintage Jackets",
-            "subtitle": "Retro · Classic"
+            "subtitle": "Retro · Classic",
+            "collection": "jackets"
           }
         },
         "cat-2": {
           "type": "category",
           "settings": {
             "title": "Vintage Leather Jackets",
-            "subtitle": "Leather · Biker"
+            "subtitle": "Leather · Biker",
+            "collection": "leather-jackets"
           }
         },
         "cat-3": {
           "type": "category",
           "settings": {
             "title": "Track Jackets",
-            "subtitle": "Sport · Retro"
+            "subtitle": "Sport · Retro",
+            "collection": "track-jackets"
           }
         },
         "cat-4": {
           "type": "category",
           "settings": {
             "title": "Shirts",
-            "subtitle": "Dress · Casual"
+            "subtitle": "Dress · Casual",
+            "collection": "shirts"
           }
         },
         "cat-5": {
           "type": "category",
           "settings": {
             "title": "Formal Pants",
-            "subtitle": "Tailored · Smart"
+            "subtitle": "Tailored · Smart",
+            "collection": "formal-pants"
           }
         },
         "cat-vest": {
