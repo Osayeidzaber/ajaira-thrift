@@ -34,4 +34,10 @@ describe('formatMoney', () => {
   it('formats cents using a money format', () => {
     expect(formatMoney(12990, '€{{amount}}')).toBe('€129.90')
   })
+  it("handles Tk, thousands and other Shopify formats", () => {
+    expect(formatMoney(70000, "Tk {{amount}}")).toBe("Tk 700.00")
+    expect(formatMoney(123456, "Tk {{amount}}")).toBe("Tk 1,234.56")
+    expect(formatMoney(123400, "Tk {{ amount_no_decimals }}")).toBe("Tk 1,234")
+    expect(formatMoney(123456, "{{amount_with_comma_separator}} €")).toBe("1.234,56 €")
+  })
 })

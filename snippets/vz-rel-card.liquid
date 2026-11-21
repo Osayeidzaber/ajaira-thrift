@@ -7,10 +7,10 @@
       {%- else -%}
         {{ 'product-apparel-1' | placeholder_svg_tag: 'vz-rel__img' }}
       {%- endif -%}
-      {%- if badge != blank -%}<span class="vz-rel__badge">{{ badge | escape }}</span>{%- endif -%}
+      {%- if badge != blank -%}<span class="vz-rel__badge">{{ badge | escape }}</span>{%- elsif p.compare_at_price > p.price and p.available -%}<span class="vz-rel__badge">{{ 'products.product.on_sale' | t }}</span>{%- endif -%}
     </div>
     <p class="vz-rel__title">{{ p.title | escape }}</p>
-    <span class="vz-rel__price">{{ p.price | money }}</span>
+    <span class="vz-rel__price">{{ p.price | money }}{%- if p.compare_at_price > p.price %} <s class="vz-rel__compare">{{ p.compare_at_price | money }}</s>{% endif -%}</span>
   </a>
   {%- render 'buy-now-mini', product: p -%}
 </div>

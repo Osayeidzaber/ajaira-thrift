@@ -17,6 +17,7 @@ interface DrawerStrings {
   loading: string
   countOne: string
   countOther: string
+  discount: string
 }
 
 const props = defineProps<{
@@ -160,7 +161,17 @@ onUnmounted(() => {
             <img v-if="line.image" class="thumb" :src="line.image" :alt="line.title" width="64" height="80">
             <div class="info">
               <a class="name" :href="line.url">{{ line.title }}</a>
-              <span class="price">{{ formatMoney(line.final_line_price, moneyFormat) }}</span>
+              <span class="price">
+                <s v-if="(line.original_line_price ?? 0) > line.final_line_price" class="was">{{
+                  formatMoney(line.original_line_price ?? 0, moneyFormat)
+                }}</s>
+                {{ formatMoney(line.final_line_price, moneyFormat) }}
+              </span>
+              <span
+                v-for="d in line.line_level_discount_allocations ?? []"
+                :key="d.discount_application.title"
+                class="deal"
+              >{{ d.discount_application.title }} (−{{ formatMoney(d.amount, moneyFormat) }})</span>
               <div class="qty">
                 <button
                   type="button"
@@ -193,6 +204,14 @@ onUnmounted(() => {
           </li>
         </ul>
         <footer class="foot">
+          <div
+            v-for="d in cart.cart_level_discount_applications ?? []"
+            :key="d.title"
+            class="deal-row"
+          >
+            <span>{{ strings.discount }}: {{ d.title }}</span>
+            <span>−{{ formatMoney(d.total_allocated_amount, moneyFormat) }}</span>
+          </div>
           <div class="subtotal">
             <span>{{ strings.subtotal }}</span>
             <span>{{ formatMoney(cart.total_price, moneyFormat) }}</span>
@@ -308,6 +327,22 @@ onUnmounted(() => {
 .price {
   color: var(--color-mute);
   font-size: 0.8rem;
+}
+.was {
+  opacity: 0.6;
+  margin-right: 0.35rem;
+}
+.deal {
+  display: block;
+  color: var(--color-wine, #b5544a);
+  font-size: 0.72rem;
+}
+.deal-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--color-wine, #b5544a);
+  margin-bottom: 0.4rem;
 }
 .qty {
   display: flex;

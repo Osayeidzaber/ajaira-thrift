@@ -15,6 +15,8 @@ export interface CartLine {
   title: string
   quantity: number
   final_line_price: number
+  original_line_price?: number
+  line_level_discount_allocations?: { amount: number; discount_application: { title: string } }[]
   image?: string
   url: string
 }
@@ -22,6 +24,8 @@ export interface CartLine {
 export interface CartState {
   item_count: number
   total_price: number
+  original_total_price?: number
+  cart_level_discount_applications?: { title: string; total_allocated_amount: number }[]
   items: CartLine[]
 }
 

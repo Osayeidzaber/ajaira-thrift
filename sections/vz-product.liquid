@@ -185,7 +185,9 @@
       <div class="vz-price" id="price-{{ section.id }}" role="status">
         <span class="vz-price__main">{{ current_variant.price | money }}</span>
         {%- if current_variant.compare_at_price > current_variant.price -%}
-          <span class="vz-price__compare">{{ current_variant.compare_at_price | money }}</span>
+          <span class="vz-price__compare"><span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>{{ current_variant.compare_at_price | money }}</span>
+          {%- assign save_pct = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price -%}
+          <span class="vz-price__sale">{{ 'products.product.on_sale' | t }}{% if save_pct > 0 %} −{{ save_pct }}%{% endif %}</span>
         {%- endif -%}
         {%- if section.settings.tax_note != blank -%}<span class="vz-price__tax">{{ section.settings.tax_note | escape }}</span>{%- endif -%}
       </div>
@@ -391,7 +393,9 @@
   .vz-h1 { font-family: var(--font-heading-family, inherit); font-size: clamp(2.8rem, 4.6vw, 4rem) !important; font-weight: 400; line-height: 1.04; letter-spacing: 0.005em; margin: 0 0 26px; color: inherit; }
   .vz-price { display: flex; align-items: baseline; gap: 16px; margin-bottom: 32px; }
   .vz-price__main { font-family: var(--font-heading-family, inherit); font-size: clamp(2.2rem, 3.4vw, 2.8rem) !important; font-weight: 400; }
-  .vz-price__compare { font-size: 1.2rem; opacity: 0.32; text-decoration: line-through; }
+  .vz-price { flex-wrap: wrap; row-gap: 8px; }
+  .vz-price__compare { font-size: 1.2rem; opacity: 0.5; text-decoration: line-through; }
+  .vz-price__sale { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--color-wine, #7a2e2e); color: #fff; }
   .vz-price__tax { font-size: 0.86rem; color: var(--muted); }
   .vz-fit { border: 1px solid var(--line2); border-radius: var(--rad); overflow: hidden; background: linear-gradient(160deg, rgba(200, 164, 92, 0.05) 0%, transparent 60%); margin-bottom: 28px; }
   .vz-fit__row { display: flex; }

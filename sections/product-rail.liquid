@@ -32,7 +32,7 @@
               {%- endif -%}
               <span class="aj-rail__tip">
                 {{- product.title | escape -}}
-                {%- if section.settings.show_price %} · {{ product.price | money }}{% endif -%}
+                {%- if section.settings.show_price %} · {{ product.price | money }}{% if product.compare_at_price > product.price %} <s>{{ product.compare_at_price | money }}</s>{% endif %}{% endif -%}
               </span>
             </a>
           </li>

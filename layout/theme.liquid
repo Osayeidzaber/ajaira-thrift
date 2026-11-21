@@ -332,7 +332,8 @@
             "decrease": {{ 'products.product.quantity.decrease' | t: product: placeholder_product | json }},
             "loading": {{ 'accessibility.loading' | t | json }},
             "countOne": {{ 'sections.header.cart_count.one' | t: count: placeholder_count | json }},
-            "countOther": {{ 'sections.header.cart_count.other' | t: count: placeholder_count | json }}
+            "countOther": {{ 'sections.header.cart_count.other' | t: count: placeholder_count | json }},
+            "discount": {{ 'customer.order.discount' | t | json }}
           },
           "moneyFormat": {{ shop.money_format | json }},
           "iconCart": {{ 'icon-cart.svg' | inline_asset_content | json }},

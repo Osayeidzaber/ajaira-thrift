@@ -32,7 +32,7 @@
           <div class="aj-spot__info">
             <a href="{{ link | default: '#' }}" class="aj-spot__name">{{ name | default: 'onboarding.product_title' | t | escape }}</a>
             {%- if section.settings.show_price and p != blank -%}
-              <span class="aj-spot__price">{{ p.price | money }}</span>
+              <span class="aj-spot__price">{{ p.price | money }}{%- if p.compare_at_price > p.price %} <s>{{ p.compare_at_price | money }}</s>{% endif -%}</span>
             {%- endif -%}
           </div>
         </li>
