@@ -4,6 +4,7 @@
   {% capture slides_json %}[
     {%- if section.settings.collections.size > 0 -%}
       {%- assign theme_photos = section.settings.theme_photo_handles | split: ',' -%}
+      {%- assign sep = '' -%}
       {%- for c in section.settings.collections -%}
         {%- liquid
           assign s400 = blank
@@ -23,7 +24,8 @@
           endif
         -%}
         {%- if s400 != blank -%}
-          { "url": {{ c.url | json }}, "title": {{ c.title | json }}, "src400": {{ s400 | json }}, "src700": {{ s700 | json }}, "src1000": {{ s1000 | json }} }{% unless forloop.last %},{% endunless %}
+          {{ sep }}{ "url": {{ c.url | json }}, "title": {{ c.title | json }}, "src400": {{ s400 | json }}, "src700": {{ s700 | json }}, "src1000": {{ s1000 | json }} }
+          {%- assign sep = ',' -%}
         {%- endif -%}
       {%- endfor -%}
     {%- else -%}
