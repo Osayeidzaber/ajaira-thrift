@@ -54,14 +54,6 @@
             "text_4": "100% Genuine Products"
           }
         },
-        "delivery": {
-          "type": "delivery",
-          "settings": {
-            "step1_label": "Order placed",
-            "step2_label": "Dispatched",
-            "step3_label": "Delivered"
-          }
-        },
         "checklist": {
           "type": "checklist",
           "settings": {
@@ -93,7 +85,6 @@
       },
       "block_order": [
         "trust",
-        "delivery",
         "checklist",
         "acc_ship",
         "acc_return",

@@ -17,7 +17,11 @@
         "wa": {
           "type": "whatsapp",
           "settings": {
-            "url": "https://wa.me/8801992420839"
+            "url": "https://wa.me/8801992420839",
+            "title": "WhatsApp Business",
+            "tag": "WhatsApp",
+            "text": "Message us on WhatsApp: 01992420839",
+            "label": "Chat now"
           }
         },
         "nl": {
