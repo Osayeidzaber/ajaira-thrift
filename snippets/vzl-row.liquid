@@ -129,15 +129,15 @@
         {%- endfor -%}
       </ul>
     {%- endif -%}
-    <a class="vzl__cta" href="{{ p.url | default: routes.all_products_collection_url }}">
-      {{- button_label | escape -}}
-    </a>
     {%- if show_price and p != blank -%}
       <span class="vzl__price">
         {{- p.price | money -}}
         {%- if p.compare_at_price > p.price %} <s class="vzl__compare">{{ p.compare_at_price | money }}</s>{% endif -%}
       </span>
     {%- endif -%}
+    <a class="vzl__cta" href="{{ p.url | default: routes.all_products_collection_url }}">
+      {{- button_label | escape -}}
+    </a>
   </div>
 </div>
 <style>
