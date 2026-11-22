@@ -7,6 +7,8 @@
   @param {string} [size_filters] - comma-separated filter param names grouped under one "Size" trigger
   @param {boolean} [enable_sorting] - show the sort dropdown
   @param {string} [font_style] - 'veyroze' (Cormorant/Jost) or 'theme' (theme fonts)
+  @param {string} [chest_chips] - chest size buttons (HTML) for the Filter & Sort sheet
+  @param {string} [chest_label] - heading for the chest size group
 
   @example
   {% render 'vz-facets', results: collection, size_filters: 'filter.p.m.custom.waist,filter.v.option.size', enable_sorting: true %}
@@ -151,6 +153,12 @@
     </div>
     <form class="vz-sbody" action="{{ results.url }}" method="get" data-vz-form data-vz-manual>
       {%- if results.terms -%}<input type="hidden" name="q" value="{{ results.terms | escape }}">{%- endif -%}
+      {%- if chest_chips != blank -%}
+        <div class="vz-acc" data-vz-acc>
+          <button type="button" class="vz-ahead" data-vz-acc-trg><span class="at">{{ chest_label | escape }}</span><span class="pl"></span></button>
+          <div class="vz-acont"><div class="in"><div class="aj-sizes aj-sizes--sheet" data-size-filter role="group" aria-label="{{ chest_label | escape }}">{{ chest_chips }}</div></div></div>
+        </div>
+      {%- endif -%}
       {%- if size_body != blank -%}
         <div class="vz-acc" data-vz-acc>
           <button type="button" class="vz-ahead" data-vz-acc-trg><span class="at">{{ 'vz_facets.size' | t }}</span><span class="pl"></span></button>
