@@ -101,9 +101,8 @@
     },
     "picks": {
       "type": "product-picks",
-      "disabled": true,
       "settings": {
-        "source": "manual",
+        "source": "latest",
         "products": [],
         "collection": "",
         "limit": 8,
@@ -111,11 +110,11 @@
         "heading": "New arrivals",
         "text": "",
         "show_count": false,
-        "show_more": false,
+        "show_more": true,
         "initial_rows": 2,
         "show_more_label": "Show more",
         "button_label": "View all",
-        "button_link": "",
+        "button_link": "shopify://collections/all",
         "columns_desktop": 4,
         "columns_mobile": "2",
         "text_align": "center",
@@ -125,7 +124,8 @@
         "show_vendor": false,
         "color_scheme": "",
         "padding_top": 48,
-        "padding_bottom": 48
+        "padding_bottom": 48,
+        "sold_out_last": true
       }
     },
     "launch1": {

@@ -23,6 +23,7 @@
 {%- endif -%}
 
 {%- style -%}
+  .grid__item.is-soldout .card__media img { opacity: 0.45; filter: grayscale(0.6); }
   .section-{{ section.id }}-padding {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
     padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
@@ -168,13 +169,21 @@
               "
             >
               {% assign skip_card_product_styles = false %}
-              {%- for product in collection.products -%}
+              {%- liquid
+                assign grid_products = collection.products
+                if section.settings.sold_out_last
+                  assign in_stock = collection.products | where: 'available', true
+                  assign sold_out = collection.products | where: 'available', false
+                  assign grid_products = in_stock | concat: sold_out
+                endif
+              -%}
+              {%- for product in grid_products -%}
                 {% assign lazy_load = false %}
                 {%- if forloop.index > 2 -%}
                   {%- assign lazy_load = true -%}
                 {%- endif -%}
                 <li
-                  class="grid__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                  class="grid__item{% unless product.available %} is-soldout{% endunless %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
                   {% if settings.animations_reveal_on_scroll %}
                     data-cascade
                     style="--animation-order: {{ forloop.index }};"
@@ -215,6 +224,12 @@
   "name": "t:sections.main-collection-product-grid.name",
   "class": "section",
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "sold_out_last",
+      "label": "Show sold-out products last",
+      "default": true
+    },
     {
       "type": "range",
       "id": "products_per_page",
