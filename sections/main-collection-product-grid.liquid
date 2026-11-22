@@ -31,10 +31,10 @@
   .aj-sizes__chip.is-on { background: rgb(var(--color-foreground)); color: rgb(var(--color-background)); border-color: rgb(var(--color-foreground)); }
   .aj-sizes__empty { margin: 8px 0 24px; opacity: 0.7; }
   #product-grid .grid__item[hidden] { display: none; }
+  .pagination-wrapper[hidden] { display: none; }
+  .aj-sizes--sheet { margin: 0; flex-wrap: wrap; }
+  @media (max-width: 749px) { .aj-sizes--bar { display: none; } }
   @media (max-width: 749px) {
-    .aj-sizes { flex-wrap: nowrap; overflow-x: auto; gap: 6px; margin: 0 -1.5rem 20px; padding: 2px 1.5rem 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-    .aj-sizes::-webkit-scrollbar { display: none; }
-    .aj-sizes__label { flex: 0 0 auto; font-size: 1.05rem; }
     .aj-sizes__chip { flex: 0 0 auto; min-width: 46px; height: 34px; padding: 0 12px; font-size: 1.25rem; }
   }
   .grid__item.is-soldout .card__media { opacity: 0.5; filter: grayscale(0.7); }
@@ -112,6 +112,39 @@
       </facet-filters-form>
     {%- endif -%}
 
+              {%- liquid
+                assign grid_products = collection.products
+                if section.settings.sold_out_last
+                  assign in_stock = collection.products | where: 'available', true
+                  assign sold_out = collection.products | where: 'available', false
+                  assign grid_products = in_stock | concat: sold_out
+                endif
+              -%}
+              {%- liquid
+                assign size_list = ''
+                if section.settings.size_filter
+                  for p in grid_products
+                    capture sz
+                      render 'product-size', product: p
+                    endcapture
+                    if sz != blank
+                      assign key = '|' | append: sz | append: '|'
+                      unless size_list contains key
+                        assign size_list = size_list | append: key
+                      endunless
+                    endif
+                  endfor
+                endif
+              -%}
+    {%- capture chest_chips -%}{%- if size_list != blank -%}
+      <button type="button" class="aj-sizes__chip is-on" data-size="" aria-pressed="true">{{ 'products.facets.all_sizes' | t }}</button>
+      {%- for n in (20..80) -%}
+        {%- assign key = '|' | append: n | append: '|' -%}
+        {%- if size_list contains key -%}
+          <button type="button" class="aj-sizes__chip" data-size="{{ n }}" aria-pressed="false">{{ n }}<span class="aj-sizes__unit">&quot;</span></button>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}{%- endcapture -%}
     <div class="{% if section.settings.filter_type == 'vertical' %} facets-vertical page-width{% endif %}">
       {%- if section.settings.veyroze_facets -%}
         {{ 'vz-facets.css' | asset_url | stylesheet_tag }}
@@ -121,7 +154,9 @@
             results: collection,
             size_filters: section.settings.size_filters,
             enable_sorting: section.settings.enable_sorting,
-            font_style: section.settings.facet_font
+            font_style: section.settings.facet_font,
+            chest_chips: chest_chips,
+            chest_label: section.settings.size_filter_label
           %}
         </div>
       {%- else -%}
@@ -173,40 +208,10 @@
             class="collection{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
           >
             <div class="loading-overlay gradient"></div>
-              {%- liquid
-                assign grid_products = collection.products
-                if section.settings.sold_out_last
-                  assign in_stock = collection.products | where: 'available', true
-                  assign sold_out = collection.products | where: 'available', false
-                  assign grid_products = in_stock | concat: sold_out
-                endif
-              -%}
-              {%- liquid
-                assign size_list = ''
-                if section.settings.size_filter
-                  for p in grid_products
-                    capture sz
-                      render 'product-size', product: p
-                    endcapture
-                    if sz != blank
-                      assign key = '|' | append: sz | append: '|'
-                      unless size_list contains key
-                        assign size_list = size_list | append: key
-                      endunless
-                    endif
-                  endfor
-                endif
-              -%}
               {%- if size_list != blank -%}
-                <div class="aj-sizes" data-size-filter role="group" aria-label="{{ section.settings.size_filter_label | escape }}">
+                <div class="aj-sizes aj-sizes--bar" data-size-filter role="group" aria-label="{{ section.settings.size_filter_label | escape }}">
                   <span class="aj-sizes__label">{{ section.settings.size_filter_label | escape }}</span>
-                  <button type="button" class="aj-sizes__chip is-on" data-size="" aria-pressed="true">{{ 'products.facets.all_sizes' | t }}</button>
-                  {%- for n in (20..80) -%}
-                    {%- assign key = '|' | append: n | append: '|' -%}
-                    {%- if size_list contains key -%}
-                      <button type="button" class="aj-sizes__chip" data-size="{{ n }}" aria-pressed="false">{{ n }}<span class="aj-sizes__unit">&quot;</span></button>
-                    {%- endif -%}
-                  {%- endfor -%}
+                  {{ chest_chips }}
                 </div>
               {%- endif -%}
             <ul
@@ -264,20 +269,122 @@
 </div>
 
 {% javascript %}
-  document.addEventListener('click', (event) => {
-    const chip = event.target.closest('[data-size-filter] .aj-sizes__chip');
-    if (!chip) return;
-    const bar = chip.closest('[data-size-filter]');
-    const want = chip.dataset.size;
-    bar.querySelectorAll('.aj-sizes__chip').forEach((c) => {
-      const on = c === chip;
-      c.classList.toggle('is-on', on);
-      c.setAttribute('aria-pressed', on ? 'true' : 'false');
+  (() => {
+    const KEY = 'aj-chest-size';
+    const grid = () => document.getElementById('product-grid');
+    const pager = () => document.querySelector('.pagination-wrapper');
+    let extra = null; // product cards from the other pages
+    let loading = null;
+
+    // Fetch every other page of this collection (same filters/sort) once.
+    const loadOtherPages = () => {
+      if (loading) return loading;
+      const ul = grid();
+      const wrap = pager();
+      if (!ul || !wrap) return (loading = Promise.resolve([]));
+      const pages = Math.max(
+        ...[...wrap.querySelectorAll('a, span')].map((a) => parseInt(a.textContent, 10)).filter((n) => n > 0),
+        1,
+      );
+      const here = parseInt(wrap.dataset.page || '1', 10);
+      const jobs = [];
+      for (let n = 1; n <= pages; n += 1) {
+        if (n === here) continue;
+        const url = new URL(location.href);
+        url.searchParams.set('page', n);
+        url.searchParams.set('section_id', ul.dataset.id);
+        jobs.push(
+          fetch(url)
+            .then((r) => r.text())
+            .then((html) => [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('#product-grid > .grid__item')])
+            .catch(() => []),
+        );
+      }
+      loading = Promise.all(jobs).then((lists) => {
+        extra = lists.flat().map((li) => {
+          li.dataset.ajExtra = '';
+          li.classList.remove('scroll-trigger', 'animate--slide-in');
+          return li;
+        });
+        addMissingChips();
+        return extra;
+      });
+      return loading;
+    };
+
+    // Sizes that only exist on other pages still get a button.
+    const addMissingChips = () => {
+      const sizes = new Set((extra || []).map((li) => li.dataset.size).filter(Boolean));
+      document.querySelectorAll('[data-size-filter]').forEach((bar) => {
+        const have = new Set([...bar.querySelectorAll('.aj-sizes__chip')].map((c) => c.dataset.size));
+        const sample = bar.querySelector('.aj-sizes__chip[data-size]:not([data-size=""])') || bar.querySelector('.aj-sizes__chip');
+        if (!sample) return;
+        sizes.forEach((size) => {
+          if (have.has(size)) return;
+          const chip = sample.cloneNode(true);
+          chip.dataset.size = size;
+          chip.classList.remove('is-on');
+          chip.setAttribute('aria-pressed', 'false');
+          chip.innerHTML = size + '<span class="aj-sizes__unit">&quot;</span>';
+          bar.appendChild(chip);
+        });
+        const chips = [...bar.querySelectorAll('.aj-sizes__chip[data-size]:not([data-size=""])')];
+        chips.sort((a, b) => Number(a.dataset.size) - Number(b.dataset.size)).forEach((c) => bar.appendChild(c));
+      });
+    };
+
+    const apply = (want) => {
+      document.querySelectorAll('[data-size-filter] .aj-sizes__chip').forEach((c) => {
+        const on = (c.dataset.size || '') === want;
+        c.classList.toggle('is-on', on);
+        c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      const ul = grid();
+      if (!ul) return;
+      const wrap = pager();
+      if (want === '') {
+        ul.querySelectorAll('[data-aj-extra]').forEach((li) => li.remove());
+        if (wrap) wrap.hidden = false;
+      } else if (extra) {
+        extra.forEach((li) => { if (li.parentNode !== ul) ul.appendChild(li); });
+        if (wrap) wrap.hidden = true;
+      }
+      ul.querySelectorAll(':scope > .grid__item').forEach((item) => {
+        item.hidden = want !== '' && item.dataset.size !== want;
+      });
+    };
+
+    const choose = (want) => {
+      try { sessionStorage.setItem(KEY + location.pathname, want); } catch (e) {}
+      if (want !== '' && pager() && !extra) {
+        apply(want);
+        loadOtherPages().then(() => apply(want));
+      } else {
+        apply(want);
+      }
+    };
+
+    document.addEventListener('click', (event) => {
+      if (event.target.closest('.vz-sfoot .clr')) {
+        try { sessionStorage.removeItem(KEY + location.pathname); } catch (e) {}
+        return;
+      }
+      const chip = event.target.closest('[data-size-filter] .aj-sizes__chip');
+      if (!chip) return;
+      event.preventDefault();
+      choose(chip.dataset.size || '');
     });
-    document.querySelectorAll('#product-grid > .grid__item').forEach((item) => {
-      item.hidden = want !== '' && item.dataset.size !== want;
-    });
-  });
+
+    const start = () => {
+      if (!document.querySelector('[data-size-filter]')) return;
+      let want = '';
+      try { want = sessionStorage.getItem(KEY + location.pathname) || ''; } catch (e) {}
+      if (pager()) loadOtherPages().then(() => { if (want) apply(want); });
+      if (want) apply(want);
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+    else start();
+  })();
 {% endjavascript %}
 
 {% schema %}
