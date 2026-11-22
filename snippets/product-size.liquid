@@ -1,0 +1,23 @@
+{%- comment -%}
+  Prints one product's chest size in whole inches (e.g. "44"), read from its
+  description ("Chest: 44”| Length: 24”"), for the collection size filter.
+  A chest under 30 is taken as measured flat and doubled.
+  Prints nothing when there is no Chest measurement.
+
+  @param {object} product
+
+  @example
+  {%- capture size -%}{% render 'product-size', product: product %}{%- endcapture -%}
+{%- endcomment -%}
+{%- liquid
+  assign desc = product.description | strip_html | downcase | replace: '&nbsp;', ' ' | replace: '”', ' ' | replace: '"', ' ' | replace: '″', ' ' | replace: '|', ' '
+  assign chest = 0
+  if desc contains 'chest'
+    assign after = desc | split: 'chest' | last | remove: ':' | remove: '-' | strip
+    assign chest = after | split: ' ' | first | plus: 0 | round
+    if chest > 0 and chest < 30
+      assign chest = chest | times: 2
+    endif
+  endif
+-%}
+{%- if chest > 0 -%}{{ chest }}{%- endif -%}

@@ -23,6 +23,13 @@
 {%- endif -%}
 
 {%- style -%}
+  .aj-sizes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 22px; }
+  .aj-sizes__label { font-size: 1.2rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.7; margin-right: 4px; }
+  .aj-sizes__chip { min-width: 52px; height: 36px; padding: 0 14px; border: 1px solid rgba(var(--color-foreground), 0.3); border-radius: 999px; background: transparent; color: rgb(var(--color-foreground)); font-size: 1.3rem; cursor: pointer; }
+  .aj-sizes__chip:hover { border-color: rgb(var(--color-foreground)); }
+  .aj-sizes__chip.is-on { background: rgb(var(--color-foreground)); color: rgb(var(--color-background)); border-color: rgb(var(--color-foreground)); }
+  .aj-sizes__empty { margin: 8px 0 24px; opacity: 0.7; }
+  #product-grid .grid__item[hidden] { display: none; }
   .grid__item.is-soldout .card__media { opacity: 0.5; filter: grayscale(0.7); }
   .section-{{ section.id }}-padding {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
@@ -159,6 +166,42 @@
             class="collection{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
           >
             <div class="loading-overlay gradient"></div>
+              {%- liquid
+                assign grid_products = collection.products
+                if section.settings.sold_out_last
+                  assign in_stock = collection.products | where: 'available', true
+                  assign sold_out = collection.products | where: 'available', false
+                  assign grid_products = in_stock | concat: sold_out
+                endif
+              -%}
+              {%- liquid
+                assign size_list = ''
+                if section.settings.size_filter
+                  for p in grid_products
+                    capture sz
+                      render 'product-size', product: p
+                    endcapture
+                    if sz != blank
+                      assign key = '|' | append: sz | append: '|'
+                      unless size_list contains key
+                        assign size_list = size_list | append: key
+                      endunless
+                    endif
+                  endfor
+                endif
+              -%}
+              {%- if size_list != blank -%}
+                <div class="aj-sizes" data-size-filter role="group" aria-label="{{ section.settings.size_filter_label | escape }}">
+                  <span class="aj-sizes__label">{{ section.settings.size_filter_label | escape }}</span>
+                  <button type="button" class="aj-sizes__chip is-on" data-size="" aria-pressed="true">{{ 'products.facets.all_sizes' | t }}</button>
+                  {%- for n in (20..80) -%}
+                    {%- assign key = '|' | append: n | append: '|' -%}
+                    {%- if size_list contains key -%}
+                      <button type="button" class="aj-sizes__chip" data-size="{{ n }}" aria-pressed="false">{{ n }}″</button>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
             <ul
               id="product-grid"
               data-id="{{ section.id }}"
@@ -169,20 +212,14 @@
               "
             >
               {% assign skip_card_product_styles = false %}
-              {%- liquid
-                assign grid_products = collection.products
-                if section.settings.sold_out_last
-                  assign in_stock = collection.products | where: 'available', true
-                  assign sold_out = collection.products | where: 'available', false
-                  assign grid_products = in_stock | concat: sold_out
-                endif
-              -%}
               {%- for product in grid_products -%}
+                {%- capture card_size -%}{%- if section.settings.size_filter -%}{% render 'product-size', product: product %}{%- endif -%}{%- endcapture -%}
                 {% assign lazy_load = false %}
                 {%- if forloop.index > 2 -%}
                   {%- assign lazy_load = true -%}
                 {%- endif -%}
                 <li
+                  data-size="{{ card_size | strip | escape }}"
                   class="grid__item{% unless product.available %} is-soldout{% endunless %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
                   {% if settings.animations_reveal_on_scroll %}
                     data-cascade
@@ -219,11 +256,45 @@
   {%- endif -%}
 </div>
 
+{% javascript %}
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-size-filter] .aj-sizes__chip');
+    if (!chip) return;
+    const bar = chip.closest('[data-size-filter]');
+    const want = chip.dataset.size;
+    bar.querySelectorAll('.aj-sizes__chip').forEach((c) => {
+      const on = c === chip;
+      c.classList.toggle('is-on', on);
+      c.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    document.querySelectorAll('#product-grid > .grid__item').forEach((item) => {
+      item.hidden = want !== '' && item.dataset.size !== want;
+    });
+  });
+{% endjavascript %}
+
 {% schema %}
 {
   "name": "t:sections.main-collection-product-grid.name",
   "class": "section",
   "settings": [
+    {
+      "type": "header",
+      "content": "Size filter"
+    },
+    {
+      "type": "checkbox",
+      "id": "size_filter",
+      "label": "Show size buttons",
+      "info": "Buttons come from the Chest measurement in each description, e.g. Chest: 44”.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "size_filter_label",
+      "label": "Label",
+      "default": "Chest size"
+    },
     {
       "type": "checkbox",
       "id": "sold_out_last",
