@@ -6,14 +6,23 @@
   endif
   assign launch_blocks = section.blocks | where: 'type', 'launch'
   assign feature_blocks = section.blocks | where: 'type', 'feature'
+  assign main_product = section.settings.product
+  assign pick = section.settings.newest_position | plus: 0
+  if pick > 0
+    assign newest = collections.all.products | sort: 'created_at' | reverse | where: 'available', true
+    assign idx = pick | minus: 1
+    if newest[idx] != blank
+      assign main_product = newest[idx]
+    endif
+  endif
 -%}
 {%- capture features_html -%}
   {%- for block in feature_blocks -%}<li {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</li>{%- endfor -%}
 {%- endcapture -%}
 <section id="{{ uid }}" data-autoplay="{{ section.settings.autoplay }}" class="vzl" style="--vzl-title-size: {{ section.settings.title_size }}px; --vzl-align: {{ section.settings.text_align }}; {% if section.settings.accent_color != blank %}--gold: {{ section.settings.accent_color }};{% endif %} {% if section.settings.text_color != blank %}--ink: {{ section.settings.text_color }};{% endif %} {% if section.settings.muted_color != blank %}--muted: {{ section.settings.muted_color }};{% endif %} {% if section.settings.line_color != blank %}--line: {{ section.settings.line_color }};{% endif %} {% if section.settings.button_text_color != blank %}--vzl-cta-text: {{ section.settings.button_text_color }};{% endif %} {% if section.settings.button_hover_color != blank %}--vzl-cta-hover: {{ section.settings.button_hover_color }};{% endif %} {% if section.settings.media_bg != blank %}--vzl-media-bg: {{ section.settings.media_bg }};{% endif %}">
-  {%- if section.settings.product != blank or launch_blocks.size == 0 -%}
+  {%- if main_product != blank or launch_blocks.size == 0 -%}
     {%- render 'vzl-row',
-      product: section.settings.product,
+      product: main_product,
       row_id: section.id,
       flip: flip_first,
       badge: section.settings.badge,
@@ -30,7 +39,7 @@
   {%- for block in launch_blocks -%}
     {%- liquid
       assign offset = forloop.index
-      if section.settings.product == blank
+      if main_product == blank
         assign offset = forloop.index0
       endif
       assign is_flip = flip_first
@@ -171,6 +180,19 @@
   "name": "Product launch",
   "tag": "div",
   "settings": [
+    {
+      "type": "select",
+      "id": "newest_position",
+      "label": "Show automatically",
+      "info": "Newest = the latest in-stock product you added. Choose Off to pick the product yourself below.",
+      "default": "0",
+      "options": [
+        { "value": "0", "label": "Off (use the product below)" },
+        { "value": "1", "label": "Newest product" },
+        { "value": "2", "label": "2nd newest product" },
+        { "value": "3", "label": "3rd newest product" }
+      ]
+    },
     {
       "type": "product",
       "id": "product",

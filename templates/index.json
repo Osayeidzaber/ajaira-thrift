@@ -126,7 +126,8 @@
         "padding_top": 48,
         "padding_bottom": 48,
         "sold_out_last": true
-      }
+      },
+      "disabled": true
     },
     "launch1": {
       "type": "product-launch",
@@ -154,7 +155,8 @@
         "line_color": "",
         "media_bg": "",
         "title_size": 44,
-        "text_align": "left"
+        "text_align": "left",
+        "newest_position": "1"
       }
     },
     "launch2": {
@@ -183,7 +185,8 @@
         "line_color": "",
         "media_bg": "",
         "title_size": 44,
-        "text_align": "left"
+        "text_align": "left",
+        "newest_position": "2"
       }
     },
     "faq": {
