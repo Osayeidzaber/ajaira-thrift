@@ -23,13 +23,20 @@
 {%- endif -%}
 
 {%- style -%}
-  .aj-sizes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 22px; }
+  .aj-sizes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 4px 0 28px; }
+  .aj-sizes__unit { margin-left: 1px; font-family: Arial, Helvetica, sans-serif; }
   .aj-sizes__label { font-size: 1.2rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.7; margin-right: 4px; }
-  .aj-sizes__chip { min-width: 52px; height: 36px; padding: 0 14px; border: 1px solid rgba(var(--color-foreground), 0.3); border-radius: 999px; background: transparent; color: rgb(var(--color-foreground)); font-size: 1.3rem; cursor: pointer; }
+  .aj-sizes__chip { min-width: 52px; height: 36px; padding: 0 14px; border: 1px solid rgba(var(--color-foreground), 0.3); border-radius: 999px; background: transparent; color: rgb(var(--color-foreground)); font-size: 1.3rem; line-height: 1; letter-spacing: 0.02em; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
   .aj-sizes__chip:hover { border-color: rgb(var(--color-foreground)); }
   .aj-sizes__chip.is-on { background: rgb(var(--color-foreground)); color: rgb(var(--color-background)); border-color: rgb(var(--color-foreground)); }
   .aj-sizes__empty { margin: 8px 0 24px; opacity: 0.7; }
   #product-grid .grid__item[hidden] { display: none; }
+  @media (max-width: 749px) {
+    .aj-sizes { flex-wrap: nowrap; overflow-x: auto; gap: 6px; margin: 0 -1.5rem 20px; padding: 2px 1.5rem 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .aj-sizes::-webkit-scrollbar { display: none; }
+    .aj-sizes__label { flex: 0 0 auto; font-size: 1.05rem; }
+    .aj-sizes__chip { flex: 0 0 auto; min-width: 46px; height: 34px; padding: 0 12px; font-size: 1.25rem; }
+  }
   .grid__item.is-soldout .card__media { opacity: 0.5; filter: grayscale(0.7); }
   .section-{{ section.id }}-padding {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
@@ -197,7 +204,7 @@
                   {%- for n in (20..80) -%}
                     {%- assign key = '|' | append: n | append: '|' -%}
                     {%- if size_list contains key -%}
-                      <button type="button" class="aj-sizes__chip" data-size="{{ n }}" aria-pressed="false">{{ n }}″</button>
+                      <button type="button" class="aj-sizes__chip" data-size="{{ n }}" aria-pressed="false">{{ n }}<span class="aj-sizes__unit">&quot;</span></button>
                     {%- endif -%}
                   {%- endfor -%}
                 </div>
