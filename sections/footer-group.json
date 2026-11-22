@@ -87,7 +87,7 @@
     "privacy": {
       "type": "privacy-shield",
       "settings": {
-        "enabled": true,
+        "enabled": false,
         "tooltip": "Privacy Settings",
         "aria_label": "Privacy & cookie settings"
       }
