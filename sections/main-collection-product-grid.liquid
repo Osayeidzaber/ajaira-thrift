@@ -31,9 +31,10 @@
   .aj-sizes__chip.is-on { background: rgb(var(--color-foreground)); color: rgb(var(--color-background)); border-color: rgb(var(--color-foreground)); }
   .aj-sizes__empty { margin: 8px 0 24px; opacity: 0.7; }
   #product-grid .grid__item[hidden] { display: none; }
-  .aj-sizes--sheet { margin: 0; flex-wrap: wrap; }
-  @media (max-width: 749px) { .aj-sizes--bar { display: none; } }
   @media (max-width: 749px) {
+    .aj-sizes { flex-wrap: nowrap; overflow-x: auto; gap: 6px; margin: 0 -1.5rem 20px; padding: 2px 1.5rem 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .aj-sizes::-webkit-scrollbar { display: none; }
+    .aj-sizes__label { flex: 0 0 auto; font-size: 1.05rem; }
     .aj-sizes__chip { flex: 0 0 auto; min-width: 46px; height: 34px; padding: 0 12px; font-size: 1.25rem; }
   }
   .grid__item.is-soldout .card__media { opacity: 0.5; filter: grayscale(0.7); }
@@ -111,39 +112,6 @@
       </facet-filters-form>
     {%- endif -%}
 
-              {%- liquid
-                assign grid_products = collection.products
-                if section.settings.sold_out_last
-                  assign in_stock = collection.products | where: 'available', true
-                  assign sold_out = collection.products | where: 'available', false
-                  assign grid_products = in_stock | concat: sold_out
-                endif
-              -%}
-              {%- liquid
-                assign size_list = ''
-                if section.settings.size_filter
-                  for p in grid_products
-                    capture sz
-                      render 'product-size', product: p
-                    endcapture
-                    if sz != blank
-                      assign key = '|' | append: sz | append: '|'
-                      unless size_list contains key
-                        assign size_list = size_list | append: key
-                      endunless
-                    endif
-                  endfor
-                endif
-              -%}
-    {%- capture chest_chips -%}{%- if size_list != blank -%}
-      <button type="button" class="aj-sizes__chip is-on" data-size="" aria-pressed="true">{{ 'products.facets.all_sizes' | t }}</button>
-      {%- for n in (20..80) -%}
-        {%- assign key = '|' | append: n | append: '|' -%}
-        {%- if size_list contains key -%}
-          <button type="button" class="aj-sizes__chip" data-size="{{ n }}" aria-pressed="false">{{ n }}<span class="aj-sizes__unit">&quot;</span></button>
-        {%- endif -%}
-      {%- endfor -%}
-    {%- endif -%}{%- endcapture -%}
     <div class="{% if section.settings.filter_type == 'vertical' %} facets-vertical page-width{% endif %}">
       {%- if section.settings.veyroze_facets -%}
         {{ 'vz-facets.css' | asset_url | stylesheet_tag }}
@@ -153,9 +121,7 @@
             results: collection,
             size_filters: section.settings.size_filters,
             enable_sorting: section.settings.enable_sorting,
-            font_style: section.settings.facet_font,
-            chest_chips: chest_chips,
-            chest_label: section.settings.size_filter_label
+            font_style: section.settings.facet_font
           %}
         </div>
       {%- else -%}
@@ -207,10 +173,40 @@
             class="collection{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
           >
             <div class="loading-overlay gradient"></div>
+              {%- liquid
+                assign grid_products = collection.products
+                if section.settings.sold_out_last
+                  assign in_stock = collection.products | where: 'available', true
+                  assign sold_out = collection.products | where: 'available', false
+                  assign grid_products = in_stock | concat: sold_out
+                endif
+              -%}
+              {%- liquid
+                assign size_list = ''
+                if section.settings.size_filter
+                  for p in grid_products
+                    capture sz
+                      render 'product-size', product: p
+                    endcapture
+                    if sz != blank
+                      assign key = '|' | append: sz | append: '|'
+                      unless size_list contains key
+                        assign size_list = size_list | append: key
+                      endunless
+                    endif
+                  endfor
+                endif
+              -%}
               {%- if size_list != blank -%}
-                <div class="aj-sizes aj-sizes--bar" data-size-filter role="group" aria-label="{{ section.settings.size_filter_label | escape }}">
+                <div class="aj-sizes" data-size-filter role="group" aria-label="{{ section.settings.size_filter_label | escape }}">
                   <span class="aj-sizes__label">{{ section.settings.size_filter_label | escape }}</span>
-                  {{ chest_chips }}
+                  <button type="button" class="aj-sizes__chip is-on" data-size="" aria-pressed="true">{{ 'products.facets.all_sizes' | t }}</button>
+                  {%- for n in (20..80) -%}
+                    {%- assign key = '|' | append: n | append: '|' -%}
+                    {%- if size_list contains key -%}
+                      <button type="button" class="aj-sizes__chip" data-size="{{ n }}" aria-pressed="false">{{ n }}<span class="aj-sizes__unit">&quot;</span></button>
+                    {%- endif -%}
+                  {%- endfor -%}
                 </div>
               {%- endif -%}
             <ul
@@ -268,40 +264,20 @@
 </div>
 
 {% javascript %}
-  (() => {
-    const KEY = 'aj-chest-size';
-    const apply = (want) => {
-      document.querySelectorAll('[data-size-filter] .aj-sizes__chip').forEach((c) => {
-        const on = c.dataset.size === want;
-        c.classList.toggle('is-on', on);
-        c.setAttribute('aria-pressed', on ? 'true' : 'false');
-      });
-      document.querySelectorAll('#product-grid > .grid__item').forEach((item) => {
-        item.hidden = want !== '' && item.dataset.size !== want;
-      });
-    };
-    const saved = () => {
-      try { return sessionStorage.getItem(KEY + location.pathname) || ''; } catch (e) { return ''; }
-    };
-    document.addEventListener('click', (event) => {
-      if (event.target.closest('.vz-sfoot .clr')) {
-        try { sessionStorage.removeItem(KEY + location.pathname); } catch (e) {}
-        return;
-      }
-      const chip = event.target.closest('[data-size-filter] .aj-sizes__chip');
-      if (!chip) return;
-      event.preventDefault();
-      const want = chip.dataset.size || '';
-      try { sessionStorage.setItem(KEY + location.pathname, want); } catch (e) {}
-      apply(want);
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-size-filter] .aj-sizes__chip');
+    if (!chip) return;
+    const bar = chip.closest('[data-size-filter]');
+    const want = chip.dataset.size;
+    bar.querySelectorAll('.aj-sizes__chip').forEach((c) => {
+      const on = c === chip;
+      c.classList.toggle('is-on', on);
+      c.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    const start = () => {
-      const want = saved();
-      if (want && document.querySelector('[data-size-filter] .aj-sizes__chip[data-size="' + want + '"]')) apply(want);
-    };
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-    else start();
-  })();
+    document.querySelectorAll('#product-grid > .grid__item').forEach((item) => {
+      item.hidden = want !== '' && item.dataset.size !== want;
+    });
+  });
 {% endjavascript %}
 
 {% schema %}
