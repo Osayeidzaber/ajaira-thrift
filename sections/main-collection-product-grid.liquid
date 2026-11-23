@@ -114,10 +114,9 @@
 
               {%- liquid
                 assign grid_products = collection.products
+                assign passes = 1
                 if section.settings.sold_out_last
-                  assign in_stock = collection.products | where: 'available', true
-                  assign sold_out = collection.products | where: 'available', false
-                  assign grid_products = in_stock | concat: sold_out
+                  assign passes = 2
                 endif
               -%}
               {%- liquid
@@ -217,6 +216,7 @@
             <ul
               id="product-grid"
               data-id="{{ section.id }}"
+              data-sold-out-last="{{ section.settings.sold_out_last }}"
               class="
                 grid product-grid grid--{{ section.settings.columns_mobile }}-col-tablet-down
                 grid--{{ section.settings.columns_desktop }}-col-desktop
@@ -224,7 +224,12 @@
               "
             >
               {% assign skip_card_product_styles = false %}
+              {%- for pass in (1..passes) -%}
               {%- for product in grid_products -%}
+                {%- if passes == 2 -%}
+                  {%- if pass == 1 and product.available == false -%}{%- continue -%}{%- endif -%}
+                  {%- if pass == 2 and product.available -%}{%- continue -%}{%- endif -%}
+                {%- endif -%}
                 {%- capture card_size -%}{%- if section.settings.size_filter -%}{% render 'product-size', product: product %}{%- endif -%}{%- endcapture -%}
                 {% assign lazy_load = false %}
                 {%- if forloop.index > 2 -%}
@@ -252,6 +257,7 @@
                   %}
                 </li>
                 {%- assign skip_card_product_styles = true -%}
+              {%- endfor -%}
               {%- endfor -%}
             </ul>
 
@@ -333,6 +339,22 @@
       });
     };
 
+    // On page 1, show the whole collection as one list with every sold-out
+    // piece at the very end (the page split would otherwise keep sold-out
+    // items in the middle of the collection).
+    let merged = false;
+    const soldOutLast = () => {
+      const ul = grid();
+      const wrap = pager();
+      if (!ul || !wrap || !extra || ul.dataset.soldOutLast !== 'true') return;
+      if (parseInt(wrap.dataset.page || '1', 10) !== 1) return;
+      extra.forEach((li) => { if (li.parentNode !== ul) ul.appendChild(li); });
+      const items = [...ul.querySelectorAll(':scope > .grid__item')];
+      items.filter((li) => li.classList.contains('is-soldout')).forEach((li) => ul.appendChild(li));
+      wrap.hidden = true;
+      merged = true;
+    };
+
     const apply = (want) => {
       document.querySelectorAll('[data-size-filter] .aj-sizes__chip').forEach((c) => {
         const on = (c.dataset.size || '') === want;
@@ -342,7 +364,9 @@
       const ul = grid();
       if (!ul) return;
       const wrap = pager();
-      if (want === '') {
+      if (merged) {
+        // every page is already in one list
+      } else if (want === '') {
         ul.querySelectorAll('[data-aj-extra]').forEach((li) => li.remove());
         if (wrap) wrap.hidden = false;
       } else if (extra) {
@@ -376,10 +400,20 @@
     });
 
     const start = () => {
-      if (!document.querySelector('[data-size-filter]')) return;
+      const hasSizes = !!document.querySelector('[data-size-filter]');
+      const ul = grid();
+      const wantMerge = ul && ul.dataset.soldOutLast === 'true';
+      if (!hasSizes && !wantMerge) return;
       let want = '';
-      try { want = sessionStorage.getItem(KEY + location.pathname) || ''; } catch (e) {}
-      if (pager()) loadOtherPages().then(() => { if (want) apply(want); });
+      if (hasSizes) {
+        try { want = sessionStorage.getItem(KEY + location.pathname) || ''; } catch (e) {}
+      }
+      if (pager()) {
+        loadOtherPages().then(() => {
+          soldOutLast();
+          if (want) apply(want);
+        });
+      }
       if (want) apply(want);
     };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
