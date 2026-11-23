@@ -9,11 +9,26 @@
   assign main_product = section.settings.product
   assign pick = section.settings.newest_position | plus: 0
   if pick > 0
-    assign newest = collections.all.products | sort: 'created_at' | reverse | where: 'available', true
+    assign newest = collections.all.products | sort: 'created_at' | reverse
+    assign word = section.settings.newest_title_word | downcase | strip
     assign idx = pick | minus: 1
-    if newest[idx] != blank
-      assign main_product = newest[idx]
-    endif
+    assign n = 0
+    for p in newest
+      unless p.available
+        continue
+      endunless
+      if word != blank
+        assign t = p.title | downcase
+        unless t contains word
+          continue
+        endunless
+      endif
+      if n == idx
+        assign main_product = p
+        break
+      endif
+      assign n = n | plus: 1
+    endfor
   endif
 -%}
 {%- capture features_html -%}
@@ -192,6 +207,12 @@
         { "value": "2", "label": "2nd newest product" },
         { "value": "3", "label": "3rd newest product" }
       ]
+    },
+    {
+      "type": "text",
+      "id": "newest_title_word",
+      "label": "Only products with this word in the title",
+      "info": "e.g. leather. Leave empty for any product."
     },
     {
       "type": "product",

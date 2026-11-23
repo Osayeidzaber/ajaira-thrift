@@ -156,7 +156,8 @@
         "media_bg": "",
         "title_size": 44,
         "text_align": "left",
-        "newest_position": "1"
+        "newest_position": "1",
+        "newest_title_word": "leather"
       }
     },
     "launch2": {
@@ -186,7 +187,8 @@
         "media_bg": "",
         "title_size": 44,
         "text_align": "left",
-        "newest_position": "2"
+        "newest_position": "2",
+        "newest_title_word": "leather"
       }
     },
     "faq": {
