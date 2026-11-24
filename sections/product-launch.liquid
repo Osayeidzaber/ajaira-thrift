@@ -9,7 +9,8 @@
   assign main_product = section.settings.product
   assign pick = section.settings.newest_position | plus: 0
   if pick > 0
-    assign newest = collections.all.products | sort: 'created_at' | reverse
+    assign source = section.settings.newest_collection | default: collections.all
+    assign newest = source.products | sort: 'created_at' | reverse
     assign word = section.settings.newest_title_word | downcase | strip
     assign idx = pick | minus: 1
     assign n = 0
@@ -207,6 +208,12 @@
         { "value": "2", "label": "2nd newest product" },
         { "value": "3", "label": "3rd newest product" }
       ]
+    },
+    {
+      "type": "collection",
+      "id": "newest_collection",
+      "label": "Take the newest from this collection",
+      "info": "Best with a collection of under 50 products. Empty = all products (Shopify only looks at the first 50)."
     },
     {
       "type": "text",

@@ -157,7 +157,8 @@
         "title_size": 44,
         "text_align": "left",
         "newest_position": "1",
-        "newest_title_word": "leather"
+        "newest_title_word": "",
+        "newest_collection": "leather-jackets"
       }
     },
     "launch2": {
@@ -188,7 +189,8 @@
         "title_size": 44,
         "text_align": "left",
         "newest_position": "2",
-        "newest_title_word": "leather"
+        "newest_title_word": "",
+        "newest_collection": "leather-jackets"
       }
     },
     "faq": {
