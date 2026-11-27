@@ -277,6 +277,10 @@
 {% javascript %}
   (() => {
     const KEY = 'aj-chest-size';
+    // Phones: pulling every page of the collection into one list (hundreds of
+    // cards, two photos each) runs iOS out of memory and crashes the page.
+    // There we keep normal page-by-page browsing and filter the current page only.
+    const PHONE = window.matchMedia('(hover: none), (pointer: coarse)').matches;
     const grid = () => document.getElementById('product-grid');
     const pager = () => document.querySelector('.pagination-wrapper');
     let extra = null; // product cards from the other pages
@@ -380,7 +384,7 @@
 
     const choose = (want) => {
       try { sessionStorage.setItem(KEY + location.pathname, want); } catch (e) {}
-      if (want !== '' && pager() && !extra) {
+      if (want !== '' && pager() && !extra && !PHONE) {
         apply(want);
         loadOtherPages().then(() => apply(want));
       } else {
@@ -408,7 +412,7 @@
       if (hasSizes) {
         try { want = sessionStorage.getItem(KEY + location.pathname) || ''; } catch (e) {}
       }
-      if (pager()) {
+      if (pager() && !PHONE) {
         loadOtherPages().then(() => {
           soldOutLast();
           if (want) apply(want);
