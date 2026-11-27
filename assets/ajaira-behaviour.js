@@ -18,6 +18,9 @@
   const startSmooth = () => {
     if (cfg.smoothScroll !== 'true' || reduceMotion || typeof window.Lenis !== 'function') return;
     if (window.Shopify && window.Shopify.designMode) return; // keep the theme editor predictable
+    // Phones/tablets: Lenis only smooths mouse wheels, so on touch it is pure overhead
+    // (an endless animation loop + body/html height changes) and crashes iOS Safari.
+    if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
     const intensity = Number(cfg.smoothScrollIntensity || 5); // 1 (subtle) – 10 (floaty)
     lenis = new window.Lenis({
       lerp: 0.16 - intensity * 0.012,
